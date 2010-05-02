@@ -1,0 +1,50 @@
+Makefile*
+
+# Directories to ignore
+# ---------------------
+debug
+examples/tools/plugandpaint/plugins
+include/*
+include/*/*
+lib/*
+!lib/fonts
+!lib/README
+plugins/*/*
+release
+tmp
+doc-build
+doc/html/*
+doc/qch
+doc-build
+.rcc
+.pch
+.metadata
+
+# Symbian build system generated files 	
+# ---------------------
+
+ABLD.BAT
+bld.inf
+*.mmp
+*.mk
+*.rss
+*.loc
+!s60main.rss
+*.pkg
+plugin_commonU.def
+*.qtplugin
+*.sis
+*.sisx
+*.lst
+*.exe
+*.mif
+*.rsc
+*.sym
+*.lib
+
+# Carbide project files
+# ---------------------
+.project
+.cproject
+.make.cache
+*.d/Makefile
