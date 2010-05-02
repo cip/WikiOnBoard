@@ -55,7 +55,7 @@ public:
 	WikiOnBoard(void* bgc, QWidget *parent = 0);
     ~WikiOnBoard();
 protected:    
-    void keyPressEvent(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent *event);    
 private:     
     Ui::WikiOnBoard ui;
     void* m_bgc;

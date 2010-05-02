@@ -27,7 +27,7 @@
  ** the BSD license as a permissible license under the exception.
  **
  ****************************************************************************/
-//TODO: fix crash when selecting item beyond articleList
+
 //TODO: Find some replacement for hourglass. (Not working anymore as mouse cursor disabled)
 //TODO fix curso in textedit (don't move on left/right). Consider however before the
 // the sync. lost during scrolling issue.
@@ -71,10 +71,16 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 
 	settings.beginGroup("UISettings");
 	int zoomInit = settings.value("zoomLevel", -1).toInt();
+	bool fullScreen = settings.value("fullScreen",false).toBool(); 		
 	settings.endGroup();
 	zoomLevel = 0;
 	zoom(zoomInit);
 
+	if (fullScreen) {
+		toggleFullScreen();
+	} else {
+		showMaximized();
+	}
 	currentlyViewedUrl = QUrl("");
 
 	setFocusPolicy(Qt::StrongFocus); //TODO to process keyboard, remove if bettermechanis impl.
@@ -315,12 +321,12 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 
 			ui.articleListWidget->clear();
 
-			
 			int i = 0;
-			
-			while ((((direction_up==false) &&(it != zimFile->end())) ||  ((direction_up) &&(it != zimFile->begin()))  ) && (i < 10+ignoreFirstN))
-				{ 
-				
+
+			while ((((direction_up == false) && (it != zimFile->end()))
+					|| ((direction_up) && (it != zimFile->begin()))) && (i < 10
+					+ ignoreFirstN))
+				{
 
 				QString articleTitle = QString::fromUtf8(
 						it->getTitle().c_str(), it->getTitle().size());
@@ -337,7 +343,7 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 				// easily save url as well.
 				if (direction_up)
 					{
-					if (i >= ignoreFirstN )
+					if (i >= ignoreFirstN)
 						{
 						ui.articleListWidget->insertItem(0, articleItem);
 						}
@@ -368,22 +374,26 @@ void WikiOnBoard::articleListSelectPreviousEntry()
 	//Actually forwarding key basically worked,
 	// as well, but crashing when trying to select item outside of list. (pretty strange)
 	//Anyway, for in future TODO planned to reload list when moving out of list.
-	if (ui.articleListWidget->count()>0) {
-	if (ui.articleListWidget->currentRow() == 0)
+	if (ui.articleListWidget->count() > 0)
 		{
-		
-		QListWidgetItem *item = ui.articleListWidget->currentItem();		
-		if (item->data(ArticleIndexRole).toInt()>0) {
-			populateArticleList(item->data(ArticleTitleRole).toString(), 1, true);
-			ui.articleListWidget->setCurrentRow(ui.articleListWidget->count() - 1);
+		if (ui.articleListWidget->currentRow() == 0)
+			{
+
+			QListWidgetItem *item = ui.articleListWidget->currentItem();
+			if (item->data(ArticleIndexRole).toInt() > 0)
+				{
+				populateArticleList(item->data(ArticleTitleRole).toString(), 1,
+						true);
+				ui.articleListWidget->setCurrentRow(
+						ui.articleListWidget->count() - 1);
+				}
+			}
+		else
+			{
+			ui.articleListWidget->setCurrentRow(
+					ui.articleListWidget->currentRow() - 1);
+			}
 		}
-		}
-	else
-		{
-		ui.articleListWidget->setCurrentRow(ui.articleListWidget->currentRow()
-				- 1);
-		}
-	}
 	}
 
 void WikiOnBoard::articleListSelectNextEntry()
@@ -391,20 +401,23 @@ void WikiOnBoard::articleListSelectNextEntry()
 	//Actually forwarding key basically worked,
 	// as well, but crashing when trying to select item outside of list. (pretty strange)
 	//Anyway, for in future TODO planned to reload list when moving out of list.
-	if (ui.articleListWidget->count()>0) {
-	if (ui.articleListWidget->currentRow() == ui.articleListWidget->count() - 1)
+	if (ui.articleListWidget->count() > 0)
 		{
-		//TODO check outof bounds
-		QListWidgetItem *item = ui.articleListWidget->currentItem();
-		populateArticleList(item->data(ArticleTitleRole).toString(), 1, false);
-		ui.articleListWidget->setCurrentRow(0);
+		if (ui.articleListWidget->currentRow() == ui.articleListWidget->count()
+				- 1)
+			{
+			//TODO check outof bounds
+			QListWidgetItem *item = ui.articleListWidget->currentItem();
+			populateArticleList(item->data(ArticleTitleRole).toString(), 1,
+					false);
+			ui.articleListWidget->setCurrentRow(0);
+			}
+		else
+			{
+			ui.articleListWidget->setCurrentRow(
+					ui.articleListWidget->currentRow() + 1);
+			}
 		}
-	else
-		{
-		ui.articleListWidget->setCurrentRow(ui.articleListWidget->currentRow()
-				+ 1);
-		}
-	}
 	}
 void WikiOnBoard::articleListOpenArticle(QListWidgetItem * item)
 	{
@@ -774,7 +787,6 @@ void WikiOnBoard::toggleFullScreen()
 	{
 	if (isFullScreen())
 		{
-		toggleFullScreenAction->setSoftKeyRole(QAction::NoSoftKey);
 		showMaximized();
 		}
 	else
@@ -788,13 +800,16 @@ void WikiOnBoard::toggleFullScreen()
 			{
 			bgc->MakeVisible(ETrue);
 			bgc->DrawNow();
-			}
-		//With workaround opening softkey menu hides softkey menus again
-		//as simple fix just replace menu with switching back to normal mode.
-		toggleFullScreenAction->setSoftKeyRole(QAction::PositiveSoftKey);
+			}		
 #endif
-
 		}
+		QSettings settings;
+		settings.beginGroup("UISettings");
+		if ((!settings.contains("fullScreen"))
+				|| (settings.value("fullScreen",false).toBool() != isFullScreen())) {
+			settings.setValue("fullScreen", isFullScreen());
+		}
+		settings.endGroup();			
 	}
 
 void WikiOnBoard::zoom(int zoomDelta)
@@ -840,3 +855,4 @@ void WikiOnBoard::zoomIn()
 	{
 	zoom(1);
 	}
+
