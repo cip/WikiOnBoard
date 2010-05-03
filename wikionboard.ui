@@ -27,7 +27,7 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="indexPage">
        <layout class="QGridLayout" name="gridLayout_2">
@@ -45,6 +45,12 @@
          <widget class="QListWidget" name="articleListWidget">
           <property name="styleSheet">
            <string notr="true">QListWidget {background-color:white;color: black}</string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
          </widget>
         </item>
@@ -68,6 +74,12 @@
           </property>
           <property name="styleSheet">
            <string notr="true">QTextBrowser {background-color: white;color: black; border:0px; margin: 0px}</string>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAsNeeded</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
           <property name="readOnly">
            <bool>true</bool>

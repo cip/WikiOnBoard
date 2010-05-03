@@ -56,6 +56,7 @@ public:
     ~WikiOnBoard();
 protected:    
     void keyPressEvent(QKeyEvent *event);    
+    void resizeEvent ( QResizeEvent * event );  
 private:     
     Ui::WikiOnBoard ui;
     void* m_bgc;
@@ -65,6 +66,8 @@ private:
     QAction* zoomInAction;
     QAction* zoomOutAction;
     QAction* searchArticleAction;
+    QAction* clearSearchAction;
+        
     QAction* openArticleAction;
     QAction* switchToIndexPageAction;
     QAction* backArticleHistoryAction;

@@ -71,16 +71,19 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 
 	settings.beginGroup("UISettings");
 	int zoomInit = settings.value("zoomLevel", -1).toInt();
-	bool fullScreen = settings.value("fullScreen",false).toBool(); 		
+	bool fullScreen = settings.value("fullScreen", false).toBool();
 	settings.endGroup();
 	zoomLevel = 0;
 	zoom(zoomInit);
 
-	if (fullScreen) {
+	if (fullScreen)
+		{
 		toggleFullScreen();
-	} else {
+		}
+	else
+		{
 		showMaximized();
-	}
+		}
 	currentlyViewedUrl = QUrl("");
 
 	setFocusPolicy(Qt::StrongFocus); //TODO to process keyboard, remove if bettermechanis impl.
@@ -125,6 +128,14 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	//ui.findButton->addAction(searchArticleAction);
 	ui.articleName->addAction(searchArticleAction);
 
+	clearSearchAction = new QAction("Clear", this);
+	connect(clearSearchAction, SIGNAL(triggered()), ui.articleName,
+				SLOT(clear()));
+	connect(clearSearchAction, SIGNAL(triggered()), searchArticleAction,
+					SIGNAL(triggered())); //Automatically search after cleared.
+
+	this->addAction(clearSearchAction);
+		
 	openArticleAction = new QAction("Open Article", this);
 
 	connect(openArticleAction, SIGNAL(triggered()), this,
@@ -148,13 +159,10 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	///	ui.articlePage->addAction(ui.actionSearch);
 
 	backArticleHistoryAction = new QAction("Back", this);
-	backArticleHistoryAction->setSoftKeyRole(QAction::NegativeSoftKey);
 	connect(backArticleHistoryAction, SIGNAL(triggered()), this,
 			SLOT(backArticleHistoryOrIndexPage()));
-	//  ui.articlePage->addAction(backArticleHistoryAction);
-	this->addAction(backArticleHistoryAction); //TODO (actually result not that bad (back on article page,
-	// exit+option on index page. But why the heck is this?
-
+	this->addAction(backArticleHistoryAction); 
+	
 	toggleFullScreenAction = new QAction("Toggle Fullscreen", this); //TODO shortcut
 	//TODO Not working:
 	toggleFullScreenAction->setShortcut(QKeySequence(Qt::Key_Asterisk
@@ -297,11 +305,10 @@ QString WikiOnBoard::getArticleTextByTitle(QString articleTitle)
 	return articleText;
 	}
 
-void WikiOnBoard::populateArticleList()
-	{
-
+void WikiOnBoard::populateArticleList() {	
 	populateArticleList(ui.articleName->text(), 0, false);
-	}
+	ui.articleListWidget->setCurrentRow(0); //Select first found item
+}
 
 void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 		bool direction_up)
@@ -322,10 +329,9 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 			ui.articleListWidget->clear();
 
 			int i = 0;
-
 			while ((((direction_up == false) && (it != zimFile->end()))
-					|| ((direction_up) && (it != zimFile->begin()))) && (i < 10
-					+ ignoreFirstN))
+					|| ((direction_up) && (it != zimFile->begin()))) && (i
+					< 100 + ignoreFirstN))
 				{
 
 				QString articleTitle = QString::fromUtf8(
@@ -358,6 +364,24 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 					++it;
 					}
 				i++;
+				if (ui.articleListWidget->count() > 0)
+					{
+					int itemHeight = ui.articleListWidget->visualItemRect(
+							ui.articleListWidget->item(0)).height();
+
+					int
+							articleListWidgetHeight =
+									ui.articleListWidget->maximumViewportSize().height();
+					QListWidgetItem *lastItem = ui.articleListWidget->item(
+							ui.articleListWidget->count() - 1);
+					int lastItemBottom = ui.articleListWidget->visualItemRect(
+							lastItem).bottom();
+					if ((lastItemBottom + itemHeight)
+							>= articleListWidgetHeight)
+						{
+						break;
+						}
+					}
 				}
 			}
 
@@ -367,6 +391,7 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 			}
 
 		}
+
 	}
 
 void WikiOnBoard::articleListSelectPreviousEntry()
@@ -623,6 +648,9 @@ void WikiOnBoard::switchToArticlePage()
 	menuBar()->addMenu(optionsMenu);
 	menuBar()->addAction(exitAction);
 
+	backArticleHistoryAction->setSoftKeyRole(QAction::NegativeSoftKey);
+	clearSearchAction->setSoftKeyRole(QAction::NoSoftKey);
+	
 	ui.stackedWidget->setCurrentWidget(ui.articlePage);
 
 	//TODO
@@ -643,15 +671,18 @@ void WikiOnBoard::switchToIndexPage()
 	menuBar()->addMenu(optionsMenu);
 	menuBar()->addAction(exitAction);
 
-	populateArticleList();
+	backArticleHistoryAction->setSoftKeyRole(QAction::NoSoftKey);
+	clearSearchAction->setSoftKeyRole(QAction::NegativeSoftKey);
+
 	ui.stackedWidget->setCurrentWidget(ui.indexPage);
 	ui.articleName->setFocus();
+	populateArticleList();
 	}
 
 void WikiOnBoard::searchArticle()
 	{
 	populateArticleList();
-	ui.articleListWidget->setCurrentRow(0); //Select first found item
+	
 	/*	if (ui.articleListWidget->hasFocus())
 	 { //TODO: remove this usabiiity hack, make own menu entry (or return key if works)
 	 on_articleListWidget_itemClicked(ui.articleListWidget->currentItem());
@@ -783,6 +814,33 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 		}
 
 	}
+
+void WikiOnBoard::resizeEvent(QResizeEvent * event)
+	{
+	
+	if (ui.stackedWidget->currentWidget() == ui.indexPage)
+		{
+		if (ui.articleListWidget->count() > 0)
+			{
+			//Current item (if none first) is new first item of list. 
+			// TODO: Keeping offset would be nicer, but more complex 
+			//      in case new size is smaller than offset.
+			int itemIndex = ui.articleListWidget->currentRow();
+			if (itemIndex < 0) {
+				itemIndex = 0;
+				}
+			QListWidgetItem *item = ui.articleListWidget->item(itemIndex);
+			if (item->data(ArticleIndexRole).toInt() > 0)
+				{
+				populateArticleList(item->data(ArticleTitleRole).toString(), 0,
+						false);
+				ui.articleListWidget->setCurrentRow(0);
+				}
+			}
+
+		}
+	}
+
 void WikiOnBoard::toggleFullScreen()
 	{
 	if (isFullScreen())
@@ -800,16 +858,17 @@ void WikiOnBoard::toggleFullScreen()
 			{
 			bgc->MakeVisible(ETrue);
 			bgc->DrawNow();
-			}		
+			}
 #endif
 		}
-		QSettings settings;
-		settings.beginGroup("UISettings");
-		if ((!settings.contains("fullScreen"))
-				|| (settings.value("fullScreen",false).toBool() != isFullScreen())) {
-			settings.setValue("fullScreen", isFullScreen());
+	QSettings settings;
+	settings.beginGroup("UISettings");
+	if ((!settings.contains("fullScreen")) || (settings.value("fullScreen",
+			false).toBool() != isFullScreen()))
+		{
+		settings.setValue("fullScreen", isFullScreen());
 		}
-		settings.endGroup();			
+	settings.endGroup();
 	}
 
 void WikiOnBoard::zoom(int zoomDelta)
