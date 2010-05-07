@@ -39,4 +39,4 @@ symbian: {
 symbian:LIBS += -lavkon \
     -leikcoctl \
     -lcone
-symbian:TARGET.UID3 = 0xE17EB894
+symbian:TARGET.UID3 = 0xA89FA6F6
