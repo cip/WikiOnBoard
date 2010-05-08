@@ -748,17 +748,25 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 			 QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
 			 break;*/
 			//The following scroll up/down are done using the scrollbar and not by remapping keys to allow better control
+			// Would be basically easier and more efficient to just change the pageStep,
+			// 	sideffcts regarding screen orientation and resolution changes could occur.
 			case Qt::Key_2: //Scroll one page up (-one line as else one line may never be visible entirely)
 				ui.textBrowser->verticalScrollBar()->triggerAction(
 						QAbstractSlider::SliderPageStepSub);
-				ui.textBrowser->verticalScrollBar()->triggerAction(
-						QAbstractSlider::SliderSingleStepAdd);
+				if (ui.textBrowser->verticalScrollBar()->value()!=ui.textBrowser->verticalScrollBar()->minimum()) {
+					//Only scroll down again a little, if not at beginning of article
+					ui.textBrowser->verticalScrollBar()->triggerAction(
+										QAbstractSlider::SliderSingleStepAdd);								
+				}
 				break;
 			case Qt::Key_8: //Scroll one page down (-one line as else one line may never be visible entirely)
 				ui.textBrowser->verticalScrollBar()->triggerAction(
 						QAbstractSlider::SliderPageStepAdd);
-				ui.textBrowser->verticalScrollBar()->triggerAction(
+				if (ui.textBrowser->verticalScrollBar()->value()!=ui.textBrowser->verticalScrollBar()->maximum()) {
+					//Only scroll back again a little, if not at end of article
+					ui.textBrowser->verticalScrollBar()->triggerAction(
 						QAbstractSlider::SliderSingleStepSub);
+				}
 				break;
 			default:
 				QMainWindow::keyPressEvent(event);
