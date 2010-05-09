@@ -127,7 +127,13 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 
 	//ui.findButton->addAction(searchArticleAction);
 	ui.articleName->addAction(searchArticleAction);
-
+	//Capitalize first letter. In particular important as zimlib
+	// search is case-sensitive and in wikipedia most articles start with
+	// captial letter.
+	// TODO: Now (at least on n82)( mode is all uppercase, which is better
+	//  but still no Ab mode selectable.
+	ui.articleName->setInputMethodHints(Qt::ImhPreferUppercase); 
+	
 	clearSearchAction = new QAction("Clear", this);
 	connect(clearSearchAction, SIGNAL(triggered()), ui.articleName,
 				SLOT(clear()));
@@ -172,7 +178,6 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 
 	connect(toggleFullScreenAction, SIGNAL(triggered()), this,
 			SLOT(toggleFullScreen()));
-	//backArticleHistoryAction->setSoftKeyRole(QAction::PositiveSoftKey); TODO not working. How to add menu to softkey?       
 	this->addAction(toggleFullScreenAction);
 
 	exitAction = new QAction(tr("Exit"), this);
@@ -245,8 +250,6 @@ QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 	zim::Blob blob;
 	try
 		{
-		//Todo not better without iterator?
-
 		std::string articleNameStdStr = std::string(articleUrl.toUtf8());
 		zim::File::const_iterator it = zimFile->find('A', articleNameStdStr);
 		if (it == zimFile->end())
@@ -313,22 +316,24 @@ void WikiOnBoard::populateArticleList() {
 void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 		bool direction_up)
 	{
-	//TODO don't load always 10,but as many as maximum visible.
 	if (zimFile != NULL)
 		{
 		try
-			{ //TODO check why try catch does not work for 0 pointer
-
-
+			{ 
 			//Zim index is (appearantly?) UTF8 encoded. Therefore use utf8 functions to access
 			// it.
 			std::string articleNameStdStr = std::string(articleName.toUtf8());
 			zim::File::const_iterator it = zimFile->findByTitle('A',
 					articleNameStdStr);
-
-			ui.articleListWidget->clear();
-
+			if (!direction_up) {
+				// If populating in reverse direction, don´t clear items now
+				// but instead each time a new item is added. This avoids
+				// that cannot be fully filled if the beginning of the zim file
+				// is reached. 
+				ui.articleListWidget->clear();
+			}
 			int i = 0;
+			int insertedItemsCount = 0;
 			while ((((direction_up == false) && (it != zimFile->end()))
 					|| ((direction_up) && (it != zimFile->begin()))) && (i
 					< 100 + ignoreFirstN))
@@ -352,6 +357,9 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 					if (i >= ignoreFirstN)
 						{
 						ui.articleListWidget->insertItem(0, articleItem);
+						insertedItemsCount++;
+						QListWidgetItem *lastItem = ui.articleListWidget->takeItem(ui.articleListWidget->count() - 1);
+						delete lastItem;							
 						}
 					--it;
 					}
@@ -360,23 +368,24 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 					if (i >= ignoreFirstN)
 						{
 						ui.articleListWidget->addItem(articleItem);
+						insertedItemsCount++;
 						}
 					++it;
 					}
 				i++;
-				if (ui.articleListWidget->count() > 0)
+				if (insertedItemsCount > 0)
 					{
+					//Calculate height of all inserted items, and stop
+					//insertion when visible area of list is full.
 					int itemHeight = ui.articleListWidget->visualItemRect(
 							ui.articleListWidget->item(0)).height();
-
 					int
 							articleListWidgetHeight =
 									ui.articleListWidget->maximumViewportSize().height();
-					QListWidgetItem *lastItem = ui.articleListWidget->item(
-							ui.articleListWidget->count() - 1);
-					int lastItemBottom = ui.articleListWidget->visualItemRect(
-							lastItem).bottom();
-					if ((lastItemBottom + itemHeight)
+					QListWidgetItem *bottomItem = ui.articleListWidget->item(insertedItemsCount - 1);
+					int bottomItemBottom = ui.articleListWidget->visualItemRect(
+							bottomItem).bottom();
+					if ((bottomItemBottom + itemHeight)
 							>= articleListWidgetHeight)
 						{
 						break;
@@ -580,9 +589,13 @@ void WikiOnBoard::openZimFileDialog()
 		{
 		path = QString::fromStdString(zimFile->getFilename());
 		}
+	QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+	//Enable virtual mouse cursor on non-touch devices, as 
+	// else file dialog not useable 
 	QString file = QFileDialog::getOpenFileName(this,
 			"Choose eBook in zim format to open", path,
 			"eBooks (*.zim);;All files (*.*)");
+	QApplication::setNavigationMode(Qt::NavigationModeNone);
 	if (!file.isNull())
 		{
 		openZimFile(file);
@@ -611,7 +624,12 @@ void WikiOnBoard::downloadZimFile()
 								"  and transfer the file later to the memory card of your phone."));
 	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 	msgBox.setDefaultButton(QMessageBox::Ok);
+	QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+	//Enable virtual mouse cursor on non-touch devices, as 
+	// else no scrolling possible. (TODO: change this so that
+	// scrolling works with cursor keys. Unclear why not working out of the box)
 	int ret = msgBox.exec();
+	QApplication::setNavigationMode(Qt::NavigationModeNone);		
 	switch (ret)
 		{
 		case QMessageBox::Ok:
@@ -625,8 +643,6 @@ void WikiOnBoard::downloadZimFile()
 //Remove all actions from menu, required for switching
 // (Appearantly on stacked widget items not symbian style menu
 //	can be created)
-// TODO Try, whether really not working to add to menu of
-// widgets. (finally 
 void WikiOnBoard::clearMenu()
 	{
 	QList<QAction *> al = menuBar()->actions();
@@ -653,9 +669,7 @@ void WikiOnBoard::switchToArticlePage()
 	
 	ui.stackedWidget->setCurrentWidget(ui.articlePage);
 
-	//TODO
 	ui.textBrowser->setFocus();
-	//ui.textBrowser->(); //TODO hack as else option menu not visible (only back). Check this
 	}
 void WikiOnBoard::switchToIndexPage()
 	{
@@ -681,17 +695,7 @@ void WikiOnBoard::switchToIndexPage()
 
 void WikiOnBoard::searchArticle()
 	{
-	populateArticleList();
-	
-	/*	if (ui.articleListWidget->hasFocus())
-	 { //TODO: remove this usabiiity hack, make own menu entry (or return key if works)
-	 on_articleListWidget_itemClicked(ui.articleListWidget->currentItem());
-	 }
-	 else
-	 {
-	 populateArticleList();
-	 ui.articleListWidget->setFocus();
-	 }*/
+	populateArticleList();	
 	}
 
 void WikiOnBoard::moveTextBrowserTextCursorToVisibleArea()
@@ -728,28 +732,13 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 			// However, actually after move to start prevCursour should be at zero anyway. (It is,
 			// but on  next event (e.g. key but also source changed) it has some other value)
 			// perhaps does setHtml somehow change it.  (at least in sourcechanged it is appearantly clearing it)
-			// TODO: Check all this can be handled directly 
-			/*	case Qt::Key_1:
-			 //Goto previous link or scrollup if no link in page. 
-			 remappedKeyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Up,
-			 Qt::NoModifier, false, 1);
-			 QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
-			 break;
-			 case Qt::Key_3:
-			 //Goto next link or scroll down if not link in page. 
-			 remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-			 Qt::Key_Down, Qt::NoModifier, false, 1);
-			 QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
-			 break;
-			 case Qt::Key_5:
-			 //Open link
-			 remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-			 Qt::Key_Select, Qt::NoModifier, false, 1);
-			 QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
-			 break;*/
+	
 			//The following scroll up/down are done using the scrollbar and not by remapping keys to allow better control
 			// Would be basically easier and more efficient to just change the pageStep,
 			// 	sideffcts regarding screen orientation and resolution changes could occur.
+			//Volume key mapping appearantly does not work,
+			// See http://bugreports.qt.nokia.com/browse/QTBUG-4415
+			case Qt::Key_VolumeDown:
 			case Qt::Key_2: //Scroll one page up (-one line as else one line may never be visible entirely)
 				ui.textBrowser->verticalScrollBar()->triggerAction(
 						QAbstractSlider::SliderPageStepSub);
@@ -759,6 +748,7 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 										QAbstractSlider::SliderSingleStepAdd);								
 				}
 				break;
+			case Qt::Key_VolumeUp:							
 			case Qt::Key_8: //Scroll one page down (-one line as else one line may never be visible entirely)
 				ui.textBrowser->verticalScrollBar()->triggerAction(
 						QAbstractSlider::SliderPageStepAdd);
@@ -773,7 +763,7 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 			}
 		}
 	else if (ui.stackedWidget->currentWidget() == ui.indexPage)
-		{
+		{		
 		//Behavior for keypad on index page:
 		//   text entry and curso left/right to articleName
 		//   up/down: select article in article list
@@ -859,7 +849,7 @@ void WikiOnBoard::toggleFullScreen()
 		{
 		showFullScreen();
 
-		//TODO workaround for softkeys.see main.cpp for details
+		//Workaround for softkeys in fullscreen mode.see main.cpp for details
 #if defined(Q_OS_SYMBIAN)
 		CEikButtonGroupContainer* bgc = (CEikButtonGroupContainer*) m_bgc;
 		if (bgc)
@@ -885,7 +875,6 @@ void WikiOnBoard::zoom(int zoomDelta)
 	// manually by just zooming in or out manually.
 	// (In particular as zoom does not saturate, but
 	// just do nothing when zoomDelta is out of range.)
-	//TODO: Think about using setbaseont directly 
 	if (zoomDelta > 5)
 		zoomDelta = 5;
 	if (zoomDelta < -5)
