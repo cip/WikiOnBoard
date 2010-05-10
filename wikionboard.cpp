@@ -605,6 +605,7 @@ void WikiOnBoard::openZimFileDialog()
 		settings.setValue("lastZimFile", file);
 		settings.endGroup();
 		ui.textBrowser->clearHistory();
+		populateArticleList();
 		}
 
 	}
