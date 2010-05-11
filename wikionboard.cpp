@@ -90,7 +90,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 
 	qDebug() << "Debug output test \n";
 
-#if defined(Q_OS_SYMBIAN) 
+	#if defined(Q_OS_SYMBIAN) 
 	ui.textBrowser->setFocusPolicy(Qt::NoFocus); //This is to allow scrolling with keypad. TODO better solution. (
 	//e.g. setting strong focus to textbrowser actually seems to work. However, note that then no remapping of keys possible.
 	// ui.textBrowser->setFocusPolicy(Qt::StrongFocus); //This is to allow scrolling with keypad. TODO better solution
@@ -509,6 +509,13 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	QString articleText = getArticleTextByUrl(path);
+	QTextDocument* defaultStyleSheetDocument = new QTextDocument(this);
+	//Override link color. At least on symbian per default textbrowser uses phone color scheme which is
+	// typically not very ergonomical. (e.g. white text on green background with N97 standard scheme). 
+	// Text and background color is changed in stylesheet property of textBrowser. Link color (white
+	// on N97...) is changed here. 
+	defaultStyleSheetDocument->setDefaultStyleSheet("a:link{color: blue}");
+	ui.textBrowser->setDocument(defaultStyleSheetDocument);
 	ui.textBrowser->setHtml(articleText);
 	QApplication::restoreOverrideCursor();
 
