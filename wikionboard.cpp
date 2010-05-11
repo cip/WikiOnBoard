@@ -334,9 +334,7 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 			}
 			int i = 0;
 			int insertedItemsCount = 0;
-			while ((((direction_up == false) && (it != zimFile->end()))
-					|| ((direction_up) && (it != zimFile->begin()))) && (i
-					< 100 + ignoreFirstN))
+			while (true)
 				{
 
 				QString articleTitle = QString::fromUtf8(
@@ -361,6 +359,8 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 						QListWidgetItem *lastItem = ui.articleListWidget->takeItem(ui.articleListWidget->count() - 1);
 						delete lastItem;							
 						}
+					if (it == zimFile->begin())
+						break;
 					--it;
 					}
 				else
@@ -370,6 +370,8 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 						ui.articleListWidget->addItem(articleItem);
 						insertedItemsCount++;
 						}
+					if (it == zimFile->end())
+										break;							
 					++it;
 					}
 				i++;
@@ -391,8 +393,8 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 						break;
 						}
 					}
-				}
-			}
+				}						
+			} 
 
 		catch (const std::exception& e)
 			{
