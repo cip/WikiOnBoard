@@ -95,22 +95,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 		}
 	currentlyViewedUrl = QUrl("");
 
-	setFocusPolicy(Qt::StrongFocus); //TODO to process keyboard, remove if bettermechanis impl.
-
 	qDebug() << "Debug output test \n";
-
-	#if defined(Q_OS_SYMBIAN) 
-	ui.textBrowser->setFocusPolicy(Qt::NoFocus); //This is to allow scrolling with keypad. TODO better solution. (
-	//e.g. setting strong focus to textbrowser actually seems to work. However, note that then no remapping of keys possible.
-	// ui.textBrowser->setFocusPolicy(Qt::StrongFocus); //This is to allow scrolling with keypad. TODO better solution
-
-	//Also consider other keypad only, and symbian phone with keyboard here.
-#endif
-	//	scrollDownAction = new QAction();
-	/*	scrollDownAction.setShortcut(Qt::Key_8);
-	 scrollUpAction.setShortcut(Qt::Key_2);
-	 *///TODO see http://wiki.forum.nokia.com/index.php/CS001512_-_Add_softkeys_to_QDialog
-
 
 	openZimFileDialogAction = new QAction(tr("Open Zimfile"), this);
 	connect(openZimFileDialogAction, SIGNAL(triggered()), this,
