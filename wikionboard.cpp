@@ -455,30 +455,14 @@ void WikiOnBoard::articleListOpenArticle(QListWidgetItem * item)
 	}
 
 void WikiOnBoard::articleListOpenArticle()
-//void qttst::articleListOpenArticle( QListWidgetItem * item ) 	  
-//void qttst::on_articleListWidget_itemClicked(QListWidgetItem * item)
 	{
 	QListWidgetItem *item = ui.articleListWidget->currentItem();
 	if (item != NULL)
 		{
+		showWaitCursor();
 		ui.textBrowser->setSource(item->data(ArticleUrlRole).toUrl());
 		switchToArticlePage();
-
-		/*	
-		 QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-		 
-		 QString articleIdx = item->toolTip(); //article idx  is stored in tool top
-		 QString articleText = getArticleTextByIdx(articleIdx);
-		 ui.textBrowser->setText(articleText); //article should normally be HTML,
-
-		 switchToArticlePage();
-		 
-		 //TODO: unsure whether working but to see error messages let textBroser determine it.
-		 QTextCursor cursor = ui.textBrowser->textCursor();
-		 cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor, 1);
-		 ui.textBrowser->setTextCursor(cursor);
-		 QApplication::restoreOverrideCursor();
-		 */
+		hideWaitCursor();
 		}
 	}
 
@@ -502,13 +486,9 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 	//TODO remove if links fixed
 
 	ui.articleName->setText(path);
-
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+	
 	QString articleText = getArticleTextByUrl(path);
 	ui.textBrowser->setHtml(articleText);
-	QApplication::restoreOverrideCursor();
-
-	//}
 	if (url.hasFragment())
 		{
 		//Either a link within current file (if path was empty), or to   newly opened file
@@ -548,11 +528,12 @@ void WikiOnBoard::on_textBrowser_anchorClicked(QUrl url)
 		{
 		//External link, open browser
 		QDesktopServices::openUrl(url);
-		//TODO: mouse pointer frozen after exiting browser. (related to internal link issue?)
 		}
 	else
-		{
-		ui.textBrowser->setSource(url);
+		{	
+			showWaitCursor();
+			ui.textBrowser->setSource(url);
+			hideWaitCursor();
 		}
 	}
 
@@ -909,3 +890,20 @@ void WikiOnBoard::zoomIn()
 	zoom(1);
 	}
 
+void WikiOnBoard::showWaitCursor() 
+	{
+	//If mouse cursor in edge of screen (which is the case for non-touch
+	// smartphones often, move it to the middle of main widget)
+	if ((QCursor::pos().x() == 0) && (QCursor::pos().y()==0)) {
+		QCursor::setPos(this->mapToGlobal(QPoint(this->width()/2,this->height()/2)));
+	}
+	//Force cursor visible on all platforms
+	QApplication::setNavigationMode(Qt::NavigationModeCursorForceVisible);		
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+	}
+
+void WikiOnBoard::hideWaitCursor()
+	{	
+	QApplication::restoreOverrideCursor();
+	QApplication::setNavigationMode(Qt::NavigationModeNone);		
+	}
