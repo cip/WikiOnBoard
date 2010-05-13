@@ -73,6 +73,15 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	int zoomInit = settings.value("zoomLevel", -1).toInt();
 	bool fullScreen = settings.value("fullScreen", false).toBool();
 	settings.endGroup();
+	QTextDocument* defaultStyleSheetDocument = new QTextDocument(this);
+	//Override link color. At least on symbian per default textbrowser uses phone color scheme which is
+	// typically not very ergonomical. (e.g. white text on green background with N97 standard scheme). 
+	// Text and background color is changed in stylesheet property of textBrowser. Link color (white
+	// on N97...) is changed here. 
+	// Only do this one, and not on every article load as this
+	// appearantly affects zoom level. 
+	defaultStyleSheetDocument->setDefaultStyleSheet("a:link{color: blue}");	
+	ui.textBrowser->setDocument(defaultStyleSheetDocument);		
 	zoomLevel = 0;
 	zoom(zoomInit);
 
@@ -511,16 +520,7 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	QString articleText = getArticleTextByUrl(path);
-	QTextDocument* defaultStyleSheetDocument = new QTextDocument(this);
-	//Override link color. At least on symbian per default textbrowser uses phone color scheme which is
-	// typically not very ergonomical. (e.g. white text on green background with N97 standard scheme). 
-	// Text and background color is changed in stylesheet property of textBrowser. Link color (white
-	// on N97...) is changed here. 
-	defaultStyleSheetDocument->setDefaultStyleSheet("a:link{color: blue}");	
-	ui.textBrowser->setDocument(defaultStyleSheetDocument);
 	ui.textBrowser->setHtml(articleText);
-	//Appearantly is zoom level lost after set style sheet command.
-	zoom(0);
 	QApplication::restoreOverrideCursor();
 
 	//}
@@ -899,12 +899,7 @@ void WikiOnBoard::zoom(int zoomDelta)
 		{
 		ui.textBrowser->zoomOut(abs(zoomDelta));
 		}
-	else if (zoomDelta == 0) 
-	{
-		//Restore current zoomlevel
-		ui.textBrowser->zoomOut(1);
-		ui.textBrowser->zoomIn(1);					
-	} else
+	else
 		{
 		ui.textBrowser->zoomIn(zoomDelta);
 		}
