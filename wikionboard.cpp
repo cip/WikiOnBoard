@@ -516,9 +516,11 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 	// typically not very ergonomical. (e.g. white text on green background with N97 standard scheme). 
 	// Text and background color is changed in stylesheet property of textBrowser. Link color (white
 	// on N97...) is changed here. 
-	defaultStyleSheetDocument->setDefaultStyleSheet("a:link{color: blue}");
+	defaultStyleSheetDocument->setDefaultStyleSheet("a:link{color: blue}");	
 	ui.textBrowser->setDocument(defaultStyleSheetDocument);
 	ui.textBrowser->setHtml(articleText);
+	//Appearantly is zoom level lost after set style sheet command.
+	zoom(0);
 	QApplication::restoreOverrideCursor();
 
 	//}
@@ -897,7 +899,12 @@ void WikiOnBoard::zoom(int zoomDelta)
 		{
 		ui.textBrowser->zoomOut(abs(zoomDelta));
 		}
-	else
+	else if (zoomDelta == 0) 
+	{
+		//Restore current zoomlevel
+		ui.textBrowser->zoomOut(1);
+		ui.textBrowser->zoomIn(1);					
+	} else
 		{
 		ui.textBrowser->zoomIn(zoomDelta);
 		}
