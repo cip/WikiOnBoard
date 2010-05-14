@@ -92,6 +92,8 @@ private:
     void openZimFile(QString zimFileName);   
     void clearMenu();
     void moveTextBrowserTextCursorToVisibleArea();
+    void showWaitCursor();
+    void hideWaitCursor();
 private slots:
 	 void switchToArticlePage();
 	 void switchToIndexPage();
