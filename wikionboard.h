@@ -35,7 +35,9 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QDesktopServices>
-
+#include <QWebView>
+#include <QWebPage>
+#include <QWebFrame>
 #include "ui_wikionboard.h"
 
 #include <zim/zim.h>
@@ -59,6 +61,9 @@ protected:
     void resizeEvent ( QResizeEvent * event );  
 private:     
     Ui::WikiOnBoard ui;
+    QGridLayout *gridLayout_articleWebView;
+      
+    QWebView* articleWebView;
     void* m_bgc;
     /*QAction* scrollUpAction;
     QAction* scrollDownAction;*/

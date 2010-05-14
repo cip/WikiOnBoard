@@ -194,6 +194,15 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 #endif
 
 	switchToIndexPage();
+	gridLayout_articleWebView = new QGridLayout(ui.articlePageWebkit);
+	gridLayout_articleWebView->setObjectName(QString::fromUtf8("gridLayout_articleWebView"));
+	        
+	articleWebView = new QWebView(ui.articlePageWebkit);
+	gridLayout_articleWebView->addWidget(articleWebView, 0, 0, 1, 1);
+
+	
+	//ui.stackedWidget->setCurrentWidget(ui.articlePageWebkit);
+    //articleWebView->load(QUrl("http://www.orf.at"));		
 	}
 
 WikiOnBoard::~WikiOnBoard()
@@ -489,6 +498,7 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 	
 	QString articleText = getArticleTextByUrl(path);
 	ui.textBrowser->setHtml(articleText);
+	articleWebView->setHtml(articleText);
 	if (url.hasFragment())
 		{
 		//Either a link within current file (if path was empty), or to   newly opened file
@@ -645,7 +655,7 @@ void WikiOnBoard::switchToArticlePage()
 	backArticleHistoryAction->setSoftKeyRole(QAction::NegativeSoftKey);
 	clearSearchAction->setSoftKeyRole(QAction::NoSoftKey);
 	
-	ui.stackedWidget->setCurrentWidget(ui.articlePage);
+	ui.stackedWidget->setCurrentWidget(ui.articlePageWebkit);
 
 	ui.textBrowser->setFocus();
 	}
