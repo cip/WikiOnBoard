@@ -3,8 +3,11 @@ TEMPLATE = app
 TARGET = WikiOnBoard
 QT += core \
     gui
-HEADERS += wikionboard.h
-SOURCES += main.cpp \
+HEADERS += articlebrowser.h \
+    flickable.h \
+    wikionboard.h
+SOURCES += flickable.cpp \
+    main.cpp \
     wikionboard.cpp
 FORMS += wikionboard.ui
 RESOURCES += 

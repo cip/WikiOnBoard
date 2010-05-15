@@ -35,9 +35,9 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QDesktopServices>
-
+#include <QTextBrowser>
 #include "ui_wikionboard.h"
-
+#include "articlebrowser.h"
 #include <zim/zim.h>
 #include <zim/fileiterator.h>
 
@@ -62,6 +62,7 @@ private:
     void* m_bgc;
     /*QAction* scrollUpAction;
     QAction* scrollDownAction;*/
+    ArticleBrowser *articleBrowser;        
     QMenu *optionsMenu;
     QAction* zoomInAction;
     QAction* zoomOutAction;

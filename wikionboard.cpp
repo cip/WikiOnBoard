@@ -68,20 +68,34 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	setStatusBar(0); //Remove status bar to increase useable screen sizz.
 	//TODO still not perfect, quite some distance between
 	//  widgeht and menu.
-
+	articleBrowser = new ArticleBrowser(ui.articlePage);
+	articleBrowser->setObjectName(QString::fromUtf8("textBrowser"));
+	articleBrowser->setMaximumSize(QSize(16777215, 16777215));
+	articleBrowser->setStyleSheet(QString::fromUtf8("QTextBrowser {background-color: white;color: black; border:0px; margin: 0px}"));
+	articleBrowser->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+	articleBrowser->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+	articleBrowser->setReadOnly(true);
+	articleBrowser->setTextInteractionFlags(Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse);
+	articleBrowser->setOpenLinks(false);
+	QTextDocument* defaultStyleSheetDocument = new QTextDocument(this);
+		//Override link color. At least on symbian per default textbrowser uses phone color scheme which is
+		// typically not very ergonomical. (e.g. white text on green background with N97 standard scheme). 
+		// Text and background color is changed in stylesheet property of textBrowser. Link color (white
+		// on N97...) is changed here. 
+		// Only do this one, and not on every article load as this
+		// appearantly affects zoom level. 
+	defaultStyleSheetDocument->setDefaultStyleSheet("a:link{color: blue}");	
+	articleBrowser->setDocument(defaultStyleSheetDocument);				
+	ui.gridLayout_3->addWidget(articleBrowser, 0, 0, 1, 1);
+	connect(articleBrowser, SIGNAL(anchorClicked(QUrl)), this,
+				SLOT(on_textBrowser_anchorClicked(QUrl)));
+	connect(articleBrowser, SIGNAL(sourceChanged(QUrl)), this,
+					SLOT(on_textBrowser_sourceChanged(QUrl)));
+						
 	settings.beginGroup("UISettings");
 	int zoomInit = settings.value("zoomLevel", -1).toInt();
 	bool fullScreen = settings.value("fullScreen", false).toBool();
 	settings.endGroup();
-	QTextDocument* defaultStyleSheetDocument = new QTextDocument(this);
-	//Override link color. At least on symbian per default textbrowser uses phone color scheme which is
-	// typically not very ergonomical. (e.g. white text on green background with N97 standard scheme). 
-	// Text and background color is changed in stylesheet property of textBrowser. Link color (white
-	// on N97...) is changed here. 
-	// Only do this one, and not on every article load as this
-	// appearantly affects zoom level. 
-	defaultStyleSheetDocument->setDefaultStyleSheet("a:link{color: blue}");	
-	ui.textBrowser->setDocument(defaultStyleSheetDocument);		
 	zoomLevel = 0;
 	zoom(zoomInit);
 
@@ -457,7 +471,7 @@ void WikiOnBoard::articleListOpenArticle()
 	QListWidgetItem *item = ui.articleListWidget->currentItem();
 	if (item != NULL)
 		{		
-		ui.textBrowser->setSource(item->data(ArticleUrlRole).toUrl());
+		articleBrowser->setSource(item->data(ArticleUrlRole).toUrl());
 		switchToArticlePage();
 		}
 	}
@@ -484,12 +498,12 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 	ui.articleName->setText(path);
 	
 	QString articleText = getArticleTextByUrl(path);
-	ui.textBrowser->setHtml(articleText);
+	articleBrowser->setHtml(articleText);
 	if (url.hasFragment())
 		{
 		//Either a link within current file (if path was empty), or to   newly opened file
 		QString fragment = url.fragment();
-		ui.textBrowser->scrollToAnchor(fragment);
+		articleBrowser->scrollToAnchor(fragment);
 		//Now text visible, but cursor not moved.
 		//=> Move cursor to current visisble location. 
 		// TODO: no better way to achieve this. Furthermore, actually
@@ -498,20 +512,20 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 		}
 	else
 		{
-		QTextCursor cursor = ui.textBrowser->textCursor();
+		QTextCursor cursor = articleBrowser->textCursor();
 
 		//Move cursor to start of file
 		cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-		ui.textBrowser->setTextCursor(cursor);
+		articleBrowser->setTextCursor(cursor);
 		//FIXME: This is a really ugly hack for the nextprevious link problem
 		// described in keyEventHandler. Note that for links with anchor this 
 		// does not work
 		QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
 				Qt::Key_Up, Qt::NoModifier, false, 1);
-		QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
+		QApplication::sendEvent(articleBrowser, remappedKeyEvent);
 		remappedKeyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
 				Qt::NoModifier, false, 1);
-		QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
+		QApplication::sendEvent(articleBrowser, remappedKeyEvent);
 
 		}
 	/// ui.stackedWidget->setCurrentWidget(ui.articlePage);
@@ -527,7 +541,7 @@ void WikiOnBoard::on_textBrowser_anchorClicked(QUrl url)
 		}
 	else
 		{	
-			ui.textBrowser->setSource(url);
+			articleBrowser->setSource(url);
 		}
 	}
 
@@ -541,9 +555,9 @@ void WikiOnBoard::on_textBrowser_sourceChanged(QUrl url)
 
 void WikiOnBoard::backArticleHistoryOrIndexPage()
 	{
-	if (ui.textBrowser->isBackwardAvailable())
+	if (articleBrowser->isBackwardAvailable())
 		{
-		ui.textBrowser->backward();
+		articleBrowser->backward();
 		}
 	else
 		{
@@ -577,7 +591,7 @@ void WikiOnBoard::openZimFileDialog()
 		settings.beginGroup("ZimFile");
 		settings.setValue("lastZimFile", file);
 		settings.endGroup();
-		ui.textBrowser->clearHistory();
+		articleBrowser->clearHistory();
 		populateArticleList();
 		}
 
@@ -644,7 +658,7 @@ void WikiOnBoard::switchToArticlePage()
 	
 	ui.stackedWidget->setCurrentWidget(ui.articlePage);
 
-	ui.textBrowser->setFocus();
+	articleBrowser->setFocus();
 	}
 void WikiOnBoard::switchToIndexPage()
 	{
@@ -674,10 +688,10 @@ void WikiOnBoard::searchArticle()
 
 void WikiOnBoard::moveTextBrowserTextCursorToVisibleArea()
 	{
-	int position = ui.textBrowser->cursorForPosition(QPoint(0, 0)).position();
-	QTextCursor cursor = ui.textBrowser->textCursor();
+	int position = articleBrowser->cursorForPosition(QPoint(0, 0)).position();
+	QTextCursor cursor = articleBrowser->textCursor();
 	cursor.setPosition(position, QTextCursor::MoveAnchor);
-	ui.textBrowser->setTextCursor(cursor);
+	articleBrowser->setTextCursor(cursor);
 	}
 
 void WikiOnBoard::keyPressEvent(QKeyEvent* event)
@@ -714,21 +728,21 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 			// See http://bugreports.qt.nokia.com/browse/QTBUG-4415
 			case Qt::Key_VolumeDown:
 			case Qt::Key_2: //Scroll one page up (-one line as else one line may never be visible entirely)
-				ui.textBrowser->verticalScrollBar()->triggerAction(
+				articleBrowser->verticalScrollBar()->triggerAction(
 						QAbstractSlider::SliderPageStepSub);
-				if (ui.textBrowser->verticalScrollBar()->value()!=ui.textBrowser->verticalScrollBar()->minimum()) {
+				if (articleBrowser->verticalScrollBar()->value()!=articleBrowser->verticalScrollBar()->minimum()) {
 					//Only scroll down again a little, if not at beginning of article
-					ui.textBrowser->verticalScrollBar()->triggerAction(
+					articleBrowser->verticalScrollBar()->triggerAction(
 										QAbstractSlider::SliderSingleStepAdd);								
 				}
 				break;
 			case Qt::Key_VolumeUp:							
 			case Qt::Key_8: //Scroll one page down (-one line as else one line may never be visible entirely)
-				ui.textBrowser->verticalScrollBar()->triggerAction(
+				articleBrowser->verticalScrollBar()->triggerAction(
 						QAbstractSlider::SliderPageStepAdd);
-				if (ui.textBrowser->verticalScrollBar()->value()!=ui.textBrowser->verticalScrollBar()->maximum()) {
+				if (articleBrowser->verticalScrollBar()->value()!=articleBrowser->verticalScrollBar()->maximum()) {
 					//Only scroll back again a little, if not at end of article
-					ui.textBrowser->verticalScrollBar()->triggerAction(
+					articleBrowser->verticalScrollBar()->triggerAction(
 						QAbstractSlider::SliderSingleStepSub);
 				}
 				break;
@@ -859,11 +873,11 @@ void WikiOnBoard::zoom(int zoomDelta)
 		}
 	if (zoomDelta < 0)
 		{
-		ui.textBrowser->zoomOut(abs(zoomDelta));
+		articleBrowser->zoomOut(abs(zoomDelta));
 		}
 	else
 		{
-		ui.textBrowser->zoomIn(zoomDelta);
+		articleBrowser->zoomIn(zoomDelta);
 		}
 	zoomLevel += zoomDelta;
 	QSettings settings;
