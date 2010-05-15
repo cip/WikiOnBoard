@@ -124,10 +124,13 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	//Capitalize first letter. In particular important as zimlib
 	// search is case-sensitive and in wikipedia most articles start with
 	// captial letter.
-	// TODO: Now (at least on n82)( mode is all uppercase, which is better
-	//  but still no Ab mode selectable.
+	// Somewhat strange that this work. (Actually defaullt should be Imhnone
+	// anyway, but appearantly it is not on symbian. Just calling ImhNone,
+	// does not do anything, because it thinks that nothing has changed. 
+	// Setting something different (here ImhPreferUppercase) and then ImhNone,
+	// sets it to the desired Abc mode.
 	ui.articleName->setInputMethodHints(Qt::ImhPreferUppercase); 
-	
+	ui.articleName->setInputMethodHints(Qt::ImhNone);
 	clearSearchAction = new QAction("Clear", this);
 	connect(clearSearchAction, SIGNAL(triggered()), ui.articleName,
 				SLOT(clear()));
