@@ -456,11 +456,9 @@ void WikiOnBoard::articleListOpenArticle()
 	{
 	QListWidgetItem *item = ui.articleListWidget->currentItem();
 	if (item != NULL)
-		{
-		showWaitCursor();
+		{		
 		ui.textBrowser->setSource(item->data(ArticleUrlRole).toUrl());
 		switchToArticlePage();
-		hideWaitCursor();
 		}
 	}
 
@@ -529,15 +527,15 @@ void WikiOnBoard::on_textBrowser_anchorClicked(QUrl url)
 		}
 	else
 		{	
-			showWaitCursor();
 			ui.textBrowser->setSource(url);
-			hideWaitCursor();
 		}
 	}
 
 void WikiOnBoard::on_textBrowser_sourceChanged(QUrl url)
 	{
+	showWaitCursor();
 	openArticleByUrl(url);
+	hideWaitCursor();
 	currentlyViewedUrl = url;
 	}
 
