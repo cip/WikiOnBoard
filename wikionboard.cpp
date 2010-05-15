@@ -167,12 +167,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	this->addAction(backArticleHistoryAction); 
 	
 	toggleFullScreenAction = new QAction("Toggle Fullscreen", this); //TODO shortcut
-	//TODO Not working:
-	toggleFullScreenAction->setShortcut(QKeySequence(Qt::Key_Asterisk
-			+ Qt::Key_Asterisk));
 	toggleFullScreenAction->setShortcutContext(Qt::ApplicationShortcut); //Or Qt::WindowShortcut?
-
-
 	connect(toggleFullScreenAction, SIGNAL(triggered()), this,
 			SLOT(toggleFullScreen()));
 	this->addAction(toggleFullScreenAction);
@@ -637,11 +632,12 @@ void WikiOnBoard::switchToArticlePage()
 	{
 	clearMenu();
 	menuBar()->addAction(switchToIndexPageAction);
-	menuBar()->addAction(toggleFullScreenAction);
-
+	
 	optionsMenu = new QMenu(tr("Options", "Option menu"));
 	optionsMenu->addAction(zoomInAction);
 	optionsMenu->addAction(zoomOutAction);
+	optionsMenu->addAction(toggleFullScreenAction);
+
 	menuBar()->addMenu(optionsMenu);
 	menuBar()->addAction(exitAction);
 
@@ -659,10 +655,9 @@ void WikiOnBoard::switchToIndexPage()
 	menuBar()->addAction(openArticleAction);
 	menuBar()->addAction(openZimFileDialogAction);
 	menuBar()->addAction(downloadZimFileAction);
-	menuBar()->addAction(toggleFullScreenAction);
 	optionsMenu = new QMenu(tr("Options", "Option menu"));
-	optionsMenu->addAction(zoomInAction);
-	optionsMenu->addAction(zoomOutAction);
+	optionsMenu->addAction(toggleFullScreenAction);
+		
 	menuBar()->addMenu(optionsMenu);
 	menuBar()->addAction(exitAction);
 
