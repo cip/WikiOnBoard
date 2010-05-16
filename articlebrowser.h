@@ -38,8 +38,8 @@ public:
         m_highlight = -1;
         m_selected = -1;
      
-        setAttribute(Qt::WA_OpaquePaintEvent, true);
-        setAttribute(Qt::WA_NoSystemBackground, true);
+        //setAttribute(Qt::WA_OpaquePaintEvent, true);
+       // setAttribute(Qt::WA_NoSystemBackground, true);
 
         setMouseTracking(true);
         Flickable::setAcceptMouseClick(this);
@@ -48,20 +48,22 @@ public:
 protected:
     // reimplement from Flickable
     virtual QPoint scrollOffset() const {
-        return QPoint(0, m_offset);
+        //return QPoint(0, this->scrollOm_offset);
+		  return QPoint(0,this->verticalScrollBar()->value());
     }
 
     // reimplement from Flickable
     virtual void setScrollOffset(const QPoint &offset) {
-        int yy = offset.y();
+        /*int yy = offset.y();
         if (yy != m_offset) {
             m_offset = qBound(0, yy, m_height * m_colorNames.count() - height());
             update();
-        }
+        }*/
+        this->verticalScrollBar()->setValue(offset.y());
     }
 
 protected:
-    void paintEvent(QPaintEvent *event) {
+  /*  void paintEvent(QPaintEvent *event) {
         /*QPainter p(this);
         p.fillRect(event->rect(), Qt::white);
         int start = m_offset / m_height;
@@ -94,27 +96,13 @@ protected:
             p.setBrush(m_secondColor[i]);
             p.drawRect(5, y + 5, m_height - 11, m_height - 11);
         }
-        p.end();*/
+        p.end();
     }
-
-    void keyReleaseEvent(QKeyEvent *event) {
-        if (event->key() == Qt::Key_Down) {
-            m_offset += 20;
-            event->accept();
-            update();
-            return;
-        }
-        if (event->key() == Qt::Key_Up) {
-            m_offset -= 20;
-            event->accept();
-            update();
-            return;
-        }
-    }
-
+*/
+    
     void mousePressEvent(QMouseEvent *event) {
         Flickable::handleMousePress(event);
-        if (event->isAccepted())
+/*        if (event->isAccepted())
             return;
 
         if (event->button() == Qt::LeftButton) {
@@ -126,23 +114,22 @@ protected:
                 update();
             }
             event->accept();
-        }
+        }*/
     }
 
     void mouseMoveEvent(QMouseEvent *event) {
         Flickable::handleMouseMove(event);
     }
-
     void mouseReleaseEvent(QMouseEvent *event) {
         Flickable::handleMouseRelease(event);
-        if (event->isAccepted())
+/*        if (event->isAccepted())
             return;
 
         if (event->button() == Qt::LeftButton) {
             m_selected = m_highlight;
             event->accept();
             update();
-        }
+        }*/
     }
 
 private:
