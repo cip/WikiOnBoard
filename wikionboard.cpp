@@ -562,14 +562,18 @@ void WikiOnBoard::openZimFileDialog()
 		{
 		path = QString::fromStdString(zimFile->getFilename());
 		}
-	QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+        #endif
 	//Enable virtual mouse cursor on non-touch devices, as 
 	// else file dialog not useable 
 	QString file = QFileDialog::getOpenFileName(this,
 			"Choose eBook in zim format to open", path,
 			"eBooks (*.zim);;All files (*.*)");
-	QApplication::setNavigationMode(Qt::NavigationModeNone);
-	if (!file.isNull())
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeNone);
+        #endif
+        if (!file.isNull())
 		{
 		openZimFile(file);
 		QSettings settings;
@@ -598,13 +602,17 @@ void WikiOnBoard::downloadZimFile()
 								"  and transfer the file later to the memory card of your phone."));
 	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 	msgBox.setDefaultButton(QMessageBox::Ok);
-	QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
-	//Enable virtual mouse cursor on non-touch devices, as 
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+        #endif
+        //Enable virtual mouse cursor on non-touch devices, as
 	// else no scrolling possible. (TODO: change this so that
 	// scrolling works with cursor keys. Unclear why not working out of the box)
 	int ret = msgBox.exec();
-	QApplication::setNavigationMode(Qt::NavigationModeNone);		
-	switch (ret)
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeNone);
+        #endif
+        switch (ret)
 		{
 		case QMessageBox::Ok:
 			QDesktopServices::openUrl(zimDownloadUrl);
@@ -894,12 +902,16 @@ void WikiOnBoard::showWaitCursor()
 		QCursor::setPos(this->mapToGlobal(QPoint(this->width()/2,this->height()/2)));
 	}
 	//Force cursor visible on all platforms
-	QApplication::setNavigationMode(Qt::NavigationModeCursorForceVisible);		
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeCursorForceVisible);
+        #endif
+        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	}
 
 void WikiOnBoard::hideWaitCursor()
 	{	
 	QApplication::restoreOverrideCursor();
-	QApplication::setNavigationMode(Qt::NavigationModeNone);		
-	}
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeNone);
+        #endif
+        }
