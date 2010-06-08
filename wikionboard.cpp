@@ -203,6 +203,9 @@ void WikiOnBoard::openZimFile(QString zimFileName)
 	{
 	try
 		{
+		QRegExp rx("(.*\\.zim)\\D\\D");
+	    rx.setCaseSensitivity(Qt::CaseInsensitive);
+	    zimFileName.replace(rx,"\\1");
 		std::string zimfilename = zimFileName.toStdString(); //
 		zimFile = new zim::File(zimfilename);
 		}
@@ -569,7 +572,7 @@ void WikiOnBoard::openZimFileDialog()
 	// else file dialog not useable 
 	QString file = QFileDialog::getOpenFileName(this,
 			"Choose eBook in zim format to open", path,
-			"eBooks (*.zim);;All files (*.*)");
+			"eBooks (*.zim*);;All files (*.*)");
         #if defined(Q_OS_SYMBIAN)
             QApplication::setNavigationMode(Qt::NavigationModeNone);
         #endif
