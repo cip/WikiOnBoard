@@ -211,7 +211,10 @@ void WikiOnBoard::openZimFile(QString zimFileName)
 		}
 	catch (const std::exception& e)
 		{
-		//TODO
+			QMessageBox::StandardButton reply;
+		     reply = QMessageBox::critical(this, tr("Error on opening zim file"),
+		                                     e.what(),
+		                                     QMessageBox::Ok);		 
 		}
 	}
 
