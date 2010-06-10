@@ -104,7 +104,10 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	downloadZimFileAction = new QAction(tr("Download Zimfile"), this);
 	connect(downloadZimFileAction, SIGNAL(triggered()), this,
 			SLOT(downloadZimFile()));
-
+	gotoHomepageAction = new QAction(tr("Goto Homepage"), this);
+	connect(gotoHomepageAction, SIGNAL(triggered()), this,
+			SLOT(gotoHomepage()));
+	
 	//Define search action (populates article list view with articles found searching for article
 	//name line edit.
 	// 
@@ -605,7 +608,11 @@ void WikiOnBoard::downloadZimFile()
 							"?\n"
 								"	Note that zim files may be very large and thus it can be expensive to download one over the mobile network. "
 								"  You should consider download from a desktop system"
-								"  and transfer the file later to the memory card of your phone."));
+								"  and transfer the file later to the memory card of your phone.\n"
+								"  Furthermore, note that current Symbian phones do not support files which"
+								"  are larger than 2 GB. You cannot download such files directly on the phone,"
+								"  but you have to download on a PC and follow the instructions on"
+								"  http://wiki.github.com/cip/WikiOnBoard/ to split them."));
 	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 	msgBox.setDefaultButton(QMessageBox::Ok);
         #if defined(Q_OS_SYMBIAN)
@@ -627,6 +634,28 @@ void WikiOnBoard::downloadZimFile()
 			break;
 		}
 	}
+
+void WikiOnBoard::gotoHomepage()
+	{
+	QString homepageUrl(tr("http://wiki.github.com/cip/WikiOnBoard"));
+	QMessageBox msgBox;
+	msgBox.setText(tr("Goto homepage"));
+	msgBox.setInformativeText(
+			tr("Open a webbrowser to show WikiOnBoard's homepage.")
+					);
+	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+	msgBox.setDefaultButton(QMessageBox::Ok);
+    int ret = msgBox.exec();
+    switch (ret)
+    	{
+		case QMessageBox::Ok:
+			QDesktopServices::openUrl(homepageUrl);
+			break;
+		default:
+			break;
+		}
+	}
+
 
 //Remove all actions from menu, required for switching
 // (Appearantly on stacked widget items not symbian style menu
@@ -667,6 +696,7 @@ void WikiOnBoard::switchToIndexPage()
 	menuBar()->addAction(openArticleAction);
 	menuBar()->addAction(openZimFileDialogAction);
 	menuBar()->addAction(downloadZimFileAction);
+	menuBar()->addAction(gotoHomepageAction);
 	optionsMenu = new QMenu(tr("Options", "Option menu"));
 	optionsMenu->addAction(toggleFullScreenAction);
 		

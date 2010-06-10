@@ -75,7 +75,8 @@ private:
     QAction* exitAction;
     QAction* openZimFileDialogAction;
     QAction* downloadZimFileAction;
-     
+    QAction* gotoHomepageAction; 
+    
     zim::File* zimFile;
     int zoomLevel;
     QString getArticleTextByUrl(QString articleUrl);   
@@ -110,6 +111,7 @@ private slots:
      
      void openZimFileDialog();
      void downloadZimFile();
+     void gotoHomepage();
      
      void articleListOpenArticle(); 	  
      void articleListOpenArticle(QListWidgetItem * item ); 	  
