@@ -84,7 +84,17 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	ui.textBrowser->setDocument(defaultStyleSheetDocument);		
 	zoomLevel = 0;
 	zoom(zoomInit);
-
+#ifdef Q_OS_SYMBIAN
+	//Enable Softkeys in fullscreen mode. 
+    //New Flag in Qt 4.6.3. 
+	//Workaround used for 4.6.2 (see main.cpp for details) 
+	//not working anymore with Qt 4.6.3
+	//However, 4.6.2 workaround keep, as perhaps still
+	// working/required for 4.6.2. 
+	Qt::WindowFlags flags = windowFlags();
+	flags |= Qt::WindowSoftkeysVisibleHint;
+	setWindowFlags(flags);
+#endif
 	if (fullScreen)
 		{
 		toggleFullScreen();

@@ -107,8 +107,9 @@ int main(int argc, char *argv[])
 
 	//Workaround for now softkeys in fullscreen mode
 	// See: http://discussion.forum.nokia.com/forum/showthread.php?t=192624
-	// TODO: QT 4.6.3 should hopefully fix this, remove workaround then
-	//    (http://bugreports.qt.nokia.com/browse/QTBUG-5171) 
+	// In QT 4.6.3 this has been fixed. (new  Qt::WindowSoftkeysVisibleHint flag.
+	// See main and http://bugreports.qt.nokia.com/browse/QTBUG-5171
+	// However, workaround kept as hopefully still working with 4.6.2
 #if defined(Q_OS_SYMBIAN) 
 	CEikButtonGroupContainer* bgc = CEikButtonGroupContainer::Current();
 #else
