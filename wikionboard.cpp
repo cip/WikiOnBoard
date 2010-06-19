@@ -108,6 +108,13 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	connect(gotoHomepageAction, SIGNAL(triggered()), this,
 			SLOT(gotoHomepage()));
 	
+	aboutAction = new QAction(tr("About"), this);
+	connect(aboutAction, SIGNAL(triggered()), this,
+			SLOT(about()));
+	aboutQtAction = new QAction(tr("About Qt"), this);
+	connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+				
+		
 	//Define search action (populates article list view with articles found searching for article
 	//name line edit.
 	// 
@@ -656,6 +663,16 @@ void WikiOnBoard::gotoHomepage()
 		}
 	}
 
+void WikiOnBoard::about()
+	{
+	QString homepageUrl(tr("About"));
+	QMessageBox msgBox;
+	msgBox.setText(tr("About"));
+	msgBox.setInformativeText(tr("WikiOnBoard\nAuthor: Christian Pühringer\nUses zimlib (openzim.org) and liblzma."));
+	msgBox.setStandardButtons(QMessageBox::Ok);
+	msgBox.setDefaultButton(QMessageBox::Ok);
+    int ret = msgBox.exec();
+    }
 
 //Remove all actions from menu, required for switching
 // (Appearantly on stacked widget items not symbian style menu
@@ -696,11 +713,16 @@ void WikiOnBoard::switchToIndexPage()
 	menuBar()->addAction(openArticleAction);
 	menuBar()->addAction(openZimFileDialogAction);
 	menuBar()->addAction(downloadZimFileAction);
-	menuBar()->addAction(gotoHomepageAction);
 	optionsMenu = new QMenu(tr("Options", "Option menu"));
 	optionsMenu->addAction(toggleFullScreenAction);
-		
+	
+	helpMenu = new QMenu(tr("Help", "Help menu"));
+	helpMenu->addAction(gotoHomepageAction);
+	helpMenu->addAction(aboutAction);
+	helpMenu->addAction(aboutQtAction);
+			
 	menuBar()->addMenu(optionsMenu);
+	menuBar()->addMenu(helpMenu);
 	menuBar()->addAction(exitAction);
 
 	backArticleHistoryAction->setSoftKeyRole(QAction::NoSoftKey);
