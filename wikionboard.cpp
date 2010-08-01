@@ -84,7 +84,17 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	ui.textBrowser->setDocument(defaultStyleSheetDocument);		
 	zoomLevel = 0;
 	zoom(zoomInit);
-
+#ifdef Q_OS_SYMBIAN
+	//Enable Softkeys in fullscreen mode. 
+    //New Flag in Qt 4.6.3. 
+	//Workaround used for 4.6.2 (see main.cpp for details) 
+	//not working anymore with Qt 4.6.3
+	//However, 4.6.2 workaround keep, as perhaps still
+	// working/required for 4.6.2. 
+	Qt::WindowFlags flags = windowFlags();
+	flags |= Qt::WindowSoftkeysVisibleHint;
+	setWindowFlags(flags);
+#endif
 	if (fullScreen)
 		{
 		toggleFullScreen();
@@ -104,7 +114,17 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	downloadZimFileAction = new QAction(tr("Download Zimfile"), this);
 	connect(downloadZimFileAction, SIGNAL(triggered()), this,
 			SLOT(downloadZimFile()));
-
+	gotoHomepageAction = new QAction(tr("Goto Homepage"), this);
+	connect(gotoHomepageAction, SIGNAL(triggered()), this,
+			SLOT(gotoHomepage()));
+	
+	aboutAction = new QAction(tr("About"), this);
+	connect(aboutAction, SIGNAL(triggered()), this,
+			SLOT(about()));
+	aboutQtAction = new QAction(tr("About Qt"), this);
+	connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+				
+		
 	//Define search action (populates article list view with articles found searching for article
 	//name line edit.
 	// 
@@ -124,10 +144,13 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	//Capitalize first letter. In particular important as zimlib
 	// search is case-sensitive and in wikipedia most articles start with
 	// captial letter.
-	// TODO: Now (at least on n82)( mode is all uppercase, which is better
-	//  but still no Ab mode selectable.
+	// Somewhat strange that this work. (Actually defaullt should be Imhnone
+	// anyway, but appearantly it is not on symbian. Just calling ImhNone,
+	// does not do anything, because it thinks that nothing has changed. 
+	// Setting something different (here ImhPreferUppercase) and then ImhNone,
+	// sets it to the desired Abc mode.
 	ui.articleName->setInputMethodHints(Qt::ImhPreferUppercase); 
-	
+	ui.articleName->setInputMethodHints(Qt::ImhNone);
 	clearSearchAction = new QAction("Clear", this);
 	connect(clearSearchAction, SIGNAL(triggered()), ui.articleName,
 				SLOT(clear()));
@@ -164,12 +187,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	this->addAction(backArticleHistoryAction); 
 	
 	toggleFullScreenAction = new QAction("Toggle Fullscreen", this); //TODO shortcut
-	//TODO Not working:
-	toggleFullScreenAction->setShortcut(QKeySequence(Qt::Key_Asterisk
-			+ Qt::Key_Asterisk));
 	toggleFullScreenAction->setShortcutContext(Qt::ApplicationShortcut); //Or Qt::WindowShortcut?
-
-
 	connect(toggleFullScreenAction, SIGNAL(triggered()), this,
 			SLOT(toggleFullScreen()));
 	this->addAction(toggleFullScreenAction);
@@ -214,12 +232,18 @@ void WikiOnBoard::openZimFile(QString zimFileName)
 	{
 	try
 		{
+		QRegExp rx("(.*\\.zim)\\D\\D");
+	    rx.setCaseSensitivity(Qt::CaseInsensitive);
+	    zimFileName.replace(rx,"\\1");
 		std::string zimfilename = zimFileName.toStdString(); //
 		zimFile = new zim::File(zimfilename);
 		}
 	catch (const std::exception& e)
 		{
-		//TODO
+			QMessageBox::StandardButton reply;
+		     reply = QMessageBox::critical(this, tr("Error on opening zim file"),
+		                                     e.what(),
+		                                     QMessageBox::Ok);		 
 		}
 	}
 
@@ -467,11 +491,9 @@ void WikiOnBoard::articleListOpenArticle()
 	{
 	QListWidgetItem *item = ui.articleListWidget->currentItem();
 	if (item != NULL)
-		{
-		showWaitCursor();
+		{		
 		ui.textBrowser->setSource(item->data(ArticleUrlRole).toUrl());
 		switchToArticlePage();
-		hideWaitCursor();
 		}
 	}
 
@@ -497,12 +519,12 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 	ui.articleName->setText(path);
 	
 	QString articleText = getArticleTextByUrl(path);
-	ui.textBrowser->setHtml(articleText);
 	articleWebView->setHtml(articleText);
 	if (url.hasFragment())
 		{
 		//Either a link within current file (if path was empty), or to   newly opened file
 		QString fragment = url.fragment();
+		//TODO
 		ui.textBrowser->scrollToAnchor(fragment);
 		//Now text visible, but cursor not moved.
 		//=> Move cursor to current visisble location. 
@@ -541,15 +563,15 @@ void WikiOnBoard::on_textBrowser_anchorClicked(QUrl url)
 		}
 	else
 		{	
-			showWaitCursor();
 			ui.textBrowser->setSource(url);
-			hideWaitCursor();
 		}
 	}
 
 void WikiOnBoard::on_textBrowser_sourceChanged(QUrl url)
 	{
+	showWaitCursor();
 	openArticleByUrl(url);
+	hideWaitCursor();
 	currentlyViewedUrl = url;
 	}
 
@@ -576,14 +598,18 @@ void WikiOnBoard::openZimFileDialog()
 		{
 		path = QString::fromStdString(zimFile->getFilename());
 		}
-	QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+        #endif
 	//Enable virtual mouse cursor on non-touch devices, as 
 	// else file dialog not useable 
 	QString file = QFileDialog::getOpenFileName(this,
 			"Choose eBook in zim format to open", path,
-			"eBooks (*.zim);;All files (*.*)");
-	QApplication::setNavigationMode(Qt::NavigationModeNone);
-	if (!file.isNull())
+			"eBooks (*.zim*);;All files (*.*)");
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeNone);
+        #endif
+        if (!file.isNull())
 		{
 		openZimFile(file);
 		QSettings settings;
@@ -609,16 +635,24 @@ void WikiOnBoard::downloadZimFile()
 							"?\n"
 								"	Note that zim files may be very large and thus it can be expensive to download one over the mobile network. "
 								"  You should consider download from a desktop system"
-								"  and transfer the file later to the memory card of your phone."));
+								"  and transfer the file later to the memory card of your phone.\n"
+								"  Furthermore, note that current Symbian phones do not support files which"
+								"  are larger than 2 GB. You cannot download such files directly on the phone,"
+								"  but you have to download on a PC and follow the instructions on"
+								"  http://wiki.github.com/cip/WikiOnBoard/ to split them."));
 	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 	msgBox.setDefaultButton(QMessageBox::Ok);
-	QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
-	//Enable virtual mouse cursor on non-touch devices, as 
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+        #endif
+        //Enable virtual mouse cursor on non-touch devices, as
 	// else no scrolling possible. (TODO: change this so that
 	// scrolling works with cursor keys. Unclear why not working out of the box)
 	int ret = msgBox.exec();
-	QApplication::setNavigationMode(Qt::NavigationModeNone);		
-	switch (ret)
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeNone);
+        #endif
+        switch (ret)
 		{
 		case QMessageBox::Ok:
 			QDesktopServices::openUrl(zimDownloadUrl);
@@ -627,6 +661,38 @@ void WikiOnBoard::downloadZimFile()
 			break;
 		}
 	}
+
+void WikiOnBoard::gotoHomepage()
+	{
+	QString homepageUrl(tr("http://wiki.github.com/cip/WikiOnBoard"));
+	QMessageBox msgBox;
+	msgBox.setText(tr("Goto homepage"));
+	msgBox.setInformativeText(
+			tr("Open a webbrowser to show WikiOnBoard's homepage.")
+					);
+	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+	msgBox.setDefaultButton(QMessageBox::Ok);
+    int ret = msgBox.exec();
+    switch (ret)
+    	{
+		case QMessageBox::Ok:
+			QDesktopServices::openUrl(homepageUrl);
+			break;
+		default:
+			break;
+		}
+	}
+
+void WikiOnBoard::about()
+	{
+	QString homepageUrl(tr("About"));
+	QMessageBox msgBox;
+	msgBox.setText(tr("About"));
+	msgBox.setInformativeText(tr("WikiOnBoard\nAuthor: Christian Pühringer\nUses zimlib (openzim.org) and liblzma."));
+	msgBox.setStandardButtons(QMessageBox::Ok);
+	msgBox.setDefaultButton(QMessageBox::Ok);
+    int ret = msgBox.exec();
+    }
 
 //Remove all actions from menu, required for switching
 // (Appearantly on stacked widget items not symbian style menu
@@ -644,11 +710,12 @@ void WikiOnBoard::switchToArticlePage()
 	{
 	clearMenu();
 	menuBar()->addAction(switchToIndexPageAction);
-	menuBar()->addAction(toggleFullScreenAction);
-
+	
 	optionsMenu = new QMenu(tr("Options", "Option menu"));
 	optionsMenu->addAction(zoomInAction);
 	optionsMenu->addAction(zoomOutAction);
+	optionsMenu->addAction(toggleFullScreenAction);
+
 	menuBar()->addMenu(optionsMenu);
 	menuBar()->addAction(exitAction);
 
@@ -666,11 +733,16 @@ void WikiOnBoard::switchToIndexPage()
 	menuBar()->addAction(openArticleAction);
 	menuBar()->addAction(openZimFileDialogAction);
 	menuBar()->addAction(downloadZimFileAction);
-	menuBar()->addAction(toggleFullScreenAction);
 	optionsMenu = new QMenu(tr("Options", "Option menu"));
-	optionsMenu->addAction(zoomInAction);
-	optionsMenu->addAction(zoomOutAction);
+	optionsMenu->addAction(toggleFullScreenAction);
+	
+	helpMenu = new QMenu(tr("Help", "Help menu"));
+	helpMenu->addAction(gotoHomepageAction);
+	helpMenu->addAction(aboutAction);
+	helpMenu->addAction(aboutQtAction);
+			
 	menuBar()->addMenu(optionsMenu);
+	menuBar()->addMenu(helpMenu);
 	menuBar()->addAction(exitAction);
 
 	backArticleHistoryAction->setSoftKeyRole(QAction::NoSoftKey);
@@ -908,12 +980,16 @@ void WikiOnBoard::showWaitCursor()
 		QCursor::setPos(this->mapToGlobal(QPoint(this->width()/2,this->height()/2)));
 	}
 	//Force cursor visible on all platforms
-	QApplication::setNavigationMode(Qt::NavigationModeCursorForceVisible);		
-	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeCursorForceVisible);
+        #endif
+        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	}
 
 void WikiOnBoard::hideWaitCursor()
 	{	
 	QApplication::restoreOverrideCursor();
-	QApplication::setNavigationMode(Qt::NavigationModeNone);		
-	}
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeNone);
+        #endif
+        }

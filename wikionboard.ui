@@ -44,7 +44,7 @@
         <item row="1" column="0" colspan="2">
          <widget class="QListWidget" name="articleListWidget">
           <property name="styleSheet">
-           <string notr="true">QListWidget {background-color:white;color: black}</string>
+           <string notr="true">QListWidget {background-color:white;color: black; selection-background-color: blue}</string>
           </property>
           <property name="verticalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -106,7 +106,7 @@
      <x>0</x>
      <y>0</y>
      <width>456</width>
-     <height>22</height>
+     <height>27</height>
     </rect>
    </property>
   </widget>

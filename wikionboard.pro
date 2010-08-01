@@ -1,13 +1,11 @@
-VERSION = 0.0.6
+VERSION = 0.1.1
 TEMPLATE = app
 TARGET = WikiOnBoard
 QT += core \
     gui \
     webkit 
-HEADERS += WikiBrowser.h \
-    wikionboard.h
-SOURCES += WikiBrowser.cpp \
-    main.cpp \
+HEADERS += wikionboard.h
+SOURCES += main.cpp \
     wikionboard.cpp
 FORMS += wikionboard.ui
 RESOURCES += 
