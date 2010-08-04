@@ -38,6 +38,7 @@
 #include <QWebView>
 #include <QWebPage>
 #include <QWebFrame>
+#include <QWebHistory>
 #include "ui_wikionboard.h"
 
 #include <zim/zim.h>
@@ -85,7 +86,7 @@ private:
     QAction* aboutAction;
     QAction* aboutQtAction;
     zim::File* zimFile;
-    int zoomLevel;
+    qreal zoomLevel;
     QString getArticleTextByUrl(QString articleUrl);   
     QString getArticleTextByIdx(QString articleIdx);         
     QString getArticleTextByTitle(QString articleTitle);
@@ -99,7 +100,6 @@ private:
     
     void openZimFile(QString zimFileName);   
     void clearMenu();
-    void moveTextBrowserTextCursorToVisibleArea();
     void showWaitCursor();
     void hideWaitCursor();
 private slots:
@@ -108,11 +108,10 @@ private slots:
  
 	 void searchArticle();
      
-    //void on_textBrowser_anchorClicked(QUrl url);  
      void backArticleHistoryOrIndexPage();
           
-     void on_textBrowser_anchorClicked(QUrl url);
-     void on_textBrowser_sourceChanged(QUrl url);  
+     void anchorClicked(QUrl url);
+     void urlChanged(QUrl url);  
      
     	 
      
@@ -126,7 +125,7 @@ private slots:
           
      //void on_articleListWidget_itemClicked ( QListWidgetItem * item ); 	  
      void toggleFullScreen();
-     void zoom(int zoomDelta);
+     void zoom();
      void zoomOut();
      void zoomIn();
 };

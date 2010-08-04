@@ -70,20 +70,10 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	//  widgeht and menu.
 
 	settings.beginGroup("UISettings");
-	int zoomInit = settings.value("zoomLevel", -1).toInt();
+	zoomLevel = settings.value("zoomLevel", -1).toInt();
 	bool fullScreen = settings.value("fullScreen", false).toBool();
 	settings.endGroup();
-	QTextDocument* defaultStyleSheetDocument = new QTextDocument(this);
-	//Override link color. At least on symbian per default textbrowser uses phone color scheme which is
-	// typically not very ergonomical. (e.g. white text on green background with N97 standard scheme). 
-	// Text and background color is changed in stylesheet property of textBrowser. Link color (white
-	// on N97...) is changed here. 
-	// Only do this one, and not on every article load as this
-	// appearantly affects zoom level. 
-	defaultStyleSheetDocument->setDefaultStyleSheet("a:link{color: blue}");	
-	ui.textBrowser->setDocument(defaultStyleSheetDocument);		
-	zoomLevel = 0;
-	zoom(zoomInit);
+	
 #ifdef Q_OS_SYMBIAN
 	//Enable Softkeys in fullscreen mode. 
     //New Flag in Qt 4.6.3. 
@@ -216,8 +206,15 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	gridLayout_articleWebView->setObjectName(QString::fromUtf8("gridLayout_articleWebView"));
 	        
 	articleWebView = new QWebView(ui.articlePageWebkit);
-	gridLayout_articleWebView->addWidget(articleWebView, 0, 0, 1, 1);
+	articleWebView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+	connect(articleWebView, SIGNAL(linkClicked(QUrl)), this,
+				SLOT(anchorClicked(QUrl)));
 
+	connect(articleWebView, SIGNAL(urlChanged(QUrl)), this,
+					SLOT(urlChanged(QUrl)));
+
+	gridLayout_articleWebView->addWidget(articleWebView, 0, 0, 1, 1);
+	
 	
 	//ui.stackedWidget->setCurrentWidget(ui.articlePageWebkit);
     //articleWebView->load(QUrl("http://www.orf.at"));		
@@ -492,7 +489,16 @@ void WikiOnBoard::articleListOpenArticle()
 	QListWidgetItem *item = ui.articleListWidget->currentItem();
 	if (item != NULL)
 		{		
-		ui.textBrowser->setSource(item->data(ArticleUrlRole).toUrl());
+		articleWebView->setUrl(item->data(ArticleUrlRole).toUrl());
+		//TODO check why not called via urlchanged.
+		// (Appearantly not called after setUrl, but after setHtml (which then leads to infinite loop
+		// fix, or at least write method  and reimpl history. 
+		articleWebView->setUrl(item->data(ArticleUrlRole).toUrl());
+		showWaitCursor();
+		openArticleByUrl(item->data(ArticleUrlRole).toUrl());
+		hideWaitCursor();
+		currentlyViewedUrl = item->data(ArticleUrlRole).toUrl();
+	
 		switchToArticlePage();
 		}
 	}
@@ -519,42 +525,22 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 	ui.articleName->setText(path);
 	
 	QString articleText = getArticleTextByUrl(path);
-	articleWebView->setHtml(articleText);
+	articleWebView->setHtml(articleText,url);
+	zoom();
 	if (url.hasFragment())
 		{
 		//Either a link within current file (if path was empty), or to   newly opened file
 		QString fragment = url.fragment();
 		//TODO
-		ui.textBrowser->scrollToAnchor(fragment);
-		//Now text visible, but cursor not moved.
-		//=> Move cursor to current visisble location. 
-		// TODO: no better way to achieve this. Furthermore, actually
-		//	cursor reason for problem or something else?)
-		moveTextBrowserTextCursorToVisibleArea();
+		//ui.textBrowser->scrollToAnchor(fragment);
 		}
 	else
 		{
-		QTextCursor cursor = ui.textBrowser->textCursor();
-
-		//Move cursor to start of file
-		cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-		ui.textBrowser->setTextCursor(cursor);
-		//FIXME: This is a really ugly hack for the nextprevious link problem
-		// described in keyEventHandler. Note that for links with anchor this 
-		// does not work
-		QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-				Qt::Key_Up, Qt::NoModifier, false, 1);
-		QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
-		remappedKeyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
-				Qt::NoModifier, false, 1);
-		QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
 
 		}
-	/// ui.stackedWidget->setCurrentWidget(ui.articlePage);
-
 	}
 
-void WikiOnBoard::on_textBrowser_anchorClicked(QUrl url)
+void WikiOnBoard::anchorClicked(QUrl url)
 	{
 	if (!QString::compare(url.scheme(), "http", Qt::CaseInsensitive))
 		{
@@ -563,23 +549,33 @@ void WikiOnBoard::on_textBrowser_anchorClicked(QUrl url)
 		}
 	else
 		{	
-			ui.textBrowser->setSource(url);
+			
+			articleWebView->setUrl(url);
+			showWaitCursor();
+			openArticleByUrl(url);
+			hideWaitCursor();
+			currentlyViewedUrl = url;
+					
 		}
 	}
 
-void WikiOnBoard::on_textBrowser_sourceChanged(QUrl url)
+void WikiOnBoard::urlChanged(QUrl url)
 	{
-	showWaitCursor();
+	
+	int i=0;
+	/*showWaitCursor();
 	openArticleByUrl(url);
 	hideWaitCursor();
 	currentlyViewedUrl = url;
+	*/
 	}
 
 void WikiOnBoard::backArticleHistoryOrIndexPage()
 	{
-	if (ui.textBrowser->isBackwardAvailable())
+	
+	if (articleWebView->history()->canGoBack())
 		{
-		ui.textBrowser->backward();
+		articleWebView->history()->back();		
 		}
 	else
 		{
@@ -617,7 +613,7 @@ void WikiOnBoard::openZimFileDialog()
 		settings.beginGroup("ZimFile");
 		settings.setValue("lastZimFile", file);
 		settings.endGroup();
-		ui.textBrowser->clearHistory();
+		articleWebView->history()->clear();
 		populateArticleList();
 		}
 
@@ -723,8 +719,7 @@ void WikiOnBoard::switchToArticlePage()
 	clearSearchAction->setSoftKeyRole(QAction::NoSoftKey);
 	
 	ui.stackedWidget->setCurrentWidget(ui.articlePageWebkit);
-
-	ui.textBrowser->setFocus();
+	articleWebView->setFocus();
 	}
 void WikiOnBoard::switchToIndexPage()
 	{
@@ -758,13 +753,6 @@ void WikiOnBoard::searchArticle()
 	populateArticleList();	
 	}
 
-void WikiOnBoard::moveTextBrowserTextCursorToVisibleArea()
-	{
-	int position = ui.textBrowser->cursorForPosition(QPoint(0, 0)).position();
-	QTextCursor cursor = ui.textBrowser->textCursor();
-	cursor.setPosition(position, QTextCursor::MoveAnchor);
-	ui.textBrowser->setTextCursor(cursor);
-	}
 
 void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 	{
@@ -774,7 +762,8 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 	// E.g. not working to redefine left/right in articlepage (which is stupid, as default
 	//		behavior is to supidly move the cursors.
 	//	while woring for index page (up/down affects non focused widget)
-	if (ui.stackedWidget->currentWidget() == ui.articlePage)
+	//FIXME: up down not working as expected. As workaround now 1/7 defined as next prev link.
+	if (ui.stackedWidget->currentWidget() == ui.articlePageWebkit)
 		{
 		switch (event->key())
 			{
@@ -798,26 +787,34 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 			// 	sideffcts regarding screen orientation and resolution changes could occur.
 			//Volume key mapping appearantly does not work,
 			// See http://bugreports.qt.nokia.com/browse/QTBUG-4415
-			case Qt::Key_VolumeDown:
-			case Qt::Key_2: //Scroll one page up (-one line as else one line may never be visible entirely)
-				ui.textBrowser->verticalScrollBar()->triggerAction(
-						QAbstractSlider::SliderPageStepSub);
-				if (ui.textBrowser->verticalScrollBar()->value()!=ui.textBrowser->verticalScrollBar()->minimum()) {
-					//Only scroll down again a little, if not at beginning of article
-					ui.textBrowser->verticalScrollBar()->triggerAction(
-										QAbstractSlider::SliderSingleStepAdd);								
-				}
+			case Qt::Key_VolumeDown:	
+			case Qt::Key_2: //Scroll one page up 
+				remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
+						Qt::Key_PageUp, Qt::NoModifier, false, 1);
+				QApplication::sendEvent(articleWebView, remappedKeyEvent);
+								
 				break;
 			case Qt::Key_VolumeUp:							
-			case Qt::Key_8: //Scroll one page down (-one line as else one line may never be visible entirely)
-				ui.textBrowser->verticalScrollBar()->triggerAction(
-						QAbstractSlider::SliderPageStepAdd);
-				if (ui.textBrowser->verticalScrollBar()->value()!=ui.textBrowser->verticalScrollBar()->maximum()) {
-					//Only scroll back again a little, if not at end of article
-					ui.textBrowser->verticalScrollBar()->triggerAction(
-						QAbstractSlider::SliderSingleStepSub);
-				}
+			case Qt::Key_8: //Scroll one page down
+				remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
+																		Qt::Key_PageDown, Qt::NoModifier, false, 1);
+								QApplication::sendEvent(articleWebView, remappedKeyEvent);				
+								
 				break;
+			case Qt::Key_1:
+			case Qt::Key_Up:
+						
+				remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
+										Qt::Key_Backtab, Qt::NoModifier, false, 1);
+				QApplication::sendEvent(articleWebView, remappedKeyEvent);				
+				break;			
+			case Qt::Key_7:
+			case Qt::Key_Down:
+				remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
+										Qt::Key_Tab, Qt::NoModifier, false, 1);
+				QApplication::sendEvent(articleWebView, remappedKeyEvent);				
+				break;			
+
 			default:
 				QMainWindow::keyPressEvent(event);
 			}
@@ -929,29 +926,17 @@ void WikiOnBoard::toggleFullScreen()
 	settings.endGroup();
 	}
 
-void WikiOnBoard::zoom(int zoomDelta)
+void WikiOnBoard::zoom()
 	{
 	//Limit zoom to allow fixing  an incorrect inifile entry 
 	// manually by just zooming in or out manually.
 	// (In particular as zoom does not saturate, but
 	// just do nothing when zoomDelta is out of range.)
-	if (zoomDelta > 5)
-		zoomDelta = 5;
-	if (zoomDelta < -5)
-		zoomDelta = -5;
-	if (abs(zoomLevel + zoomDelta) > 5)
-		{
-		return;
-		}
-	if (zoomDelta < 0)
-		{
-		ui.textBrowser->zoomOut(abs(zoomDelta));
-		}
-	else
-		{
-		ui.textBrowser->zoomIn(zoomDelta);
-		}
-	zoomLevel += zoomDelta;
+	if (zoomLevel > 5.0)
+		zoomLevel = 5.0;
+	if (zoomLevel <= 0)
+		zoomLevel = 0.2;
+	articleWebView->setZoomFactor(zoomLevel);
 	QSettings settings;
 	settings.beginGroup("UISettings");
 	if ((!settings.contains("zoomLevel"))
@@ -964,12 +949,14 @@ void WikiOnBoard::zoom(int zoomDelta)
 
 void WikiOnBoard::zoomOut()
 	{
-	zoom(-1);
+	zoomLevel = zoomLevel*0.9;
+	zoom();
 	}
 
 void WikiOnBoard::zoomIn()
 	{
-	zoom(1);
+	zoomLevel = zoomLevel*1.1;
+	zoom();
 	}
 
 void WikiOnBoard::showWaitCursor() 
