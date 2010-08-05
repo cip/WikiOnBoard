@@ -70,7 +70,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	//  widgeht and menu.
 
 	settings.beginGroup("UISettings");
-	zoomLevel = settings.value("zoomLevel", -1).toInt();
+	zoomLevel = settings.value("zoomLevel", 1.0).toFloat();
 	bool fullScreen = settings.value("fullScreen", false).toBool();
 	settings.endGroup();
 	
@@ -214,10 +214,6 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 					SLOT(urlChanged(QUrl)));
 
 	gridLayout_articleWebView->addWidget(articleWebView, 0, 0, 1, 1);
-	
-	
-	//ui.stackedWidget->setCurrentWidget(ui.articlePageWebkit);
-    //articleWebView->load(QUrl("http://www.orf.at"));		
 	}
 
 WikiOnBoard::~WikiOnBoard()
@@ -803,18 +799,18 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 				break;
 			case Qt::Key_1:
 			case Qt::Key_Up:
-						
-				remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-										Qt::Key_Backtab, Qt::NoModifier, false, 1);
-				QApplication::sendEvent(articleWebView, remappedKeyEvent);				
+				articleWebView->page()->focusNextPrevChild(false);
 				break;			
 			case Qt::Key_7:
 			case Qt::Key_Down:
-				remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-										Qt::Key_Tab, Qt::NoModifier, false, 1);
-				QApplication::sendEvent(articleWebView, remappedKeyEvent);				
+				articleWebView->page()->focusNextPrevChild(true);
 				break;			
-
+			case Qt::Key_Select:
+				//This appearantly is the select key of the mobile phone. (it is not return or select)
+				remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
+						Qt::Key_Enter, Qt::NoModifier, false, 1);
+				QApplication::sendEvent(articleWebView, remappedKeyEvent);				
+								
 			default:
 				QMainWindow::keyPressEvent(event);
 			}
