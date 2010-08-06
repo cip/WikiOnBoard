@@ -105,6 +105,7 @@ private:
     void clearMenu();
     void showWaitCursor();
     void hideWaitCursor();
+    QWebElement getFirstLastLinkInRect(QRect rect, bool first);
     QWebElement getNextOrPrevLink(QWebElement currentElement, bool next);
     void selectNextPrevVisibleLinkOrScroll(bool next);
 private slots:

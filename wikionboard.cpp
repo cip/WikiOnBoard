@@ -979,6 +979,45 @@ void WikiOnBoard::hideWaitCursor()
         #endif
         }
 
+QWebElement WikiOnBoard::getFirstLastLinkInRect(QRect rect, bool first) {
+	//Note: hitTest cannot be used, because it appearantly does not return a elemen
+	// for any point within the frame. 
+	//TODO: check whether makes sense to retrieve links only once per page.
+	QWebElementCollection allLinks = articleWebView->page()->currentFrame()->findAllElements("a");
+	//TODO: Optimize 
+	//TODO: Check whether  they  are really always sorted?, probably depeneds on wiki html )
+	QWebElement firstLastLink = QWebElement();
+	qDebug() << " targetRect: "<<rect<<"\n";
+	for (int i=0;i<allLinks.count();i++) {
+		qDebug() << "link["<<i<<"]: " << allLinks[i].tagName() << "geometry :"<< allLinks[i].geometry() <<" \n\tLink text:" <<  allLinks[i].toPlainText() <<"\n\tChild name: " << allLinks[i].firstChild().tagName();
+	}
+	bool done=false;
+	int i;
+	if (first) {
+		i=0;
+	} else {
+		i=allLinks.count()-1;
+	}
+	while (!done) {
+		if (i<0 || i>allLinks.count()-1) {
+			done=true;
+		}else {
+			qDebug() << "link ("<<i<<") geometry"<< allLinks[i].geometry()<<"\n";			
+			if (rect.contains(allLinks[i].geometry(),true)) {
+				qDebug() << "link: "<<i << " is within rect. \n";
+				firstLastLink = allLinks[i];
+				done=true;
+			}
+			if (first) {
+				i++;
+			} else {
+				i--;
+			}
+		}
+	}
+	return firstLastLink;
+}
+
 QWebElement WikiOnBoard::getNextOrPrevLink(QWebElement currentElement, bool next) {
 	QWebElement foundElement;
 	if (!currentElement.isNull()) {
@@ -995,111 +1034,92 @@ QWebElement WikiOnBoard::getNextOrPrevLink(QWebElement currentElement, bool next
 		qDebug() << "Looking for previous link, or no link child found\n";
 		foundElement = currentElement;
 		while (!foundElement.isNull()) {
-			if (next) {
-				foundElement = foundElement.nextSibling();
-			} else {
-				foundElement = foundElement.previousSibling();
-			}		
-			qDebug() << "foundName" << foundElement.tagName() << "geometry" << foundElement.geometry() << "\n";
-			if (!foundElement.isNull()) {
-			
-				if (foundElement.tagName().compare("a",Qt::CaseInsensitive)==0) {
-					qDebug() << "found sibling element is a link, return it.\n";
-					return foundElement;
+			QWebElement siblingElement=foundElement; 
+			bool siblingsParsed=false;			
+			while (!siblingsParsed) {
+				if (next) {
+					siblingElement = siblingElement.nextSibling();
 				} else {
-					qDebug() << "found sibling element is not a link, search childs";
-					foundElement = foundElement.findFirst("a");
-					qDebug() << "foundName" << foundElement.tagName() << "geometry" << foundElement.geometry() << "\n";
-					if (!foundElement.isNull()) {					
-						//Return first child which is a link
-						qDebug() << "Sibling link child found. Return it.";
-						return foundElement;
+					siblingElement = siblingElement.previousSibling();
+				}		
+				qDebug() << "siblingName" << siblingElement.tagName() << "geometry" << siblingElement.geometry() << "\n";
+				if (!siblingElement.isNull()) {			
+					if (siblingElement.tagName().compare("a",Qt::CaseInsensitive)==0) {
+						qDebug() << "found sibling element is a link, return it.\n";
+						return siblingElement;
+					} else {
+						qDebug() << "found sibling element is not a link, search childs";
+						siblingElement = siblingElement.findFirst("a");
+						qDebug() << "foundName" << siblingElement.tagName() << "geometry" << siblingElement.geometry() << "\n";
+						if (!siblingElement.isNull()) {					
+							//Return first child which is a link
+							qDebug() << "Sibling link child found. Return it.";
+							return siblingElement;
+						}
 					}
+				} else {
+					siblingsParsed=true;				
 				}
 			}
-			qDebug() << "No sibling exists, or does not contain links. \n";
+			qDebug() << "No siblings exists, or do not contain links. \n";
 			qDebug() << "Try with parent of current element. \n";
 			foundElement = foundElement.parent();						
 			qDebug() << "foundName" << foundElement.tagName() << "geometry" << foundElement.geometry() << "\n";
 		}
-		qDebug() << "Reached root of DOM, still no link found. Document contains no links. Return null";
-		return foundElement;			
+		qDebug() << "Reached root of DOM, still no link found. Document contains no links. Return null\n";
+		return QWebElement();			
 	}	
-	return currentElement;
+	qDebug() << "current Element is null. Return null\n";
+	return QWebElement();
 }
 
 void WikiOnBoard::selectNextPrevVisibleLinkOrScroll(bool next) {
 
 	qDebug() << "currentFrame()->geometry(): " << articleWebView->page()->currentFrame()->geometry();
 	qDebug() << "currentFrame()->scrollPosition(): " << articleWebView->page()->currentFrame()->scrollPosition();
-		
-	QWebElementCollection allLinks = articleWebView->page()->currentFrame()->findAllElements("a");
-	
-	QWebElement focusedLink = articleWebView->page()->currentFrame()->findFirstElement("a:focus");
-	qDebug() << "tagName" << focusedLink.tagName() << "geometry" << focusedLink.geometry()<< "\n";											
-	/*if (focusedLink.isNull()){
-		allLinks.at(0).setFocus();
-	} else {
-		for (int c=0;c<allLinks.count();c++) {
-			if (allLinks.at(c).hasFocus()) {
-				if (next && c+1<allLinks.count())  {
-					allLinks.at(c+1).setFocus();
-					if (!allLinks.at(c+1).hasFocus()) {
-								articleWebView->page()->currentFrame()->scroll(0,100);
-								allLinks.at(c+1).setFocus();
-					}
-				} else if (!next && c-1>=0) {
-					allLinks.at(c-1).setFocus();									
-					if (!allLinks.at(c-1).hasFocus()) {
-						articleWebView->page()->currentFrame()->scroll(0,-100);
-						allLinks.at(c-1).setFocus();		
-					}
-				
-				}				
-				break;
-			}
-		}
-	}
-	return;*/
-	
-//	QPoint currentPosition = articleWebView->page()->currentFrame()->scrollPosition();
-	QPoint currentPosition = QPoint(0,0);
-	if (!focusedLink.isNull()) {
-		currentPosition = focusedLink.geometry().topLeft();
-		getNextOrPrevLink(focusedLink,true).setFocus();
+	QRect currentViewRect = QRect(articleWebView->page()->currentFrame()->scrollPosition().x(),articleWebView->page()->currentFrame()->scrollPosition().y(),articleWebView->page()->currentFrame()->geometry().width(),articleWebView->page()->currentFrame()->geometry().height());
+	qDebug() << "currentFrame()->geometry(): " << articleWebView->page()->currentFrame()->geometry();
+	qDebug() << "currentFrame()->scrollPosition(): " << articleWebView->page()->currentFrame()->scrollPosition();
+	qDebug() << "currentViewRect: "<< currentViewRect << "\n";
 			
-	}
-	qDebug() << "currentPosisition" << currentPosition << "\n";											
+	QWebElement focusedLink = articleWebView->page()->currentFrame()->findFirstElement("a:focus");
+	qDebug() << "focusedLink tagName" << focusedLink.tagName() << "geometry" << focusedLink.geometry()<< "\n";											
+	
 
-	QWebHitTestResult hitTestResult = articleWebView->page()->currentFrame()->hitTestContent(currentPosition);
-
-//		QWebHitTestResult hitTestResult = articleWebView->page()->currentFrame()->hitTestContent(QPoint(z*2,z*2));
-	bool done = false;
-	if (!hitTestResult.isNull()) {	
-		getNextOrPrevLink(hitTestResult.element(),true).setFocus();
-	}
-	/*
-	int i=0;
-	do {
-	if (next) {
-	currentElement = firstVisibleElement.nextSibling();
+	QWebElement nextOrPrevLink;
+	if (!focusedLink.isNull() && focusedLink.geometry().intersects(currentViewRect)) {		
+		qDebug() << "Link selected (and link within current view rect), get next/prev link\n";
+		//TODO consider clearing focus (but how?)
+		nextOrPrevLink  = getNextOrPrevLink(focusedLink,next);	
+		
 	} else {
-	currentElement = firstVisibleElement.previousSibling();			
-	}	
-	currentElement = firstVisibleElement;
-	QStringList classes = currentElement.classes();
-	QString tagName = currentElement.tagName();
-	qDebug() << "tagName" << tagName << "\n";
-
-	for (int j=0; j<classes.count();j++) {
-	QString s = classes.at(j);
-	qDebug() << "classes " << j << " " << s << "\n";
-
+		qDebug() << "No link selected (or not within current view), get next/prev link to element in center of view.\n";
+		nextOrPrevLink  = getFirstLastLinkInRect(currentViewRect,next);
+	};
+	int scrollOffset = articleWebView->page()->currentFrame()->geometry().height()*4/3;
+	if (!next) {
+		scrollOffset = -scrollOffset;
+	};
+	QRect possibleTargetViewRect = QRect(currentViewRect);
+	possibleTargetViewRect.translate(0,scrollOffset);
+	qDebug() << "possibleTargetViewRect: "<< possibleTargetViewRect << "\n";
+		
+	if (!nextOrPrevLink.isNull()) {
+		qDebug() << "nextOrPrevlink found. geometry: " << nextOrPrevLink.geometry() << "\n";
+		if (currentViewRect.intersects(nextOrPrevLink.geometry())) {
+			qDebug() << "nextOrPrevlink intersects current view. Select it";
+			nextOrPrevLink.setFocus();
+			
+		} else if (possibleTargetViewRect.intersects(nextOrPrevLink.geometry())) {
+			qDebug() << "nextOrPrevlink not in current view, but within scroll range. Scroll and select link. (y offset: " << scrollOffset << ")\n";		
+			articleWebView->page()->currentFrame()->scroll(0,scrollOffset);
+			nextOrPrevLink.setFocus();
+		} else {			 
+			qDebug() << "nextOrPrevlink not in current view, nor within scroll range. Scroll instead. (y offset: " << scrollOffset << ")\n";										
+			articleWebView->page()->currentFrame()->scroll(0,scrollOffset);										
+		}
+	} else {
+		qDebug() << "No link found. Scroll instead. (y offset: " << scrollOffset << ")\n";										
+		articleWebView->page()->currentFrame()->scroll(0,scrollOffset);												
 	}
-	currentElement.setFocus();
-	i++;
-	} while (i<10);
-	}
-}*/
-
 }
