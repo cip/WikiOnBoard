@@ -799,11 +799,13 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 				break;
 			case Qt::Key_1:
 			case Qt::Key_Up:
-				articleWebView->page()->focusNextPrevChild(false);
+				//articleWebView->page()->focusNextPrevChild(false);
+				selectNextPrevVisibleLinkOrScroll(false);																
 				break;			
 			case Qt::Key_7:
 			case Qt::Key_Down:
-				articleWebView->page()->focusNextPrevChild(true);
+				//articleWebView->page()->focusNextPrevChild(true);
+				selectNextPrevVisibleLinkOrScroll(true);								
 				break;			
 			case Qt::Key_Select:
 				//This appearantly is the select key of the mobile phone. (it is not return or select)
@@ -976,3 +978,128 @@ void WikiOnBoard::hideWaitCursor()
             QApplication::setNavigationMode(Qt::NavigationModeNone);
         #endif
         }
+
+QWebElement WikiOnBoard::getNextOrPrevLink(QWebElement currentElement, bool next) {
+	QWebElement foundElement;
+	if (!currentElement.isNull()) {
+		qDebug() << "tagName" << currentElement.tagName() << "geometry" << currentElement.geometry()<< "\n";											
+		//Search first child which is a  link
+		if (next) {
+			foundElement = currentElement.findFirst("a");
+			qDebug() << "foundName" << foundElement.tagName() << "geometry" << foundElement.geometry() << "\n";
+			if (!foundElement.isNull()) {
+				//Return first child which is a link
+				return foundElement;
+			}
+		} 
+		qDebug() << "Looking for previous link, or no link child found\n";
+		foundElement = currentElement;
+		while (!foundElement.isNull()) {
+			if (next) {
+				foundElement = foundElement.nextSibling();
+			} else {
+				foundElement = foundElement.previousSibling();
+			}		
+			qDebug() << "foundName" << foundElement.tagName() << "geometry" << foundElement.geometry() << "\n";
+			if (!foundElement.isNull()) {
+			
+				if (foundElement.tagName().compare("a",Qt::CaseInsensitive)==0) {
+					qDebug() << "found sibling element is a link, return it.\n";
+					return foundElement;
+				} else {
+					qDebug() << "found sibling element is not a link, search childs";
+					foundElement = foundElement.findFirst("a");
+					qDebug() << "foundName" << foundElement.tagName() << "geometry" << foundElement.geometry() << "\n";
+					if (!foundElement.isNull()) {					
+						//Return first child which is a link
+						qDebug() << "Sibling link child found. Return it.";
+						return foundElement;
+					}
+				}
+			}
+			qDebug() << "No sibling exists, or does not contain links. \n";
+			qDebug() << "Try with parent of current element. \n";
+			foundElement = foundElement.parent();						
+			qDebug() << "foundName" << foundElement.tagName() << "geometry" << foundElement.geometry() << "\n";
+		}
+		qDebug() << "Reached root of DOM, still no link found. Document contains no links. Return null";
+		return foundElement;			
+	}	
+	return currentElement;
+}
+
+void WikiOnBoard::selectNextPrevVisibleLinkOrScroll(bool next) {
+
+	qDebug() << "currentFrame()->geometry(): " << articleWebView->page()->currentFrame()->geometry();
+	qDebug() << "currentFrame()->scrollPosition(): " << articleWebView->page()->currentFrame()->scrollPosition();
+		
+	QWebElementCollection allLinks = articleWebView->page()->currentFrame()->findAllElements("a");
+	
+	QWebElement focusedLink = articleWebView->page()->currentFrame()->findFirstElement("a:focus");
+	qDebug() << "tagName" << focusedLink.tagName() << "geometry" << focusedLink.geometry()<< "\n";											
+	/*if (focusedLink.isNull()){
+		allLinks.at(0).setFocus();
+	} else {
+		for (int c=0;c<allLinks.count();c++) {
+			if (allLinks.at(c).hasFocus()) {
+				if (next && c+1<allLinks.count())  {
+					allLinks.at(c+1).setFocus();
+					if (!allLinks.at(c+1).hasFocus()) {
+								articleWebView->page()->currentFrame()->scroll(0,100);
+								allLinks.at(c+1).setFocus();
+					}
+				} else if (!next && c-1>=0) {
+					allLinks.at(c-1).setFocus();									
+					if (!allLinks.at(c-1).hasFocus()) {
+						articleWebView->page()->currentFrame()->scroll(0,-100);
+						allLinks.at(c-1).setFocus();		
+					}
+				
+				}				
+				break;
+			}
+		}
+	}
+	return;*/
+	
+//	QPoint currentPosition = articleWebView->page()->currentFrame()->scrollPosition();
+	QPoint currentPosition = QPoint(0,0);
+	if (!focusedLink.isNull()) {
+		currentPosition = focusedLink.geometry().topLeft();
+		getNextOrPrevLink(focusedLink,true).setFocus();
+			
+	}
+	qDebug() << "currentPosisition" << currentPosition << "\n";											
+
+	QWebHitTestResult hitTestResult = articleWebView->page()->currentFrame()->hitTestContent(currentPosition);
+
+//		QWebHitTestResult hitTestResult = articleWebView->page()->currentFrame()->hitTestContent(QPoint(z*2,z*2));
+	bool done = false;
+	if (!hitTestResult.isNull()) {	
+		getNextOrPrevLink(hitTestResult.element(),true).setFocus();
+	}
+	/*
+	int i=0;
+	do {
+	if (next) {
+	currentElement = firstVisibleElement.nextSibling();
+	} else {
+	currentElement = firstVisibleElement.previousSibling();			
+	}	
+	currentElement = firstVisibleElement;
+	QStringList classes = currentElement.classes();
+	QString tagName = currentElement.tagName();
+	qDebug() << "tagName" << tagName << "\n";
+
+	for (int j=0; j<classes.count();j++) {
+	QString s = classes.at(j);
+	qDebug() << "classes " << j << " " << s << "\n";
+
+	}
+	currentElement.setFocus();
+	i++;
+	} while (i<10);
+	}
+}*/
+
+}

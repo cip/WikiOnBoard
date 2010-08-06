@@ -39,6 +39,9 @@
 #include <QWebPage>
 #include <QWebFrame>
 #include <QWebHistory>
+#include <QWebHitTestResult>
+#include <QWebElement>
+#include <QWebElementCollection>
 #include "ui_wikionboard.h"
 
 #include <zim/zim.h>
@@ -102,6 +105,8 @@ private:
     void clearMenu();
     void showWaitCursor();
     void hideWaitCursor();
+    QWebElement getNextOrPrevLink(QWebElement currentElement, bool next);
+    void selectNextPrevVisibleLinkOrScroll(bool next);
 private slots:
 	 void switchToArticlePage();
 	 void switchToIndexPage();
