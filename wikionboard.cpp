@@ -1049,12 +1049,12 @@ QWebElement WikiOnBoard::getNextOrPrevLink(QWebElement currentElement, bool next
 						return siblingElement;
 					} else {
 						qDebug() << "found sibling element is not a link, search childs";
-						siblingElement = siblingElement.findFirst("a");
-						qDebug() << "foundName" << siblingElement.tagName() << "geometry" << siblingElement.geometry() << "\n";
-						if (!siblingElement.isNull()) {					
+						QWebElement siblingChildElement = siblingElement.findFirst("a");
+						qDebug() << "foundName" << siblingChildElement.tagName() << "geometry" << siblingChildElement.geometry() << "\n";
+						if (!siblingChildElement.isNull()) {					
 							//Return first child which is a link
 							qDebug() << "Sibling link child found. Return it.";
-							return siblingElement;
+							return siblingChildElement;
 						}
 					}
 				} else {
