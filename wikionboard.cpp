@@ -38,6 +38,7 @@
 #include <QScrollBar>
 #include <QMessageBox>
 #include <QStringBuilder>
+#include <QElapsedTimer>
 //TODO: not necessary for symbian, why necessary on linux? (and anyway exception should be replaced
 //  by something else
 #include <stdexcept>
@@ -283,7 +284,8 @@ QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 			{
 			blob = it->getData();
 			}
-		articleText = QString::fromUtf8(blob.data(), blob.size());
+                qDebug() << " Article (URL: "<< articleUrl << ", Size: "<<blob.size()<<") loaded from zim file";
+                articleText = QString::fromUtf8(blob.data(), blob.size());
 		}
 	catch (const std::exception& e)
 		{
@@ -509,8 +511,14 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 
 	ui.articleName->setText(path);
 	
-	QString articleText = getArticleTextByUrl(path);
-	ui.textBrowser->setHtml(articleText);
+        QElapsedTimer timer;
+        timer.start();
+        QString articleText = getArticleTextByUrl(path);
+        qDebug() << "Reading article " <<path <<" from zim file took" << timer.elapsed() << " milliseconds";
+        timer.start();
+
+        ui.textBrowser->setHtml(articleText);
+        qDebug() << "Loading article into textview (setHtml()) took" << timer.restart() << " milliseconds";
 	if (url.hasFragment())
 		{
 		//Either a link within current file (if path was empty), or to   newly opened file
@@ -540,7 +548,9 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 		QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
 
 		}
+
 	/// ui.stackedWidget->setCurrentWidget(ui.articlePage);
+        qDebug() << "Loading article into textview (gotoAnchor/moveposition) took" << timer.restart() << " milliseconds";
 
 	}
 
