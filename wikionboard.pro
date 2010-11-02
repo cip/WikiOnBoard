@@ -1,4 +1,4 @@
-VERSION = 0.0.10
+VERSION = 0.0.12
 TEMPLATE = app
 TARGET = WikiOnBoard
 QT += core \
@@ -8,6 +8,7 @@ SOURCES += main.cpp \
     wikionboard.cpp
 FORMS += wikionboard.ui
 RESOURCES += 
+include(../kineticscroller/qtscroller.pri)
 
 # TODO This is a workaround, final fix should rename zimlib to libzim for symbian as well.
 # Note that unix includes symbian and therefore cannot be used.
@@ -19,6 +20,11 @@ else {
     # TODO find out why this is not working on my linux. (actually it should)
     LIBS += -lzimlib
     LIBS += -lliblzma
+#LIBS += -L../zimlib
+
+#    LIBS += -l:libzimlib.a
+ #   LIBS += -L../xz
+  #  LIBS += -l:libliblzma.lib.a
 }
 win32::INCLUDEPATH += e:\cygwin\usr\local\include
 symbian: { 
@@ -39,3 +45,34 @@ symbian:LIBS += -lavkon \
     -leikcoctl \
     -lcone
 symbian:TARGET.UID3 = 0xA89FA6F6
+
+#Maemo
+INCLUDEPATH += ../zimlib/include
+
+OTHER_FILES += \
+    debian/changelog \
+    debian/compat \
+    debian/control \
+    debian/copyright \
+    debian/README \
+    debian/rules \
+    WikiOnBoard.desktop
+
+unix:!symbian {
+    maemo5 {
+        target.path = /opt/usr/bin
+    } else {
+        target.path = /usr/local/bin
+    }
+    INSTALLS += target
+}
+
+unix:!symbian {
+    desktopfile.files = $${TARGET}.desktop
+    maemo5 {
+        desktopfile.path = /usr/share/applications/hildon
+    } else {
+        desktopfile.path = /usr/share/applications
+    }
+    INSTALLS += desktopfile
+}

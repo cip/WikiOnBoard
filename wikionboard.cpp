@@ -38,7 +38,13 @@
 #include <QScrollBar>
 #include <QMessageBox>
 #include <QStringBuilder>
-#include <QElapsedTimer>
+//"Official" kinetic scrolling. (Backport from Qt 4.8) 
+//	See http://qt.gitorious.org/qt-labs/kineticscroller/commits/solution and
+//		http://bugreports.qt.nokia.com/browse/QTBUG-9054?focusedCommentId=130700&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#action_130700
+#include <QtScroller>
+
+
+//#include <QElapsedTimer>
 //TODO: not necessary for symbian, why necessary on linux? (and anyway exception should be replaced
 //  by something else
 #include <stdexcept>
@@ -85,6 +91,8 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	ui.textBrowser->setDocument(defaultStyleSheetDocument);		
 	zoomLevel = 0;
 	zoom(zoomInit);
+	QtScroller::grabGesture(ui.textBrowser->viewport(), QtScroller::LeftMouseButtonGesture);
+
 #ifdef Q_OS_SYMBIAN
 	//Enable Softkeys in fullscreen mode. 
     //New Flag in Qt 4.6.3. 
@@ -511,14 +519,14 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 
 	ui.articleName->setText(path);
 	
-        QElapsedTimer timer;
-        timer.start();
+        //QElapsedTimer timer;
+        //timer.start();
         QString articleText = getArticleTextByUrl(path);
-        qDebug() << "Reading article " <<path <<" from zim file took" << timer.elapsed() << " milliseconds";
-        timer.start();
+        //qDebug() << "Reading article " <<path <<" from zim file took" << timer.elapsed() << " milliseconds";
+        //timer.start();
 
         ui.textBrowser->setHtml(articleText);
-        qDebug() << "Loading article into textview (setHtml()) took" << timer.restart() << " milliseconds";
+        //qDebug() << "Loading article into textview (setHtml()) took" << timer.restart() << " milliseconds";
 	if (url.hasFragment())
 		{
 		//Either a link within current file (if path was empty), or to   newly opened file
@@ -550,7 +558,7 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 		}
 
 	/// ui.stackedWidget->setCurrentWidget(ui.articlePage);
-        qDebug() << "Loading article into textview (gotoAnchor/moveposition) took" << timer.restart() << " milliseconds";
+        //qDebug() << "Loading article into textview (gotoAnchor/moveposition) took" << timer.restart() << " milliseconds";
 
 	}
 
