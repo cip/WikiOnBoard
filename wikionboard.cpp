@@ -53,9 +53,15 @@
 #include <eikbtgpc.h>       // symbian: LIBS += -lavkon -leikcoctl
 #endif
 
+
+
+
+    
 WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	QMainWindow(parent), m_bgc(bgc)
 	{
+	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 22 scroll per pixel. \n";
+
 	zimFile = NULL; //zimFile unitialized until,
 	//file loaded (either stored filename from last run,
 	// or user loads file). To allow test for == NULL, explicitlz
@@ -91,8 +97,18 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	ui.textBrowser->setDocument(defaultStyleSheetDocument);		
 	zoomLevel = 0;
 	zoom(zoomInit);
+	// On N8  LeftMouseButtonGesture working better than Touchgesture:
+	// 	Article: Touchgesture used: scroll starts after selecting some text.
+	//	ArticleList: Touchgesture used: Article opens if kinetic scrolling
+	//		does not scroll selected entry fast enough out of view ...
 	QtScroller::grabGesture(ui.textBrowser->viewport(), QtScroller::LeftMouseButtonGesture);
-
+	// ScrollPerPixel required for kinetic scrolling
+	ui.articleListWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);	    
+	QtScroller::grabGesture(ui.articleListWidget->viewport(), QtScroller::LeftMouseButtonGesture);
+		//TODO: update article list during scroll. Try with eventfilter
+//	ui.articleListWidget->viewport()->installEventFilter(new ArticleListFilter());
+	    
+	
 #ifdef Q_OS_SYMBIAN
 	//Enable Softkeys in fullscreen mode. 
     //New Flag in Qt 4.6.3. 
@@ -113,8 +129,6 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 		showMaximized();
 		}
 	currentlyViewedUrl = QUrl("");
-
-	qDebug() << "Debug output test \n";
 
 	openZimFileDialogAction = new QAction(tr("Open Zimfile"), this);
 	connect(openZimFileDialogAction, SIGNAL(triggered()), this,
@@ -403,8 +417,16 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 					++it;
 					}
 				i++;
+				//FIXME
+				if (insertedItemsCount >= 100) {
+				 break;
+				}
+					
+				/*
 				if (insertedItemsCount > 0)
 					{
+					//Non-Touch: Only fill visible area, no scrolling
+					//TODO: Consider to enable for non-touch
 					//Calculate height of all inserted items, and stop
 					//insertion when visible area of list is full.
 					int itemHeight = ui.articleListWidget->visualItemRect(
@@ -420,8 +442,8 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 						{
 						break;
 						}
-					}
-				}						
+					}*/
+				}				
 			} 
 
 		catch (const std::exception& e)
@@ -1001,3 +1023,5 @@ void WikiOnBoard::hideWaitCursor()
             QApplication::setNavigationMode(Qt::NavigationModeNone);
         #endif
         }
+
+
