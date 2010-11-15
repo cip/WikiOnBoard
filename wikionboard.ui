@@ -85,7 +85,7 @@
            <bool>true</bool>
           </property>
           <property name="textInteractionFlags">
-           <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+           <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse</set>
           </property>
           <property name="openLinks">
            <bool>false</bool>
@@ -116,7 +116,7 @@
      <x>0</x>
      <y>0</y>
      <width>456</width>
-     <height>27</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
