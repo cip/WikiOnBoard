@@ -60,7 +60,7 @@
 WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	QMainWindow(parent), m_bgc(bgc)
 	{
-	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 22 scroll per pixel. \n";
+	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 23 touch gesture. \n";
 
 	zimFile = NULL; //zimFile unitialized until,
 	//file loaded (either stored filename from last run,
@@ -97,11 +97,20 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	ui.textBrowser->setDocument(defaultStyleSheetDocument);		
 	zoomLevel = 0;
 	zoom(zoomInit);
-	// On N8  LeftMouseButtonGesture working better than Touchgesture:
-	// 	Article: Touchgesture used: scroll starts after selecting some text.
-	//	ArticleList: Touchgesture used: Article opens if kinetic scrolling
+	// 
+	// 	For Article use ?: 
+	//	   If LeftmouseButtonGesture used:
+	//		If fingerscroll starts very slowly, text jumps some line and does not
+	// 		move any more, even if finger continues scrolling.
+	//	   If TouchGesture used:
+	//			If link clicked during finger scroll, article opens
+	//			Sometimes article left margin changed incorrectly, first letters
+	//			close/off left screen edge
+	//	For ArticleList LeftMouseButtonGesture better than  Touchgesture
+	//		If TouchGesture used used: Article opens if kinetic scrolling
 	//		does not scroll selected entry fast enough out of view ...
-	QtScroller::grabGesture(ui.textBrowser->viewport(), QtScroller::LeftMouseButtonGesture);
+	// (Test device: N8)
+	QtScroller::grabGesture(ui.textBrowser->viewport(), QtScroller::TouchGesture);
 	// ScrollPerPixel required for kinetic scrolling
 	ui.articleListWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);	    
 	QtScroller::grabGesture(ui.articleListWidget->viewport(), QtScroller::LeftMouseButtonGesture);
