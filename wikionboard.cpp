@@ -60,7 +60,7 @@
 WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	QMainWindow(parent), m_bgc(bgc)
 	{
-	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 23 touch gesture. \n";
+	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 25 custom scroller settings. \n";
 
 	zimFile = NULL; //zimFile unitialized until,
 	//file loaded (either stored filename from last run,
@@ -98,25 +98,52 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	zoomLevel = 0;
 	zoom(zoomInit);
 	// 
-	// 	For Article use ?: 
+	// 	For Article LeftMouseButtonGesture used, as link opening issue
+	//		more annoying then slow scroll now working issue.: 
 	//	   If LeftmouseButtonGesture used:
-	//		If fingerscroll starts very slowly, text jumps some line and does not
+	//		*If fingerscroll starts very slowly, text jumps some line and does not
 	// 		move any more, even if finger continues scrolling.
 	//	   If TouchGesture used:
-	//			If link clicked during finger scroll, article opens
+	//			If link clicked at beginning of finger scroll, article opens after
+	//				end of scrolling.
 	//			Sometimes article left margin changed incorrectly, first letters
 	//			close/off left screen edge
 	//	For ArticleList LeftMouseButtonGesture better than  Touchgesture
 	//		If TouchGesture used used: Article opens if kinetic scrolling
 	//		does not scroll selected entry fast enough out of view ...
 	// (Test device: N8)
-	QtScroller::grabGesture(ui.textBrowser->viewport(), QtScroller::TouchGesture);
+        // Samsung Galaxy S: Touchgesture has open article problem.
+        // 	 LeftMousebutton does not show the slow-scroll problem, but also has
+        //		open article problem (weaker?)
+	//QtScroller::grabGesture(ui.textBrowser->viewport(), QtScroller::TouchGesture);
+	QtScroller::grabGesture(ui.textBrowser->viewport(), QtScroller::LeftMouseButtonGesture);
+					
 	// ScrollPerPixel required for kinetic scrolling
 	ui.articleListWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);	    
 	QtScroller::grabGesture(ui.articleListWidget->viewport(), QtScroller::LeftMouseButtonGesture);
 		//TODO: update article list during scroll. Try with eventfilter
 //	ui.articleListWidget->viewport()->installEventFilter(new ArticleListFilter());
-	    
+	QtScrollerProperties properties = QtScroller::scroller(ui.textBrowser->viewport())->scrollerProperties();
+	properties.setScrollMetric(QtScrollerProperties::DragStartDistance,
+	 	                                QVariant(1.0/1000)); 
+	properties.setScrollMetric(QtScrollerProperties::DragVelocitySmoothingFactor,
+		 	 	                                QVariant(0.9)); 
+		
+	properties.setScrollMetric(QtScrollerProperties::AcceleratingFlickMaximumTime,
+	 	 	 	                                QVariant(0.0));
+	//Avoid scrolling right/left for up/down gestures. Higher value
+	// would be better regarding this, but then finger scrolling is
+	// is not working very well. 
+	properties.setScrollMetric(QtScrollerProperties::AxisLockThreshold,
+	 			 	 	 	                                QVariant(0.2));	 		 	 
+	properties.setScrollMetric(QtScrollerProperties::DecelerationFactor,
+	 		 	 	 	 	 	                                QVariant(0.400));			 		 	 
+	properties.setScrollMetric(QtScrollerProperties::MaximumVelocity,
+                 QVariant(200.0/1000.0));	
+	properties.setScrollMetric(QtScrollerProperties::MousePressEventDelay,
+	                 QVariant(0.2));	
+			 
+	QtScroller::scroller(ui.textBrowser->viewport())->setScrollerProperties(properties);
 	
 #ifdef Q_OS_SYMBIAN
 	//Enable Softkeys in fullscreen mode. 
