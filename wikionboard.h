@@ -87,7 +87,7 @@ private:
     QUrl currentlyViewedUrl;    
     void openArticleByUrl(QUrl url);
     void populateArticleList(); 
-    void populateArticleList(QString articleName, int ignoreFirstN, bool direction_up);
+    void populateArticleList(QString articleName, int ignoreFirstN, bool direction_up, bool noDelete=false);
     void articleListSelectPreviousEntry();
     void articleListSelectNextEntry();
         
@@ -124,6 +124,20 @@ private slots:
      void zoom(int zoomDelta);
      void zoomOut();
      void zoomIn();
+     void approachingEndOfList(bool up);
 };
+
+class ArticleListFilter : public QObject {
+	Q_OBJECT
+public:
+	ArticleListFilter() {};
+	
+protected:
+	
+    bool eventFilter(QObject *o, QEvent *e);
+signals: 
+	void approachingEndOfList(bool up);
+};
+
 
 #endif // WIKIONBOARD_H

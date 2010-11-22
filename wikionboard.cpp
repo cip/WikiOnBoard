@@ -42,6 +42,8 @@
 //	See http://qt.gitorious.org/qt-labs/kineticscroller/commits/solution and
 //		http://bugreports.qt.nokia.com/browse/QTBUG-9054?focusedCommentId=130700&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#action_130700
 #include <QtScroller>
+#include <qtscrollevent>
+
 
 
 //#include <QElapsedTimer>
@@ -53,10 +55,52 @@
 #include <eikbtgpc.h>       // symbian: LIBS += -lavkon -leikcoctl
 #endif
 
+    bool ArticleListFilter::eventFilter(QObject *o, QEvent *e) {    	
+    	switch (e->type()) {
+    	    case QtScrollPrepareEvent::ScrollPrepare:
+    	    {
+    	        QtScrollPrepareEvent *se = static_cast<QtScrollPrepareEvent *>(e);
+    	        qDebug() << " ScrollPrepare: " << se->startPos();
+    	        return false;
+    	    }
+    	    case QtScrollEvent::Scroll:
+    	    {
+				QtScrollEvent *se = static_cast<QtScrollEvent *>(e);
+				qDebug() << " ScrollEvent. ScrollState: " << se->scrollState() << " contentPos: " << se->contentPos();
+									
+				QWidget *w = static_cast<QWidget *>(o);
+				qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
+								
+				if (w->parentWidget()) {
+						            if (QListWidget *lw = qobject_cast<QListWidget *>(w->parentWidget())) {
+						                if (lw->viewport() == w) {             
+						                   qDebug()<<"ArticleList: vmaximum " << lw->verticalScrollBar()->maximum();
+						                   if (lw->verticalScrollBar()->maximum()*0.9 < se->contentPos().y()) {
+											   if (QtScroller::scroller(w)->velocity().y()>0.0) 
+						                   		 emit approachingEndOfList(false);
+						                   } else if  (lw->verticalScrollBar()->minimum() < se->contentPos().y()/0.9) {
+												   if (QtScroller::scroller(w)->velocity().y()<0.0) 
+													   emit approachingEndOfList(true);
+						                   }			                   
+						                   
+						           
+						                }
+						            }
+				}
 
+				return false;
+    	    } 
+    	    default:
+    	            return false;
+    	        
+    	}
+    	        	        
+    	return false;
+    }
 
 
     
+
 WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	QMainWindow(parent), m_bgc(bgc)
 	{
@@ -122,7 +166,9 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	ui.articleListWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);	    
 	QtScroller::grabGesture(ui.articleListWidget->viewport(), QtScroller::LeftMouseButtonGesture);
 		//TODO: update article list during scroll. Try with eventfilter
-//	ui.articleListWidget->viewport()->installEventFilter(new ArticleListFilter());
+	ArticleListFilter *articleListFilter = new ArticleListFilter();
+	ui.articleListWidget->viewport()->installEventFilter(articleListFilter);
+	connect(articleListFilter,SIGNAL(approachingEndOfList(bool)),this, SLOT(approachingEndOfList(bool)));
 	QtScrollerProperties properties = QtScroller::scroller(ui.textBrowser->viewport())->scrollerProperties();
 	properties.setScrollMetric(QtScrollerProperties::DragStartDistance,
 	 	                                QVariant(1.0/1000)); 
@@ -392,7 +438,7 @@ void WikiOnBoard::populateArticleList() {
 }
 
 void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
-		bool direction_up)
+		bool direction_up, bool noDelete)
 	{
 	if (zimFile != NULL)
 		{
@@ -408,7 +454,9 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 				// but instead each time a new item is added. This avoids
 				// that cannot be fully filled if the beginning of the zim file
 				// is reached. 
-				ui.articleListWidget->clear();
+				if (noDelete==false) {
+					ui.articleListWidget->clear();
+				}
 			}
 			int i = 0;
 			int insertedItemsCount = 0;
@@ -434,8 +482,10 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 						{
 						ui.articleListWidget->insertItem(0, articleItem);
 						insertedItemsCount++;
-						QListWidgetItem *lastItem = ui.articleListWidget->takeItem(ui.articleListWidget->count() - 1);
-						delete lastItem;							
+						if (noDelete==false) {
+							QListWidgetItem *lastItem = ui.articleListWidget->takeItem(ui.articleListWidget->count() - 1);
+							delete lastItem;
+						}
 						}
 					if (it == zimFile->begin())
 						break;
@@ -1060,4 +1110,13 @@ void WikiOnBoard::hideWaitCursor()
         #endif
         }
 
+void WikiOnBoard::approachingEndOfList(bool up) {
+	qDebug()<< "WikiOnBoard::approachingEndOfList";
+	if (up) {
+		populateArticleList(ui.articleListWidget->item(0)->data(ArticleTitleRole).toString(),0,true, true);
+	} else {
+		populateArticleList(ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString(),0,false, true);
+	
+	}	
+}
 
