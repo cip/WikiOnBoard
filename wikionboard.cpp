@@ -55,48 +55,59 @@
 #include <eikbtgpc.h>       // symbian: LIBS += -lavkon -leikcoctl
 #endif
 
-    bool ArticleListFilter::eventFilter(QObject *o, QEvent *e) {    	
-    	switch (e->type()) {
-    	    case QtScrollPrepareEvent::ScrollPrepare:
-    	    {
-    	        QtScrollPrepareEvent *se = static_cast<QtScrollPrepareEvent *>(e);
-    	        qDebug() << " ScrollPrepare: " << se->startPos();
-    	        return false;
-    	    }
-    	    case QtScrollEvent::Scroll:
-    	    {
-				QtScrollEvent *se = static_cast<QtScrollEvent *>(e);
-				qDebug() << " ScrollEvent. ScrollState: " << se->scrollState() << " contentPos: " << se->contentPos();
-									
-				QWidget *w = static_cast<QWidget *>(o);
-				qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
-								
-				if (w->parentWidget()) {
-						            if (QListWidget *lw = qobject_cast<QListWidget *>(w->parentWidget())) {
-						                if (lw->viewport() == w) {             
-						                   qDebug()<<"ArticleList: vmaximum " << lw->verticalScrollBar()->maximum();
-						                   if (lw->verticalScrollBar()->maximum()*0.9 < se->contentPos().y()) {
-											   if (QtScroller::scroller(w)->velocity().y()>0.0) 
-						                   		 emit approachingEndOfList(false);
-						                   } else if  (lw->verticalScrollBar()->minimum() < se->contentPos().y()/0.9) {
-												   if (QtScroller::scroller(w)->velocity().y()<0.0) 
-													   emit approachingEndOfList(true);
-						                   }			                   
-						                   
-						           
-						                }
-						            }
+    bool ArticleListFilter::eventFilter(QObject *o, QEvent *e)
+	{
+	switch (e->type())
+		{
+		case QtScrollPrepareEvent::ScrollPrepare:
+			{
+			QtScrollPrepareEvent *se = static_cast<QtScrollPrepareEvent *> (e);
+			qDebug() << " ScrollPrepare: " << se->startPos();
+			return false;
+			}
+		case QtScrollEvent::Scroll:
+			{
+			QtScrollEvent *se = static_cast<QtScrollEvent *> (e);
+			qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
+					<< " contentPos: " << se->contentPos();
+
+			QWidget *w = static_cast<QWidget *> (o);
+			qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
+
+			if (w->parentWidget())
+				{
+				if (QListWidget *lw = qobject_cast<QListWidget *>(w->parentWidget()))
+					{
+					if (lw->viewport() == w)
+						{
+						qDebug() << "ArticleList: vmaximum "
+								<< lw->verticalScrollBar()->maximum();
+						if (lw->verticalScrollBar()->maximum() * 0.9
+								< se->contentPos().y())
+							{
+							if (QtScroller::scroller(w)->velocity().y() > 0.0)
+								emit approachingEndOfList(false);
+							}
+						else if (lw->verticalScrollBar()->minimum()
+								< se->contentPos().y() / 0.9)
+							{
+							if (QtScroller::scroller(w)->velocity().y() < 0.0)
+								emit approachingEndOfList(true);
+							}
+
+						}
+					}
 				}
 
-				return false;
-    	    } 
-    	    default:
-    	            return false;
-    	        
-    	}
-    	        	        
-    	return false;
-    }
+			return false;
+			}
+		default:
+			return false;
+
+		}
+
+	return false;
+	}
 
 
     
