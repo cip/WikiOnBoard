@@ -1,4 +1,4 @@
-VERSION = 0.0.16
+VERSION = 0.0.17
 TEMPLATE = app
 TARGET = WikiOnBoard
 QT += core \
@@ -12,7 +12,7 @@ include(../kineticscroller/qtscroller.pri)
 
 # TODO This is a workaround, final fix should rename zimlib to libzim for symbian as well.
 # Note that unix includes symbian and therefore cannot be used.
-linux-g++: { 
+linux-g++: {
     LIBS += -l:libzim.so
     LIBS += -l:liblzma.so
 }
