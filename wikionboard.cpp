@@ -116,7 +116,7 @@
 WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	QMainWindow(parent), m_bgc(bgc)
 	{
-	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 26 scroller with fixed slow gesture hang. \n";
+	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 28 scroller pulled 19.12.2010;removed (now really) custom settings \n";
 
 	zimFile = NULL; //zimFile unitialized until,
 	//file loaded (either stored filename from last run,
@@ -164,24 +164,25 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	ui.articleListWidget->viewport()->installEventFilter(articleListFilter);
 	connect(articleListFilter,SIGNAL(approachingEndOfList(bool)),this, SLOT(approachingEndOfList(bool)));
 	QtScrollerProperties properties = QtScroller::scroller(ui.textBrowser->viewport())->scrollerProperties();
-	properties.setScrollMetric(QtScrollerProperties::DragStartDistance,
-	 	                                QVariant(1.0/1000)); 
-	properties.setScrollMetric(QtScrollerProperties::DragVelocitySmoothingFactor,
-		 	 	                                QVariant(0.9)); 
+	//properties.setScrollMetric(QtScrollerProperties::DragStartDistance,
+	 //	                                QVariant(1.0/1000)); 
+	//properties.setScrollMetric(QtScrollerProperties::DragVelocitySmoothingFactor,
+		// 	 	                                QVariant(0.9)); 
 		
-	properties.setScrollMetric(QtScrollerProperties::AcceleratingFlickMaximumTime,
-	 	 	 	                                QVariant(0.0));
+//	properties.setScrollMetric(QtScrollerProperties::AcceleratingFlickMaximumTime,
+	// 	 	 	                                QVariant(0.0));
 	//Avoid scrolling right/left for up/down gestures. Higher value
 	// would be better regarding this, but then finger scrolling is
 	// is not working very well. 
-	properties.setScrollMetric(QtScrollerProperties::AxisLockThreshold,
-	 			 	 	 	                                QVariant(0.2));	 		 	 
-	properties.setScrollMetric(QtScrollerProperties::DecelerationFactor,
-	 		 	 	 	 	 	                                QVariant(0.400));			 		 	 
-	properties.setScrollMetric(QtScrollerProperties::MaximumVelocity,
-                 QVariant(200.0/1000.0));	
-	properties.setScrollMetric(QtScrollerProperties::MousePressEventDelay,
-	                 QVariant(0.2));	
+	
+	//properties.setScrollMetric(QtScrollerProperties::AxisLockThreshold,
+	 //			 	 	 	                                QVariant(0.2));	 		 	 
+	//properties.setScrollMetric(QtScrollerProperties::DecelerationFactor,
+	 //		 	 	 	 	 	                                QVariant(0.400));			 		 	 
+//	properties.setScrollMetric(QtScrollerProperties::MaximumVelocity,
+  //               QVariant(200.0/1000.0));	
+	//properties.setScrollMetric(QtScrollerProperties::MousePressEventDelay,
+	  //               QVariant(0.2));	
 			 
 	QtScroller::scroller(ui.textBrowser->viewport())->setScrollerProperties(properties);
 	
