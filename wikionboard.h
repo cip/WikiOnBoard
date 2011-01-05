@@ -35,9 +35,9 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QDesktopServices>
-
+#include <QAbstractListModel>
 #include "ui_wikionboard.h"
-
+#include <QListWidget>
 #include <zim/zim.h>
 #include <zim/fileiterator.h>
 
@@ -45,6 +45,17 @@ enum ArticleListItemDataRole {
 	ArticleUrlRole=Qt::UserRole,
 	ArticleIndexRole,
 	ArticleTitleRole
+};
+
+class ArticleListModel : public QAbstractListModel {
+	Q_OBJECT
+public:
+	ArticleListModel( QObject *parent = 0);
+	int rowCount ( const QModelIndex & parent = QModelIndex()) const;
+	QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
+	void setZimFile(zim::File* zimFile) {this->zimFile=zimFile;}
+protected: 
+	zim::File* zimFile;
 };
 
 class WikiOnBoard : public QMainWindow
@@ -80,6 +91,7 @@ private:
     QAction* aboutAction;
     QAction* aboutQtAction;
     zim::File* zimFile;
+    ArticleListModel* articleListModel;
     int zoomLevel;
     bool hasTouchScreen;
     QString getArticleTextByUrl(QString articleUrl);   
@@ -125,9 +137,9 @@ private slots:
      void zoom(int zoomDelta);
      void zoomOut();
      void zoomIn();
-     void approachingEndOfList(bool up);
+     //void approachingEndOfList(bool up);
 };
-
+/*
 class ArticleListFilter : public QObject {
 	Q_OBJECT
 public:
@@ -139,6 +151,6 @@ protected:
 signals: 
 	void approachingEndOfList(bool up);
 };
-
+*/
 
 #endif // WIKIONBOARD_H

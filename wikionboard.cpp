@@ -37,6 +37,7 @@
 #include <QProgressBar>
 #include <QScrollBar>
 #include <QMessageBox>
+
 #include <QStringBuilder>
 //"Official" kinetic scrolling. (Backport from Qt 4.8) 
 //	See http://qt.gitorious.org/qt-labs/kineticscroller/commits/solution and
@@ -55,6 +56,7 @@
 #include <eikbtgpc.h>       // symbian: LIBS += -lavkon -leikcoctl
 #endif
 
+/*
 //To update article list during scrolling. FIXME not working very well yet
     bool ArticleListFilter::eventFilter(QObject *o, QEvent *e)
 	{
@@ -111,7 +113,7 @@
 
 	return false;
 	}
-
+*/
 
     
 
@@ -128,7 +130,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	}
 	#endif
 	
-	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 29 call instead of signal\n";
+	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 30 Model-View\n";
 	qDebug() << " hasTouchScreen: "<<hasTouchScreen;
 	zimFile = NULL; //zimFile unitialized until,
 	//file loaded (either stored filename from last run,
@@ -170,11 +172,11 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	QtScroller::grabGesture(ui.textBrowser->viewport(), QtScroller::LeftMouseButtonGesture);
 					
 	// ScrollPerPixel required for kinetic scrolling
-	ui.articleListWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);	    
-	QtScroller::grabGesture(ui.articleListWidget->viewport(), QtScroller::LeftMouseButtonGesture);
-	ArticleListFilter *articleListFilter = new ArticleListFilter();
-	ui.articleListWidget->viewport()->installEventFilter(articleListFilter);
-	connect(articleListFilter,SIGNAL(approachingEndOfList(bool)),this, SLOT(approachingEndOfList(bool)));
+	ui.articleListView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);	    
+	QtScroller::grabGesture(ui.articleListView->viewport(), QtScroller::LeftMouseButtonGesture);
+	//ArticleListFilter *articleListFilter = new ArticleListFilter();
+	//ui.articleListView->viewport()->installEventFilter(articleListFilter);
+	//TODO connect(articleListFilter,SIGNAL(approachingEndOfList(bool)),this, SLOT(approachingEndOfList(bool)));
 	QtScrollerProperties properties = QtScroller::scroller(ui.textBrowser->viewport())->scrollerProperties();
 	//properties.setScrollMetric(QtScrollerProperties::DragStartDistance,
 	 //	                                QVariant(1.0/1000)); 
@@ -274,12 +276,12 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 
 	connect(openArticleAction, SIGNAL(triggered()), this,
 			SLOT(articleListOpenArticle()));
-	connect(ui.articleListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this,
+	connect(ui.articleListView, SIGNAL(itemClicked(QListWidgetItem*)), this,
 			SLOT(articleListOpenArticle(QListWidgetItem *))); //For touchscreen devices
 	//slot just calls openArticlAction.trigger
 
 	//connect(ui.articleListWidget, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(articleListOpenArticle(QListWidgetItem *)));
-	ui.articleListWidget->addAction(openArticleAction);
+	ui.articleListView->addAction(openArticleAction);
 
 	//Open article when clicked or return key clicked. Note that for keypad phones return (amongst others) is
 	// forwarded to articleListWidget, so that this works even if it has not focus.
@@ -322,6 +324,9 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 			}
 #endif
 
+	articleListModel = new ArticleListModel(this);
+	ui.articleListView->setModel(articleListModel);		
+
 	switchToIndexPage();
 	}
 
@@ -339,6 +344,7 @@ void WikiOnBoard::openZimFile(QString zimFileName)
 	    zimFileName.replace(rx,"\\1");
 		std::string zimfilename = zimFileName.toStdString(); //
 		zimFile = new zim::File(zimfilename);
+		articleListModel->setZimFile(zimFile);
 		}
 	catch (const std::exception& e)
 		{
@@ -439,14 +445,14 @@ QString WikiOnBoard::getArticleTextByTitle(QString articleTitle)
 	}
 
 void WikiOnBoard::populateArticleList() {	
-	populateArticleList(ui.articleName->text(), 0, false);
-	ui.articleListWidget->setCurrentRow(0); //Select first found item
+/*	populateArticleList(ui.articleName->text(), 0, false);
+	ui.articleListView->setCurrentRow(0); //Select first found item*/
 }
 
 void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 		bool direction_up, bool noDelete)
 	{
-	qDebug() << "in populateArticleList. articleName:  "<<articleName << ". ignoreFirstN: "<<ignoreFirstN <<". direction_up:"<< direction_up<<".noDelete: "<<noDelete; 
+/*	qDebug() << "in populateArticleList. articleName:  "<<articleName << ". ignoreFirstN: "<<ignoreFirstN <<". direction_up:"<< direction_up<<".noDelete: "<<noDelete; 
 	if (zimFile != NULL)
 		{
 		try
@@ -462,7 +468,7 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 				// that cannot be fully filled if the beginning of the zim file
 				// is reached. 
 				if (noDelete==false) {
-					ui.articleListWidget->clear();
+					ui.articleListView->clear();
 				}
 			}
 			int i = 0;
@@ -487,10 +493,10 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 					{
 					if (i >= ignoreFirstN)
 						{
-						ui.articleListWidget->insertItem(0, articleItem);
+						ui.articleListView->insertItem(0, articleItem);
 						insertedItemsCount++;
 						if (noDelete==false) {
-							QListWidgetItem *lastItem = ui.articleListWidget->takeItem(ui.articleListWidget->count() - 1);
+							QListWidgetItem *lastItem = ui.articleListView->takeItem(ui.articleListView->count() - 1);
 							delete lastItem;
 						}
 						}
@@ -502,7 +508,7 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 					{
 					if (i >= ignoreFirstN)
 						{
-						ui.articleListWidget->addItem(articleItem);
+						ui.articleListView->addItem(articleItem);
 						insertedItemsCount++;
 						}
 					if (it == zimFile->end())
@@ -523,16 +529,16 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 					//TODO: Consider to enable for non-touch
 					//Calculate height of all inserted items, and stop
 					//insertion when visible area of list is full.
-					int itemHeight = ui.articleListWidget->visualItemRect(
-							ui.articleListWidget->item(0)).height();
+					int itemHeight = ui.articleListView->visualItemRect(
+							ui.articleListView->item(0)).height();
 					int
 							articleListWidgetHeight =
-									ui.articleListWidget->maximumViewportSize().height();
-					QListWidgetItem *bottomItem = ui.articleListWidget->item(
+									ui.articleListView->maximumViewportSize().height();
+					QListWidgetItem *bottomItem = ui.articleListView->item(
 							insertedItemsCount - 1);
 					int
 							bottomItemBottom =
-									ui.articleListWidget->visualItemRect(
+									ui.articleListView->visualItemRect(
 											bottomItem).bottom();
 					if ((bottomItemBottom + itemHeight)
 							>= articleListWidgetHeight)
@@ -545,63 +551,65 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 
 		catch (const std::exception& e)
 			{
-			ui.articleListWidget->addItem("Error occured");
+			ui.articleListView->addItem("Error occured");
 			}
 
 		}
 
+*/
 	}
-
+/*
 void WikiOnBoard::articleListSelectPreviousEntry()
 	{
 	//Actually forwarding key basically worked,
 	// as well, but crashing when trying to select item outside of list. (pretty strange)
 	//Anyway, for in future TODO planned to reload list when moving out of list.
-	if (ui.articleListWidget->count() > 0)
+	if (ui.articleListView->->count() > 0)
 		{
-		if (ui.articleListWidget->currentRow() == 0)
+		if (ui.articleListView->currentRow() == 0)
 			{
 
-			QListWidgetItem *item = ui.articleListWidget->currentItem();
+			QListWidgetItem *item = ui.articleListView->currentItem();
 			if (item->data(ArticleIndexRole).toInt() > 0)
 				{
 				populateArticleList(item->data(ArticleTitleRole).toString(), 1,
 						true);
-				ui.articleListWidget->setCurrentRow(
-						ui.articleListWidget->count() - 1);
+				ui.articleListView->setCurrentRow(
+						ui.articleListView->count() - 1);
 				}
 			}
 		else
 			{
-			ui.articleListWidget->setCurrentRow(
-					ui.articleListWidget->currentRow() - 1);
+			ui.articleListView->setCurrentRow(
+					ui.articleListView->currentRow() - 1);
 			}
 		}
-	}
+}
 
 void WikiOnBoard::articleListSelectNextEntry()
 	{
 	//Actually forwarding key basically worked,
 	// as well, but crashing when trying to select item outside of list. (pretty strange)
 	//Anyway, for in future TODO planned to reload list when moving out of list.
-	if (ui.articleListWidget->count() > 0)
+	if (ui.articleListView->count() > 0)
 		{
-		if (ui.articleListWidget->currentRow() == ui.articleListWidget->count()
+		if (ui.articleListView->currentRow() == ui.articleListView->count()
 				- 1)
 			{
 			//TODO check outof bounds
-			QListWidgetItem *item = ui.articleListWidget->currentItem();
+			QListWidgetItem *item = ui.articleListView->currentItem();
 			populateArticleList(item->data(ArticleTitleRole).toString(), 1,
 					false);
-			ui.articleListWidget->setCurrentRow(0);
+			ui.articleListView->setCurrentRow(0);
 			}
 		else
 			{
-			ui.articleListWidget->setCurrentRow(
-					ui.articleListWidget->currentRow() + 1);
+			ui.articleListView->setCurrentRow(
+					ui.articleListView->currentRow() + 1);
 			}
 		}
 	}
+*/
 void WikiOnBoard::articleListOpenArticle(QListWidgetItem * item)
 	{
 	openArticleAction->trigger();
@@ -609,7 +617,7 @@ void WikiOnBoard::articleListOpenArticle(QListWidgetItem * item)
 
 void WikiOnBoard::articleListOpenArticle()
 	{
-	QListWidgetItem *item = ui.articleListWidget->currentItem();
+	QListWidgetItem *item = NULL; //TODOui.articleListView->currentItem();
 	if (item != NULL)
 		{		
 		ui.textBrowser->setSource(item->data(ArticleUrlRole).toUrl());
@@ -962,18 +970,19 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 
 			{
 			case Qt::Key_Up:
-				/*
+			
 				 remappedKeyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Up,
 				 Qt::NoModifier, false, 1);
-				 QApplication::sendEvent(ui.articleListWidget, remappedKeyEvent);
-				 */
-				articleListSelectPreviousEntry();
+				 QApplication::sendEvent(ui.articleListView, remappedKeyEvent);
+				 // TODO: check whether remapping works with model view. (with listviewwidget problematic)
+				//articleListSelectPreviousEntry();
 				break;
 			case Qt::Key_Down:
-				/*remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
+				remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
 				 Qt::Key_Down, Qt::NoModifier, false, 1);
-				 QApplication::sendEvent(ui.articleListWidget, remappedKeyEvent);*/
-				articleListSelectNextEntry();
+				 QApplication::sendEvent(ui.articleListView, remappedKeyEvent);
+				 // TODO: check whether remapping works with model view. (with listviewwidget problematic)
+				//articleListSelectNextEntry();
 				break;
 			case Qt::Key_Left:
 				remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
@@ -1005,28 +1014,28 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 
 void WikiOnBoard::resizeEvent(QResizeEvent * event)
 	{
-	
+	/*
 	if (ui.stackedWidget->currentWidget() == ui.indexPage)
 		{
-		if (ui.articleListWidget->count() > 0)
+		if (ui.articleListView->count() > 0)
 			{
 			//Current item (if none first) is new first item of list. 
 			// TODO: Keeping offset would be nicer, but more complex 
 			//      in case new size is smaller than offset.
-			int itemIndex = ui.articleListWidget->currentRow();
+			int itemIndex = ui.articleListView->currentRow();
 			if (itemIndex < 0) {
 				itemIndex = 0;
 				}
-			QListWidgetItem *item = ui.articleListWidget->item(itemIndex);
+			QListWidgetItem *item = ui.articleListView->item(itemIndex);
 			if (item->data(ArticleIndexRole).toInt() > 0)
 				{
 				populateArticleList(item->data(ArticleTitleRole).toString(), 0,
 						false);
-				ui.articleListWidget->setCurrentRow(0);
+				ui.articleListView->setCurrentRow(0);
 				}
 			}
 
-		}
+		}*/
 	}
 
 void WikiOnBoard::toggleFullScreen()
@@ -1123,18 +1132,45 @@ void WikiOnBoard::hideWaitCursor()
             QApplication::setNavigationMode(Qt::NavigationModeNone);
         #endif
         }
-
+/*
 void WikiOnBoard::approachingEndOfList(bool up) {
 	qDebug()<< "WikiOnBoard::approachingEndOfList";
 	if (up) {
-		populateArticleList(ui.articleListWidget->item(0)->data(ArticleTitleRole).toString(),0,true, true);
+		populateArticleList(ui.articleListView->item(0)->data(ArticleTitleRole).toString(),0,true, true);
 	} else {
-		qDebug()<< "ui.articleListWidget->count()"<< ui.articleListWidget->count();
-		qDebug()<< "ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString()"<<ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString();
-		qDebug()<< "ui.articleListWidget->item(ui.articleListWidget->count()-1)->text(): "<<ui.articleListWidget->item(ui.articleListWidget->count()-1)->text();
+		qDebug()<< "ui.articleListView->count()"<< ui.articleListView->count();
+		qDebug()<< "ui.articleListView->item(ui.articleListView->count()-1)->data(ArticleTitleRole).toString()"<<ui.articleListView->item(ui.articleListView->count()-1)->data(ArticleTitleRole).toString();
+		qDebug()<< "ui.articleListView->item(ui.articleListView->count()-1)->text(): "<<ui.articleListView->item(ui.articleListView->count()-1)->text();
 				
-		populateArticleList(ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString(),0,false, true);
+		populateArticleList(ui.articleListView->item(ui.articleListView->count()-1)->data(ArticleTitleRole).toString(),0,false, true);
 	
 	}	
 }
+*/
+
+ArticleListModel::ArticleListModel(QObject* parent): QAbstractListModel(parent) {
+	zimFile = NULL;
+}
+
+int ArticleListModel::rowCount ( const QModelIndex & parent) const {
+	int articleCount=0;
+	if (zimFile!=NULL) {
+		articleCount=zimFile->getCountArticles();
+		articleCount=100;
+	}
+	qDebug() << "ArticleListModel::rowCount = "<<articleCount;
+	return articleCount;
+}
+QVariant ArticleListModel::data ( const QModelIndex & index, int role) const {
+	qDebug() << "ArticleListModel::data(index ="<<index<<", role="<< role;
+	if (zimFile!=NULL) {
+		if (role==Qt::DisplayRole) {
+			return QVariant("Todo"+index.row());
+		}
+	}
+}
+
+
+
+
 
