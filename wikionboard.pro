@@ -1,4 +1,4 @@
-VERSION = 0.0.17
+VERSION = 0.0.19
 TEMPLATE = app
 TARGET = WikiOnBoard
 QT += core \
