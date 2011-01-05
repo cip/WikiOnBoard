@@ -81,6 +81,7 @@ private:
     QAction* aboutQtAction;
     zim::File* zimFile;
     int zoomLevel;
+    bool hasTouchScreen;
     QString getArticleTextByUrl(QString articleUrl);   
     QString getArticleTextByIdx(QString articleIdx);         
     QString getArticleTextByTitle(QString articleTitle);

@@ -69,11 +69,11 @@
 		case QtScrollEvent::Scroll:
 			{
 			QtScrollEvent *se = static_cast<QtScrollEvent *> (e);
-			qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
-					<< " contentPos: " << se->contentPos();
+		//	qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
+			//		<< " contentPos: " << se->contentPos();
 
 			QWidget *w = static_cast<QWidget *> (o);
-			qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
+			//qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
 
 			if (w->parentWidget())
 				{
@@ -81,19 +81,21 @@
 					{
 					if (lw->viewport() == w)
 						{
-						qDebug() << "ArticleList: vmaximum "
-								<< lw->verticalScrollBar()->maximum();
+					//	qDebug() << "ArticleList: vmaximum "
+						//		<< lw->verticalScrollBar()->maximum();
 						if (lw->verticalScrollBar()->maximum() * 0.9
 								< se->contentPos().y())
 							{
 							if (QtScroller::scroller(w)->velocity().y() > 0.0)
-								emit approachingEndOfList(false);
+								//emit approachingEndOfList(false);
+								approachingEndOfList(false);
 							}
 						else if (lw->verticalScrollBar()->minimum()
 								< se->contentPos().y() / 0.9)
 							{
 							if (QtScroller::scroller(w)->velocity().y() < 0.0)
-								emit approachingEndOfList(true);
+								//emit approachingEndOfList(true);
+								approachingEndOfList(true);
 							}
 
 						}
@@ -116,8 +118,18 @@
 WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	QMainWindow(parent), m_bgc(bgc)
 	{
-	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 28 scroller pulled 19.12.2010;removed (now really) custom settings \n";
-
+	//For now assume that: S60 rd 3dition devices have no touch screen, all other devices have touch screen.
+	// TODO Consider changing to QSystemDeviceInfo when Qt Mobility available for all supported devices
+	hasTouchScreen = true;
+	#ifdef Q_OS_SYMBIAN	
+	if ((QSysInfo::s60Version()==QSysInfo::SV_S60_3_1) || (QSysInfo::s60Version()==QSysInfo::SV_S60_3_2)) {
+		qDebug() << "S60 3rd edition device. Assume that no touchscreen is available.";
+		hasTouchScreen = false;
+	}
+	#endif
+	
+	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 29 call instead of signal\n";
+	qDebug() << " hasTouchScreen: "<<hasTouchScreen;
 	zimFile = NULL; //zimFile unitialized until,
 	//file loaded (either stored filename from last run,
 	// or user loads file). To allow test for == NULL, explicitlz
@@ -134,7 +146,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 		}
 
 	ui.setupUi(this);
-	setStatusBar(0); //Remove status bar to increase useable screen sizz.
+	setStatusBar(0); //Remove status bar to increase useable screen size.
 	//TODO still not perfect, quite some distance between
 	//  widgeht and menu.
 
@@ -239,7 +251,6 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 			SIGNAL(triggered())); //Automatically search after text changed
 
 
-	//ui.findButton->addAction(searchArticleAction);
 	ui.articleName->addAction(searchArticleAction);
 	//Capitalize first letter. In particular important as zimlib
 	// search is case-sensitive and in wikipedia most articles start with
@@ -435,6 +446,7 @@ void WikiOnBoard::populateArticleList() {
 void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 		bool direction_up, bool noDelete)
 	{
+	qDebug() << "in populateArticleList. articleName:  "<<articleName << ". ignoreFirstN: "<<ignoreFirstN <<". direction_up:"<< direction_up<<".noDelete: "<<noDelete; 
 	if (zimFile != NULL)
 		{
 		try
@@ -498,13 +510,14 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 					++it;
 					}
 				i++;
-				//FIXME
-				if (insertedItemsCount >= 100) {
-				 break;
-				}
-					
-				/*
-				if (insertedItemsCount > 0)
+				if (hasTouchScreen)
+					{
+					if (insertedItemsCount >= 100)
+						{
+						break;
+						}
+					}
+				else if (insertedItemsCount > 0)
 					{
 					//Non-Touch: Only fill visible area, no scrolling
 					//TODO: Consider to enable for non-touch
@@ -515,15 +528,18 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 					int
 							articleListWidgetHeight =
 									ui.articleListWidget->maximumViewportSize().height();
-					QListWidgetItem *bottomItem = ui.articleListWidget->item(insertedItemsCount - 1);
-					int bottomItemBottom = ui.articleListWidget->visualItemRect(
-							bottomItem).bottom();
+					QListWidgetItem *bottomItem = ui.articleListWidget->item(
+							insertedItemsCount - 1);
+					int
+							bottomItemBottom =
+									ui.articleListWidget->visualItemRect(
+											bottomItem).bottom();
 					if ((bottomItemBottom + itemHeight)
 							>= articleListWidgetHeight)
 						{
 						break;
 						}
-					}*/
+					}
 				}				
 			} 
 
@@ -648,18 +664,21 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 		//Move cursor to start of file
 		cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
 		ui.textBrowser->setTextCursor(cursor);
-		//FIXME: This is a really ugly hack for the nextprevious link problem
-		// described in keyEventHandler. Note that for links with anchor this 
-		// does not work
-		QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-				Qt::Key_Up, Qt::NoModifier, false, 1);
-		QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
-		remappedKeyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
-				Qt::NoModifier, false, 1);
-		QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
+		if (hasTouchScreen == false)
+			{
+			//FIXME: This is a really ugly hack for the nextprevious link problem
+			// described in keyEventHandler. Note that for links with anchor this 
+			// does not work
+			// On touchscreen devices workaround is not performed.
+			QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
+					Qt::Key_Up, Qt::NoModifier, false, 1);
+			QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
+			remappedKeyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
+					Qt::NoModifier, false, 1);
+			QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
 
+			}
 		}
-
 	/// ui.stackedWidget->setCurrentWidget(ui.articlePage);
         //qDebug() << "Loading article into textview (gotoAnchor/moveposition) took" << timer.restart() << " milliseconds";
 
@@ -1110,6 +1129,10 @@ void WikiOnBoard::approachingEndOfList(bool up) {
 	if (up) {
 		populateArticleList(ui.articleListWidget->item(0)->data(ArticleTitleRole).toString(),0,true, true);
 	} else {
+		qDebug()<< "ui.articleListWidget->count()"<< ui.articleListWidget->count();
+		qDebug()<< "ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString()"<<ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString();
+		qDebug()<< "ui.articleListWidget->item(ui.articleListWidget->count()-1)->text(): "<<ui.articleListWidget->item(ui.articleListWidget->count()-1)->text();
+				
 		populateArticleList(ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString(),0,false, true);
 	
 	}	
