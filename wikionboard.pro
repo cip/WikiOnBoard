@@ -1,4 +1,6 @@
-VERSION = 0.0.19
+
+VERSION = 0.0.25
+DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 TARGET = WikiOnBoard
 QT += core \

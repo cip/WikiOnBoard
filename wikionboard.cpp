@@ -55,6 +55,12 @@
 #include <eikbtgpc.h>       // symbian: LIBS += -lavkon -leikcoctl
 #endif
 
+//Get VERSION from qmake .pro file as string 
+#define __VER1M__(x) #x
+#define __VERM__(x) __VER1M__(x)
+#define __APPVERSIONSTRING__ __VERM__(__APPVERSION__)
+
+
 //To update article list during scrolling. FIXME not working very well yet
     bool ArticleListFilter::eventFilter(QObject *o, QEvent *e)
 	{
@@ -128,7 +134,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	}
 	#endif
 	
-	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 29 call instead of signal\n";
+	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 34master fix s3 open file (*.zim, *.zima). Version: __APPVERSIONSTRING__\n";
 	qDebug() << " hasTouchScreen: "<<hasTouchScreen;
 	zimFile = NULL; //zimFile unitialized until,
 	//file loaded (either stored filename from last run,
@@ -732,10 +738,14 @@ void WikiOnBoard::openZimFileDialog()
             QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
         #endif
 	//Enable virtual mouse cursor on non-touch devices, as 
-	// else file dialog not useable 
+	// else file dialog not useable
+            
+    //Extension is .zim for single file zim files,
+    // or .zima for splitted zim files. (.zima is extension
+    // of first file)
 	QString file = QFileDialog::getOpenFileName(this,
 			"Choose eBook in zim format to open", path,
-			"eBooks (*.zim*);;All files (*.*)");
+			"eBooks (*.zim *.zima);;All files (*.*)");
         #if defined(Q_OS_SYMBIAN)
             QApplication::setNavigationMode(Qt::NavigationModeNone);
         #endif
@@ -813,12 +823,19 @@ void WikiOnBoard::gotoHomepage()
 		}
 	}
 
+
 void WikiOnBoard::about()
 	{
 	QString homepageUrl(tr("About"));
 	QMessageBox msgBox;
 	msgBox.setText(tr("About"));
-	msgBox.setInformativeText(tr("WikiOnBoard\nAuthor: Christian Pühringer\nUses zimlib (openzim.org) and liblzma."));
+	QString date = QString::fromLocal8Bit(__DATE__);
+	QString version = QString::fromLocal8Bit(__APPVERSIONSTRING__);
+	msgBox.setInformativeText(tr("WikiOnBoard\n"
+			 "Version ")+version+tr("\n"
+			 "Author: Christian Pühringer\n"  
+			 "Uses zimlib (openzim.org) and liblzma.\n"
+			 "Build date: ")+date);
 	msgBox.setStandardButtons(QMessageBox::Ok);
 	msgBox.setDefaultButton(QMessageBox::Ok);
     int ret = msgBox.exec();
