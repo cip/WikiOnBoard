@@ -134,7 +134,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	}
 	#endif
 	
-	qDebug() << "WikiOnBoard::WikiOnBoard. Debug version: 34master fix s3 open file (*.zim, *.zima). Version: __APPVERSIONSTRING__\n";
+	qDebug() << "WikiOnBoard::WikiOnBoard. Use kineticscroller version 2011/04/21. Version: __APPVERSIONSTRING__\n";
 	qDebug() << " hasTouchScreen: "<<hasTouchScreen;
 	zimFile = NULL; //zimFile unitialized until,
 	//file loaded (either stored filename from last run,
