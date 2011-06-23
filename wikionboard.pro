@@ -47,7 +47,10 @@ symbian:LIBS += -lavkon \
     -leikcoctl \
     -lcone
 symbian:TARGET.UID3 = 0xA89FA6F6
-
+symbian:
+{
+    ICON = wikionboard.svg
+}
 #Maemo
 INCLUDEPATH += ../zimlib/include
 
