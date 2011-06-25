@@ -76,7 +76,8 @@ private:
     QAction* openZimFileDialogAction;
     QAction* downloadZimFileAction;
     QMenu *helpMenu;
-    QAction* gotoHomepageAction; 
+    QAction* gotoHomepageAction;
+    QAction* aboutCurrentZimFileAction;
     QAction* aboutAction;
     QAction* aboutQtAction;
     zim::File* zimFile;
@@ -85,6 +86,7 @@ private:
     QString getArticleTextByUrl(QString articleUrl);   
     QString getArticleTextByIdx(QString articleIdx);         
     QString getArticleTextByTitle(QString articleTitle);
+    QString getMetaData(QString string);
     QUrl currentlyViewedUrl;    
     void openArticleByUrl(QUrl url);
     void populateArticleList(); 
@@ -115,6 +117,7 @@ private slots:
      void openZimFileDialog();
      void downloadZimFile();
      void gotoHomepage();
+     void aboutCurrentZimFile();
      void about();
      
      void articleListOpenArticle(); 	  

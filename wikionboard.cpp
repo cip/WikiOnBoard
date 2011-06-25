@@ -235,7 +235,9 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	gotoHomepageAction = new QAction(tr("Goto Homepage"), this);
 	connect(gotoHomepageAction, SIGNAL(triggered()), this,
 			SLOT(gotoHomepage()));
-	
+	aboutCurrentZimFileAction = new QAction(tr("About current zim File"), this);
+	connect(aboutCurrentZimFileAction, SIGNAL(triggered()), this, 
+			SLOT(aboutCurrentZimFile()));
 	aboutAction = new QAction(tr("About"), this);
 	connect(aboutAction, SIGNAL(triggered()), this,
 			SLOT(about()));
@@ -460,8 +462,12 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 			//Zim index is (appearantly?) UTF8 encoded. Therefore use utf8 functions to access
 			// it.
 			std::string articleNameStdStr = std::string(articleName.toUtf8());
+			//Find article, if not an exact match,  Iterator may point to end, or to 
+			// element of other namespace. (like image (I) or metadata (M))		
+			//FIXME
 			zim::File::const_iterator it = zimFile->findByTitle('A',
 					articleNameStdStr);
+			
 			if (!direction_up) {
 				// If populating in reverse direction, don´t clear items now
 				// but instead each time a new item is added. This avoids
@@ -823,6 +829,51 @@ void WikiOnBoard::gotoHomepage()
 		}
 	}
 
+QString WikiOnBoard::getMetaData(QString key) {
+	std::string keyStdStr = std::string(key.toUtf8());				
+	if (zimFile!=NULL) {
+		std::pair<bool, zim::File::const_iterator> r = zimFile->findxByTitle('M', keyStdStr);
+		if (r.first) {
+			zim::Blob blob;					
+			zim::Article a =*r.second;
+			blob = a.getData();
+			return QString::fromUtf8(blob.data(), blob.size());
+		} else {
+			
+			return QString(tr("-"));
+		}			
+	} else {
+		return QString("");
+	}
+}
+
+void WikiOnBoard::aboutCurrentZimFile()
+	{
+	QMessageBox msgBox;
+		
+	msgBox.setText(tr("About Current Zimfile"));
+	if (zimFile==NULL) {
+		msgBox.setInformativeText(tr("No zim file is currently opened"));	
+	} else {
+	
+	msgBox.setInformativeText(tr(""
+			 "Current zim file: ")+QString::fromStdString(zimFile->getFilename())+tr("\n"
+			 "Articles: ")+QString::number(zimFile->getNamespaceCount('A'))+tr(""
+			 ", Images: ")+QString::number(zimFile->getNamespaceCount('I'))+tr("\n"
+			 "Title:")+getMetaData("Title")+tr("\n"
+			 "Creator:")+getMetaData("Creator")+tr("\n"
+			 "Date:")+getMetaData("Date")+tr("\n"
+			 "Description:")+getMetaData("Description")+tr("\n"
+			 "Language:")+getMetaData("Language")+tr("\n"
+			 "Relation:")+getMetaData("Relation")+tr("\n"
+			 "Source:")+getMetaData("Source"));
+	 //TODO: check hash, uid?
+	}		
+	msgBox.setStandardButtons(QMessageBox::Ok);
+	msgBox.setDefaultButton(QMessageBox::Ok);
+    int ret = msgBox.exec();
+  }
+
 
 void WikiOnBoard::about()
 	{
@@ -885,6 +936,7 @@ void WikiOnBoard::switchToIndexPage()
 	
 	helpMenu = new QMenu(tr("Help", "Help menu"));
 	helpMenu->addAction(gotoHomepageAction);
+	helpMenu->addAction(aboutCurrentZimFileAction);
 	helpMenu->addAction(aboutAction);
 	helpMenu->addAction(aboutQtAction);
 			
