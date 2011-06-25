@@ -38,6 +38,7 @@
 #include <QScrollBar>
 #include <QMessageBox>
 #include <QStringBuilder>
+#include <QTextCodec>
 //"Official" kinetic scrolling. (Backport from Qt 4.8) 
 //	See http://qt.gitorious.org/qt-labs/kineticscroller/commits/solution and
 //		http://bugreports.qt.nokia.com/browse/QTBUG-9054?focusedCommentId=130700&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#action_130700
@@ -134,17 +135,22 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	}
 	#endif
 	
-	qDebug() << "WikiOnBoard::WikiOnBoard. Version: __APPVERSIONSTRING__\n";
+	qDebug() << "WikiOnBoard::WikiOnBoard. Version: " << QString::fromLocal8Bit(__APPVERSIONSTRING__);
 	qDebug() << " hasTouchScreen: "<<hasTouchScreen;
+	
+	//TODO consider removal. stdString only used for open (zimfile filename) and exceptions messages. For exeception messages
+	//   default (latin8) probably better, and for open could be done locally. 
+	QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale()); 
+	qDebug() << "Set coded for c strings  (affects basically only toStdString and fromStdString) to QTextCodec::codecForLocale, that is: " << QTextCodec::codecForCStrings()->name();
 	zimFile = NULL; //zimFile unitialized until,
 	//file loaded (either stored filename from last run,
 	// or user loads file). To allow test for == NULL, explicitlz
 	// set to null. (at least in symbian emulator else 0xCCCCCCCC
 
 	QSettings settings;
-	settings.beginGroup("ZimFile");
+	settings.beginGroup(QLatin1String("ZimFile"));
 
-	QString lastZimFile = settings.value("lastZimFile").toString();
+	QString lastZimFile = settings.value(QLatin1String("lastZimFile")).toString();
 	settings.endGroup();
 	if (!lastZimFile.isEmpty())
 		{
@@ -156,9 +162,9 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	//TODO still not perfect, quite some distance between
 	//  widgeht and menu.
 
-	settings.beginGroup("UISettings");
-	int zoomInit = settings.value("zoomLevel", -1).toInt();
-	bool fullScreen = settings.value("fullScreen", false).toBool();
+	settings.beginGroup(QLatin1String("UISettings"));
+	int zoomInit = settings.value(QLatin1String("zoomLevel"), -1).toInt();
+	bool fullScreen = settings.value(QLatin1String("fullScreen"), false).toBool();
 	settings.endGroup();
 	QTextDocument* defaultStyleSheetDocument = new QTextDocument(this);
 	//Override link color. At least on symbian per default textbrowser uses phone color scheme which is
@@ -167,7 +173,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	// on N97...) is changed here. 
 	// Only do this one, and not on every article load as this
 	// appearantly affects zoom level. 
-	defaultStyleSheetDocument->setDefaultStyleSheet("a:link{color: blue}");	
+	defaultStyleSheetDocument->setDefaultStyleSheet(QLatin1String("a:link{color: blue}"));	
 	ui.textBrowser->setDocument(defaultStyleSheetDocument);		
 	zoomLevel = 0;
 	zoom(zoomInit);
@@ -223,7 +229,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 		{
 		showMaximized();
 		}
-	currentlyViewedUrl = QUrl("");
+	currentlyViewedUrl = QUrl(QLatin1String(""));
 
 	openZimFileDialogAction = new QAction(tr("Open Zimfile"), this);
 	connect(openZimFileDialogAction, SIGNAL(triggered()), this,
@@ -248,7 +254,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	//Define search action (populates article list view with articles found searching for article
 	//name line edit.
 	// 
-	searchArticleAction = new QAction("Search Article", this);
+	searchArticleAction = new QAction(tr("Search Article"), this);
 
 	connect(searchArticleAction, SIGNAL(triggered()), this,
 			SLOT(searchArticle()));
@@ -270,7 +276,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	// sets it to the desired Abc mode.
 	ui.articleName->setInputMethodHints(Qt::ImhPreferUppercase); 
 	ui.articleName->setInputMethodHints(Qt::ImhNone);
-	clearSearchAction = new QAction("Clear", this);
+	clearSearchAction = new QAction(tr("Clear"), this);
 	connect(clearSearchAction, SIGNAL(triggered()), ui.articleName,
 				SLOT(clear()));
 	connect(clearSearchAction, SIGNAL(triggered()), searchArticleAction,
@@ -278,7 +284,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 
 	this->addAction(clearSearchAction);
 		
-	openArticleAction = new QAction("Open Article", this);
+	openArticleAction = new QAction(tr("Open Article"), this);
 
 	connect(openArticleAction, SIGNAL(triggered()), this,
 			SLOT(articleListOpenArticle()));
@@ -292,7 +298,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	//Open article when clicked or return key clicked. Note that for keypad phones return (amongst others) is
 	// forwarded to articleListWidget, so that this works even if it has not focus.
 
-	switchToIndexPageAction = new QAction("Switch to index page", this);
+	switchToIndexPageAction = new QAction(tr("Switch to index page"), this);
 	connect(switchToIndexPageAction, SIGNAL(triggered()), this,
 			SLOT(switchToIndexPage()));
 	this->addAction(switchToIndexPageAction);
@@ -300,12 +306,12 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	//	ui.actionSearch->setSoftKeyRole(QAction::NegativeSoftKey); //Right softkey: return to search page
 	///	ui.articlePage->addAction(ui.actionSearch);
 
-	backArticleHistoryAction = new QAction("Back", this);
+	backArticleHistoryAction = new QAction(tr("Back"), this);
 	connect(backArticleHistoryAction, SIGNAL(triggered()), this,
 			SLOT(backArticleHistoryOrIndexPage()));
 	this->addAction(backArticleHistoryAction); 
 	
-	toggleFullScreenAction = new QAction("Toggle Fullscreen", this); //TODO shortcut
+	toggleFullScreenAction = new QAction(tr("Toggle Fullscreen"), this); //TODO shortcut
 	toggleFullScreenAction->setShortcutContext(Qt::ApplicationShortcut); //Or Qt::WindowShortcut?
 	connect(toggleFullScreenAction, SIGNAL(triggered()), this,
 			SLOT(toggleFullScreen()));
@@ -342,24 +348,24 @@ void WikiOnBoard::openZimFile(QString zimFileName)
 	{
 	try
 		{
-		QRegExp rx("(.*\\.zim)\\D\\D");
+		QRegExp rx(QLatin1String("(.*\\.zim)\\D\\D"));
 	    rx.setCaseSensitivity(Qt::CaseInsensitive);
-	    zimFileName.replace(rx,"\\1");
-		std::string zimfilename = zimFileName.toStdString(); //
+	    zimFileName.replace(rx,QLatin1String("\\1"));
+		std::string zimfilename = zimFileName.toStdString(); 
 		zimFile = new zim::File(zimfilename);
 		}
 	catch (const std::exception& e)
 		{
 			QMessageBox::StandardButton reply;
 		     reply = QMessageBox::critical(this, tr("Error on opening zim file"),
-		                                     e.what(),
+		                                     QString::fromStdString(e.what()),
 		                                     QMessageBox::Ok);		 
 		}
 	}
 
 QString WikiOnBoard::getArticleTextByIdx(QString articleIdx)
 	{
-	QString articleText = QString("ERROR");
+	QString articleText = QLatin1String("ERROR");
 	zim::Blob blob;
 	try
 		{
@@ -375,7 +381,7 @@ QString WikiOnBoard::getArticleTextByIdx(QString articleIdx)
 		}
 	catch (const std::exception& e)
 		{
-		return e.what();
+		return QString::fromStdString(e.what());
 		}
 
 	return articleText;
@@ -383,12 +389,16 @@ QString WikiOnBoard::getArticleTextByIdx(QString articleIdx)
 
 QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 	{
-	QString articleText = QString("ERROR");
+	QString articleText = QLatin1String("ERROR");
 	zim::Blob blob;
 	try
 		{
 		std::string articleNameStdStr = std::string(articleUrl.toUtf8());
 		std::string articleNameDecodedStdStr = zim::urldecode(articleNameStdStr);
+		//TODO: fromStdString in debug is not a really good idea, because this
+		// will use the encoding set for c strings, and not utf8. As only
+		// debug output not really important, but keep this in mind when
+		// reading debug output. 
 		qDebug() << "Open article by URL.\n QString: " << articleUrl
 				<< "\n std:string: " << QString::fromStdString(articleNameStdStr)
 				<< "\n decoded: " << QString::fromStdString(
@@ -412,7 +422,7 @@ QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 		}
 	catch (const std::exception& e)
 		{
-		return e.what();
+		return QString::fromStdString(e.what());
 		}
 
 	return articleText;
@@ -420,7 +430,7 @@ QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 
 QString WikiOnBoard::getArticleTextByTitle(QString articleTitle)
 	{
-	QString articleText = QString("ERROR");
+	QString articleText = QLatin1String("ERROR");
 	zim::Blob blob;
 	try
 		{
@@ -445,7 +455,7 @@ QString WikiOnBoard::getArticleTextByTitle(QString articleTitle)
 		}
 	catch (const std::exception& e)
 		{
-		return e.what();
+		return QString::fromStdString(e.what());
 		}
 
 	return articleText;
@@ -564,7 +574,7 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 
 		catch (const std::exception& e)
 			{
-			ui.articleListWidget->addItem("Error occured");
+			ui.articleListWidget->addItem(QLatin1String("Error occured"));
 			}
 
 		}
@@ -681,10 +691,10 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 			// does not work
 			// On touchscreen devices workaround is not performed.
 			QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-					Qt::Key_Up, Qt::NoModifier, false, 1);
+					Qt::Key_Up, Qt::NoModifier, QString(), false, 1);
 			QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
 			remappedKeyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
-					Qt::NoModifier, false, 1);
+					Qt::NoModifier, QString(), false, 1);
 			QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
 
 			}
@@ -696,7 +706,7 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 
 void WikiOnBoard::on_textBrowser_anchorClicked(QUrl url)
 	{
-	if (!QString::compare(url.scheme(), "http", Qt::CaseInsensitive))
+	if (!QString::compare(url.scheme(), QLatin1String("http"), Qt::CaseInsensitive))
 		{
 		//External link, open browser
 		QDesktopServices::openUrl(url);
@@ -748,8 +758,8 @@ void WikiOnBoard::openZimFileDialog()
     // or .zima for splitted zim files. (.zima is extension
     // of first file)
 	QString file = QFileDialog::getOpenFileName(this,
-			"Choose eBook in zim format to open", path,
-			"eBooks (*.zim *.zima);;All files (*.*)");
+			tr("Choose eBook in zim format to open"), path,
+			tr("eBooks (*.zim *.zima)"));
         #if defined(Q_OS_SYMBIAN)
             QApplication::setNavigationMode(Qt::NavigationModeNone);
         #endif
@@ -758,8 +768,8 @@ void WikiOnBoard::openZimFileDialog()
 		openZimFile(file);
 		QSettings settings;
 		// Store this file to settings, and automatically open next time app is started
-		settings.beginGroup("ZimFile");
-		settings.setValue("lastZimFile", file);
+		settings.beginGroup(QLatin1String("ZimFile"));
+		settings.setValue(QLatin1String("lastZimFile"), file);
 		settings.endGroup();
 		ui.textBrowser->clearHistory();
 		populateArticleList();
@@ -769,21 +779,19 @@ void WikiOnBoard::openZimFileDialog()
 
 void WikiOnBoard::downloadZimFile()
 	{
-	QString zimDownloadUrl(tr("http://openzim.org/ZIM_File_Archive"));
+	QString zimDownloadUrl(tr("http://openzim.org/ZIM_File_Archive","Change link to page with localized zim files if available."));
 	QMessageBox msgBox;
 	msgBox.setText(tr("Download ZIM file"));
-	msgBox.setInformativeText(
-			tr("Open a webbrowser to download zim files from ")
-					% zimDownloadUrl
-					% tr(
-							"?\n"
-								"	Note that zim files may be very large and thus it can be expensive to download one over the mobile network. "
-								"  You should consider download from a desktop system"
-								"  and transfer the file later to the memory card of your phone.\n"
-								"  Furthermore, note that current Symbian phones do not support files which"
-								"  are larger than 2 GB. You cannot download such files directly on the phone,"
-								"  but you have to download on a PC and follow the instructions on"
-								"  http://wiki.github.com/cip/WikiOnBoard/ to split them."));
+	QString informativeText = QString(tr("Open a webbrowser to download zim files from %1?\n"
+								"Note that zim files may be very large and thus it can be"
+								"expensive to download one over the mobile network. "
+								"You should consider download from a desktop system"
+								"and transfer the file later to the memory card of your phone.\n"
+								"Furthermore, note that current Symbian phones do not support files which"
+								"are larger than 2 GB. You cannot download such files directly on the phone,"
+								"but you have to download on a PC and follow the instructions on"
+								"to split them.")).arg(zimDownloadUrl,tr("http://wiki.github.com/cip/WikiOnBoard/","Change link to localized webpage if/when available."));
+	msgBox.setInformativeText(informativeText);
 	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 	msgBox.setDefaultButton(QMessageBox::Ok);
         #if defined(Q_OS_SYMBIAN)
@@ -837,10 +845,10 @@ std::pair<bool, QString> WikiOnBoard::getMetaData(QString key) {
 			blob = a.getData();			
 			return std::pair<bool, QString>(true,  QString::fromUtf8(blob.data(), blob.size()));
 		} else {			
-			return std::pair<bool, QString>(false, QString(""));
+			return std::pair<bool, QString>(false, QLatin1String(""));
 		}			
 	} else {
-		return std::pair<bool, QString>(false, QString(""));
+		return std::pair<bool, QString>(false, QLatin1String(""));
 	}
 }
 
@@ -853,8 +861,8 @@ QString WikiOnBoard::byteArray2HexQString(const QByteArray & byteArray)
 {
     QString hexString;
     QTextStream textStream(&hexString);
-    textStream << "0x" 
-             << hex << qSetFieldWidth(2) << qSetPadChar('0') << left;
+    textStream << QLatin1String("0x") 
+             << hex << qSetFieldWidth(2) << qSetPadChar(QLatin1Char('0')) << left;
     for (int i = 0; i < byteArray.size(); i++)
     {
         textStream << static_cast<unsigned char>(byteArray.at(i));
@@ -891,13 +899,13 @@ void WikiOnBoard::aboutCurrentZimFile()
 			 "Description: %5\n"					 			 
 			 "Language: %6\n" 
 			 "Relation: %7\n")).arg(
-					 getMetaDataString("Title"),
-					 getMetaDataString("Creator"),
-					 getMetaDataString("Date"),
-					 getMetaDataString("Source"),
-					 getMetaDataString("Description"),
-					 getMetaDataString("Language"),
-					 getMetaDataString("Relation")
+					 getMetaDataString(QLatin1String("Title")),
+					 getMetaDataString(QLatin1String("Creator")),
+					 getMetaDataString(QLatin1String("Date")),
+					 getMetaDataString(QLatin1String("Source")),
+					 getMetaDataString(QLatin1String("Description")),
+					 getMetaDataString(QLatin1String("Language")),
+					 getMetaDataString(QLatin1String("Relation"))
 			  )			  
 	);	
 	informativeText.append(QString(tr(""
@@ -910,30 +918,47 @@ void WikiOnBoard::aboutCurrentZimFile()
 	msgBox.setInformativeText(informativeText);
 	msgBox.setStandardButtons(QMessageBox::Ok);
 	msgBox.setDefaultButton(QMessageBox::Ok);
-    int ret = msgBox.exec();
+	#if defined(Q_OS_SYMBIAN)
+		QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+	#endif
+	//Enable virtual mouse cursor on non-touch devices, as
+	// else no scrolling possible. (TODO: change this so that
+	// scrolling works with cursor keys. Unclear why not working out of the box)
+	int ret = msgBox.exec();
+	#if defined(Q_OS_SYMBIAN)
+		QApplication::setNavigationMode(Qt::NavigationModeNone);
+	#endif
   }
 
 
 void WikiOnBoard::about()
 	{
-	QString homepageUrl(tr("About"));
 	QMessageBox msgBox;
 	msgBox.setText(tr("About"));
-	QString date = QString::fromLocal8Bit(__DATE__);
-	QString version = QString::fromLocal8Bit(__APPVERSIONSTRING__);
 	QString text = QString (tr(""
 			"WikiOnBoard %1\n"
 			"Author: %2\n"
 			"Uses zimlib (openzim.org) and liblzma.\n"
 			"Build date: %3\n")).arg(
-					version,
-					"Christian Pühringer",
-					date
+					QString::fromLocal8Bit(__APPVERSIONSTRING__),
+					QString::fromUtf8("Christian P\252hringer"),
+					QString::fromLocal8Bit(__DATE__)
 	);
+	//TODO: Why are all other msgBox basically fullscreen, but this one is
+	//not even large enough to display complete text without scrolling?
 	msgBox.setInformativeText(text);
 	msgBox.setStandardButtons(QMessageBox::Ok);
-	msgBox.setDefaultButton(QMessageBox::Ok);
-    int ret = msgBox.exec();
+	msgBox.setDefaultButton(QMessageBox::Ok);    
+	#if defined(Q_OS_SYMBIAN)
+		QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+	#endif
+	//Enable virtual mouse cursor on non-touch devices, as
+	// else no scrolling possible. (TODO: change this so that
+	// scrolling works with cursor keys. Unclear why not working out of the box)
+	int ret = msgBox.exec();
+	#if defined(Q_OS_SYMBIAN)
+		QApplication::setNavigationMode(Qt::NavigationModeNone);
+	#endif
     }
 
 //Remove all actions from menu, required for switching
@@ -1090,12 +1115,12 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 				break;
 			case Qt::Key_Left:
 				remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-						Qt::Key_Left, Qt::NoModifier, false, 1);
+						Qt::Key_Left, Qt::NoModifier, QString(), false, 1);
 				QApplication::sendEvent(ui.articleName, remappedKeyEvent);
 				break;
 			case Qt::Key_Right:
 				remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-						Qt::Key_Right, Qt::NoModifier, false, 1);
+						Qt::Key_Right, Qt::NoModifier, QString(), false, 1);
 				QApplication::sendEvent(ui.articleName, remappedKeyEvent);
 				break;
 			case Qt::Key_Select:
@@ -1163,11 +1188,11 @@ void WikiOnBoard::toggleFullScreen()
 #endif
 		}
 	QSettings settings;
-	settings.beginGroup("UISettings");
-	if ((!settings.contains("fullScreen")) || (settings.value("fullScreen",
+	settings.beginGroup(QLatin1String("UISettings"));
+	if ((!settings.contains(QLatin1String("fullScreen"))) || (settings.value(QLatin1String("fullScreen"),
 			false).toBool() != isFullScreen()))
 		{
-		settings.setValue("fullScreen", isFullScreen());
+		settings.setValue(QLatin1String("fullScreen"), isFullScreen());
 		}
 	settings.endGroup();
 	}
@@ -1196,11 +1221,11 @@ void WikiOnBoard::zoom(int zoomDelta)
 		}
 	zoomLevel += zoomDelta;
 	QSettings settings;
-	settings.beginGroup("UISettings");
-	if ((!settings.contains("zoomLevel"))
-			|| (settings.value("zoomLevel").toInt() != zoomLevel))
+	settings.beginGroup(QLatin1String("UISettings"));
+	if ((!settings.contains(QLatin1String("zoomLevel")))
+			|| (settings.value(QLatin1String("zoomLevel")).toInt() != zoomLevel))
 		{
-		settings.setValue("zoomLevel", zoomLevel);
+		settings.setValue(QLatin1String("zoomLevel"), zoomLevel);
 		}
 	settings.endGroup();
 	}

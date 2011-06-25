@@ -105,6 +105,19 @@ int main(int argc, char *argv[])
 	{
 	MyApplication a(argc, argv);
 
+	QString locale = QLocale::system().name();
+	qDebug() << "System locale is: " << locale; 		
+	qDebug() << "Language of system locale is: " << locale; 
+	
+	//Load translation
+	QTranslator translator;
+	//Note: If translator.load does not find locale file, it automatically strips local name and tries again.
+	//  E.g. If wikionboard_de_AT.qsf does not exist, it tries wikionboard_de.qsf next. 
+	if (!translator.load(QLatin1String("wikionboard_") + locale)) {
+		qDebug() << "Loading translation file for locale " << locale << " failed. Use english as default";
+	}
+	a.installTranslator(&translator);
+	     
 	//Workaround for now softkeys in fullscreen mode
 	// See: http://discussion.forum.nokia.com/forum/showthread.php?t=192624
 	// In QT 4.6.3 this has been fixed. (new  Qt::WindowSoftkeysVisibleHint flag.

@@ -1,5 +1,5 @@
 
-VERSION = 0.0.32
+VERSION = 0.0.34
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 TARGET = WikiOnBoard
@@ -12,6 +12,9 @@ FORMS += wikionboard.ui
 RESOURCES += 
 include(../kineticscroller/qtscroller.pri)
 
+TRANSLATIONS = wikionboard_de.ts \
+               wikionboard_es.ts 
+               
 # TODO This is a workaround, final fix should rename zimlib to libzim for symbian as well.
 # Note that unix includes symbian and therefore cannot be used.
 linux-g++: {
@@ -33,6 +36,10 @@ symbian: {
     SOURCES += WikiOnBoard_reg.rss
     INCLUDEPATH += \epoc32\include
 }
+
+DEFINES += QT_NO_CAST_FROM_ASCII \
+           QT_NO_CAST_TO_ASCII
+
 symbian: { 
     TARGET.EPCSTACKSIZE = 0x14000
     TARGET.EPOCHEAPSIZE = 0x20000 \
@@ -42,6 +49,9 @@ symbian: {
         128kb, \
         Max \
         32Mb
+ #Deploy files for translation (qm extension) to application's private directory
+    translationfiles.sources = *.qm    
+    DEPLOYMENT +=translationfiles 
 }
 symbian:LIBS += -lavkon \
     -leikcoctl \
