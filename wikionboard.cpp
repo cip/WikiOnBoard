@@ -134,7 +134,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	}
 	#endif
 	
-	qDebug() << "WikiOnBoard::WikiOnBoard. Use kineticscroller version 2011/04/21. Version: __APPVERSIONSTRING__\n";
+	qDebug() << "WikiOnBoard::WikiOnBoard. Version: __APPVERSIONSTRING__\n";
 	qDebug() << " hasTouchScreen: "<<hasTouchScreen;
 	zimFile = NULL; //zimFile unitialized until,
 	//file loaded (either stored filename from last run,
@@ -235,7 +235,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	gotoHomepageAction = new QAction(tr("Goto Homepage"), this);
 	connect(gotoHomepageAction, SIGNAL(triggered()), this,
 			SLOT(gotoHomepage()));
-	aboutCurrentZimFileAction = new QAction(tr("About current zim File"), this);
+	aboutCurrentZimFileAction = new QAction(tr("About current Zimfile"), this);
 	connect(aboutCurrentZimFileAction, SIGNAL(triggered()), this, 
 			SLOT(aboutCurrentZimFile()));
 	aboutAction = new QAction(tr("About"), this);
@@ -829,22 +829,39 @@ void WikiOnBoard::gotoHomepage()
 		}
 	}
 
-QString WikiOnBoard::getMetaData(QString key) {
+std::pair<bool, QString> WikiOnBoard::getMetaData(QString key) {
 	std::string keyStdStr = std::string(key.toUtf8());				
 	if (zimFile!=NULL) {
 		std::pair<bool, zim::File::const_iterator> r = zimFile->findxByTitle('M', keyStdStr);
 		if (r.first) {
 			zim::Blob blob;					
 			zim::Article a =*r.second;
-			blob = a.getData();
-			return QString::fromUtf8(blob.data(), blob.size());
-		} else {
-			
-			return QString(tr("-"));
+			blob = a.getData();			
+			return std::pair<bool, QString>(true,  QString::fromUtf8(blob.data(), blob.size()));
+		} else {			
+			return std::pair<bool, QString>(false, QString(""));
 		}			
 	} else {
-		return QString("");
+		return std::pair<bool, QString>(false, QString(""));
 	}
+}
+
+QString WikiOnBoard::getMetaDataString(QString key) {
+	std::pair<bool, QString> metaData = getMetaData(key);  
+	return metaData.first ? metaData.second : QString(tr("Not available"));
+}
+
+QString WikiOnBoard::byteArray2HexQString(const QByteArray & byteArray)
+{
+    QString hexString;
+    QTextStream textStream(&hexString);
+    textStream << "0x" 
+             << hex << qSetFieldWidth(2) << qSetPadChar('0') << left;
+    for (int i = 0; i < byteArray.size(); i++)
+    {
+        textStream << static_cast<unsigned char>(byteArray.at(i));
+    }
+    return hexString;
 }
 
 void WikiOnBoard::aboutCurrentZimFile()
@@ -852,23 +869,47 @@ void WikiOnBoard::aboutCurrentZimFile()
 	QMessageBox msgBox;
 		
 	msgBox.setText(tr("About Current Zimfile"));
+	QString informativeText;
 	if (zimFile==NULL) {
-		msgBox.setInformativeText(tr("No zim file is currently opened"));	
+		informativeText = QString(tr("No zim file is currently opened"));	
 	} else {
 	
-	msgBox.setInformativeText(tr(""
-			 "Current zim file: ")+QString::fromStdString(zimFile->getFilename())+tr("\n"
-			 "Articles: ")+QString::number(zimFile->getNamespaceCount('A'))+tr(""
-			 ", Images: ")+QString::number(zimFile->getNamespaceCount('I'))+tr("\n"
-			 "Title:")+getMetaData("Title")+tr("\n"
-			 "Creator:")+getMetaData("Creator")+tr("\n"
-			 "Date:")+getMetaData("Date")+tr("\n"
-			 "Description:")+getMetaData("Description")+tr("\n"
-			 "Language:")+getMetaData("Language")+tr("\n"
-			 "Relation:")+getMetaData("Relation")+tr("\n"
-			 "Source:")+getMetaData("Source"));
-	 //TODO: check hash, uid?
-	}		
+	QByteArray uuidBA =QByteArray(zimFile->getFileheader().getUuid().data, zimFile->getFileheader().getUuid().size());
+	informativeText = QString(tr(""
+			 "Current Zim File: %1\n"
+			 "Articles : %2, Images: %3, Categories: %4\n"
+			 )).arg(
+					 QString::fromStdString(zimFile->getFilename()),
+					 QString::number(zimFile->getNamespaceCount('A')), //Including redirects
+					 QString::number(zimFile->getNamespaceCount('I')),
+					 QString::number(zimFile->getNamespaceCount('U'))
+			 );
+	informativeText.append(
+			 QString(tr(""
+			 "Title: %1\n"
+			 "Creator: %2\n"
+			 "Date: %3\n"
+			 "Source: %4\n"
+			 "Description: %5\n"					 			 
+			 "Language: %6\n" 
+			 "Relation: %7\n")).arg(
+					 getMetaDataString("Title"),
+					 getMetaDataString("Creator"),
+					 getMetaDataString("Date"),
+					 getMetaDataString("Source"),
+					 getMetaDataString("Description"),
+					 getMetaDataString("Language"),
+					 getMetaDataString("Relation")
+			  )			  
+	);	
+	informativeText.append(QString(tr(""
+			"UUID: %5\n"			
+			).arg(
+					byteArray2HexQString(uuidBA)
+			)));				 
+	 //TODO: check hash? (Should be separate function)
+ 	}	
+	msgBox.setInformativeText(informativeText);
 	msgBox.setStandardButtons(QMessageBox::Ok);
 	msgBox.setDefaultButton(QMessageBox::Ok);
     int ret = msgBox.exec();
@@ -882,11 +923,16 @@ void WikiOnBoard::about()
 	msgBox.setText(tr("About"));
 	QString date = QString::fromLocal8Bit(__DATE__);
 	QString version = QString::fromLocal8Bit(__APPVERSIONSTRING__);
-	msgBox.setInformativeText(tr("WikiOnBoard\n"
-			 "Version ")+version+tr("\n"
-			 "Author: Christian Pühringer\n"  
-			 "Uses zimlib (openzim.org) and liblzma.\n"
-			 "Build date: ")+date);
+	QString text = QString (tr(""
+			"WikiOnBoard %1\n"
+			"Author: %2\n"
+			"Uses zimlib (openzim.org) and liblzma.\n"
+			"Build date: %3\n")).arg(
+					version,
+					"Christian Pühringer",
+					date
+	);
+	msgBox.setInformativeText(text);
 	msgBox.setStandardButtons(QMessageBox::Ok);
 	msgBox.setDefaultButton(QMessageBox::Ok);
     int ret = msgBox.exec();

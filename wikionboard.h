@@ -86,7 +86,9 @@ private:
     QString getArticleTextByUrl(QString articleUrl);   
     QString getArticleTextByIdx(QString articleIdx);         
     QString getArticleTextByTitle(QString articleTitle);
-    QString getMetaData(QString string);
+    std::pair<bool, QString> WikiOnBoard::getMetaData(QString key);
+    QString WikiOnBoard::getMetaDataString(QString key);
+    QString byteArray2HexQString(const QByteArray & byteArray);
     QUrl currentlyViewedUrl;    
     void openArticleByUrl(QUrl url);
     void populateArticleList(); 
