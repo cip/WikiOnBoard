@@ -388,7 +388,12 @@ QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 	try
 		{
 		std::string articleNameStdStr = std::string(articleUrl.toUtf8());
-		zim::File::const_iterator it = zimFile->find('A', articleNameStdStr);
+		std::string articleNameDecodedStdStr = zim::urldecode(articleNameStdStr);
+		qDebug() << "Open article by URL.\n QString: " << articleUrl
+				<< "\n std:string: " << QString::fromStdString(articleNameStdStr)
+				<< "\n decoded: " << QString::fromStdString(
+				articleNameDecodedStdStr);
+		zim::File::const_iterator it = zimFile->find('A', articleNameDecodedStdStr);
 		if (it == zimFile->end())
 			throw std::runtime_error("article not found");
 		if (it->isRedirect())
@@ -454,7 +459,9 @@ void WikiOnBoard::populateArticleList() {
 void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 		bool direction_up, bool noDelete)
 	{
-	qDebug() << "in populateArticleList. articleName:  "<<articleName << ". ignoreFirstN: "<<ignoreFirstN <<". direction_up:"<< direction_up<<".noDelete: "<<noDelete; 
+	qDebug() << "in populateArticleList. articleName:  " << articleName
+			<< ". ignoreFirstN: " << ignoreFirstN << ". direction_up:"
+			<< direction_up << ".noDelete: " << noDelete; 
 	if (zimFile != NULL)
 		{
 		try
@@ -638,16 +645,7 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 	// content is deleted. Therefore for now just reload in any case url.
 	// Optimize (by handling in anchorClicked, but check what happens
 	//	to history then)
-	//if (!path.isEmpty() && (currentlyViewedUrl.path()!=url.path())) {
-
-	path = path.replace('+', ' '); //TODO hack for '+' in article names  with spaces (de wik),
-	// find out what's the root cause. (
-	//Note that with this hack articles containg '+'
-	// cannot be opened as a link
-
-	//This is on purpose, so if link does not work its easier to search it in index.
-	//TODO remove if links fixed
-
+	//if (!path.isEmpty() && (currentlyViewedUrl.path()!=url.path())) {	
 	ui.articleName->setText(path);
 	
         //QElapsedTimer timer;
@@ -903,7 +901,7 @@ void WikiOnBoard::aboutCurrentZimFile()
 			  )			  
 	);	
 	informativeText.append(QString(tr(""
-			"UUID: %5\n"			
+			"UUID: %1\n"			
 			).arg(
 					byteArray2HexQString(uuidBA)
 			)));				 
