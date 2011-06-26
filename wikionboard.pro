@@ -1,5 +1,9 @@
 
-VERSION = 0.0.35
+#Set to 1 or 0. SwEvent Capability requested only if not selfsigned.
+IS_SELFSIGNED = 1
+DEFINES += "__IS_SELFSIGNED___"=$$IS_SELFSIGNED
+
+VERSION = 0.0.36
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 TARGET = WikiOnBoard
@@ -50,7 +54,14 @@ symbian: {
         128kb, \
         Max \
         32Mb
- #Deploy files for translation (qm extension) to application's private directory
+    #Required to let browser load page and switch to foreground if browser already open
+    # on QDesktopServices::openUrl call
+    #Note that capability not available for self-signed apps. 
+    contains(IS_SELFSIGNED,0): {	
+ 	 TARGET.CAPABILITY+= SwEvent 	 
+ 	}
+ 		
+ #Deploy files for translation (qm extension) to application's private directory    
     translationfiles.sources = *.qm    
     DEPLOYMENT +=translationfiles 
 }

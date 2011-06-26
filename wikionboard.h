@@ -105,6 +105,7 @@ private:
     void moveTextBrowserTextCursorToVisibleArea();
     void showWaitCursor();
     void hideWaitCursor();
+    bool openExternalLink(QUrl url);
 private slots:
 	 void switchToArticlePage();
 	 void switchToIndexPage();

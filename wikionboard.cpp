@@ -135,7 +135,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	}
 	#endif
 	
-	qDebug() << "WikiOnBoard::WikiOnBoard. Version: " << QString::fromLocal8Bit(__APPVERSIONSTRING__);
+	qDebug() << "WikiOnBoard::WikiOnBoard. Version: " << QString::fromLocal8Bit(__APPVERSIONSTRING__) << " QT Version: "<<qVersion();
 	qDebug() << " hasTouchScreen: "<<hasTouchScreen;
 	
 	zimFile = NULL; //zimFile unitialized until,
@@ -718,12 +718,62 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 
 	}
 
+bool WikiOnBoard::openExternalLink(QUrl url)
+	{
+	
+	QMessageBox msgBox;
+	msgBox.setText(tr("Open link in browser"));
+	QString bugText = QString(tr("[TRANLATOR]Explain that may not work if browser running.", "only displayed if self_signed or QT<4.7.0"));
+#if defined(Q_OS_SYMBIAN)
+	#if __IS_SELFSIGNED__==0
+			bugText = QLatin1String("");
+	#endif
+	QString qtVersion = QLatin1String(qVersion());
+	// A little dirty, but there is not earlier version than 4.6 for symbian.
+	if (!qtVersion.startsWith(QLatin1String("4.6"))) {
+		bugText = QLatin1String("");
+	}
+#endif
+	
+	QString
+			informativeText =
+					QString(
+							tr(
+									"[TRANSLATOR] Explain that link %1 clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.%2")).arg(
+							url.toString(), bugText);
+	msgBox.setInformativeText(informativeText);
+	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+	msgBox.setDefaultButton(QMessageBox::Ok);
+#if defined(Q_OS_SYMBIAN)
+	QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+#endif
+	//Enable virtual mouse cursor on non-touch devices, as
+	// else no scrolling possible. (TODO: change this so that
+	// scrolling works with cursor keys. Unclear why not working out of the box)
+	int ret = msgBox.exec();
+#if defined(Q_OS_SYMBIAN)
+	QApplication::setNavigationMode(Qt::NavigationModeNone);
+#endif
+	switch (ret)
+		{
+		case QMessageBox::Ok:
+			QDesktopServices::openUrl(url);
+			return true;
+			break;
+		default:
+			return false;
+			break;
+		}
+
+	//External link, open browser
+	QDesktopServices::openUrl(url);
+	}
+
 void WikiOnBoard::on_textBrowser_anchorClicked(QUrl url)
 	{
 	if (!QString::compare(url.scheme(), QLatin1String("http"), Qt::CaseInsensitive))
 		{
-		//External link, open browser
-		QDesktopServices::openUrl(url);
+			openExternalLink(url);
 		}
 	else
 		{	
@@ -787,6 +837,7 @@ void WikiOnBoard::openZimFileDialog()
 		settings.setValue(QLatin1String("lastZimFile"), file);
 		settings.endGroup();
 		ui.textBrowser->clearHistory();
+		switchToIndexPage(); //In case currently viewing an article.
 		populateArticleList();
 		}
 
@@ -992,7 +1043,6 @@ void WikiOnBoard::switchToArticlePage()
 	{
 	clearMenu();
 	menuBar()->addAction(switchToIndexPageAction);
-	menuBar()->addAction(openArticleAction);
 	menuBar()->addAction(openZimFileDialogAction);
 	menuBar()->addAction(downloadZimFileAction);
 	
