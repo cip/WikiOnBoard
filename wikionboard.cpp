@@ -138,10 +138,6 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	qDebug() << "WikiOnBoard::WikiOnBoard. Version: " << QString::fromLocal8Bit(__APPVERSIONSTRING__);
 	qDebug() << " hasTouchScreen: "<<hasTouchScreen;
 	
-	//TODO consider removal. stdString only used for open (zimfile filename) and exceptions messages. For exeception messages
-	//   default (latin8) probably better, and for open could be done locally. 
-	QTextCodec::setCodecForCStrings(QTextCodec::codecForLocale()); 
-	qDebug() << "Set coded for c strings  (affects basically only toStdString and fromStdString) to QTextCodec::codecForLocale, that is: " << QTextCodec::codecForCStrings()->name();
 	zimFile = NULL; //zimFile unitialized until,
 	//file loaded (either stored filename from last run,
 	// or user loads file). To allow test for == NULL, explicitlz
@@ -351,6 +347,8 @@ void WikiOnBoard::openZimFile(QString zimFileName)
 		QRegExp rx(QLatin1String("(.*\\.zim)\\D\\D"));
 	    rx.setCaseSensitivity(Qt::CaseInsensitive);
 	    zimFileName.replace(rx,QLatin1String("\\1"));
+	    //TODO: Default is latin1 encoding. Correct? (at least zim files with
+	    // special characters do not open correctly, but can this be fixed by other encoding?)
 		std::string zimfilename = zimFileName.toStdString(); 
 		zimFile = new zim::File(zimfilename);
 		}
@@ -393,16 +391,32 @@ QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 	zim::Blob blob;
 	try
 		{
-		std::string articleNameStdStr = std::string(articleUrl.toUtf8());
+		QString strippedArticleUrl;
+		//Supported article urls are:
+		// A/Url  (Expected by zimlib find(Url) )
+		// /A/Url  (Appearanlty used by
+		// Url  (Without namespace /A/.), assume it is article. (Either relative or other namespace)
+		if (articleUrl.startsWith(QLatin1String("/A/"))) {			
+			strippedArticleUrl=articleUrl.remove(0, 3); //Remove /A/
+			qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with /A/./A/ refers to article name space."; 
+			
+		} else if (articleUrl.startsWith(QLatin1String("A/"))) {
+			//TODO remove this when correct behavior clarified.
+			strippedArticleUrl=articleUrl.remove(0, 2); //Remove /A
+			qWarning() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with A/. Assume A/ refers to article name space. ";
+		} else {
+			strippedArticleUrl=articleUrl; 
+			qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" does not start with A/ or /A/. Assume it is a relative URL to A/";			
+		}			
+			
+		std::string articleNameStdStr = std::string(strippedArticleUrl.toUtf8());
 		std::string articleNameDecodedStdStr = zim::urldecode(articleNameStdStr);
-		//TODO: fromStdString in debug is not a really good idea, because this
-		// will use the encoding set for c strings, and not utf8. As only
-		// debug output not really important, but keep this in mind when
-		// reading debug output. 
 		qDebug() << "Open article by URL.\n QString: " << articleUrl
-				<< "\n std:string: " << QString::fromStdString(articleNameStdStr)
-				<< "\n decoded: " << QString::fromStdString(
+				<< "QString article namespace stripped:" << strippedArticleUrl
+				<< "\n std:string: " << fromUTF8EncodedStdString(articleNameStdStr)
+				<< "\n decoded: " << fromUTF8EncodedStdString(
 				articleNameDecodedStdStr);
+		
 		zim::File::const_iterator it = zimFile->find('A', articleNameDecodedStdStr);
 		if (it == zimFile->end())
 			throw std::runtime_error("article not found");
@@ -746,6 +760,7 @@ void WikiOnBoard::openZimFileDialog()
 		}
 	else
 		{
+	//TODO: Default is latin1 encoding. Correct?
 		path = QString::fromStdString(zimFile->getFilename());
 		}
         #if defined(Q_OS_SYMBIAN)
@@ -977,13 +992,22 @@ void WikiOnBoard::switchToArticlePage()
 	{
 	clearMenu();
 	menuBar()->addAction(switchToIndexPageAction);
+	menuBar()->addAction(openArticleAction);
+	menuBar()->addAction(openZimFileDialogAction);
+	menuBar()->addAction(downloadZimFileAction);
 	
 	optionsMenu = new QMenu(tr("Options", "Option menu"));
 	optionsMenu->addAction(zoomInAction);
 	optionsMenu->addAction(zoomOutAction);
 	optionsMenu->addAction(toggleFullScreenAction);
+	helpMenu = new QMenu(tr("Help", "Help menu"));
+	helpMenu->addAction(gotoHomepageAction);
+	helpMenu->addAction(aboutCurrentZimFileAction);
+	helpMenu->addAction(aboutAction);
+	helpMenu->addAction(aboutQtAction);
 
 	menuBar()->addMenu(optionsMenu);
+	menuBar()->addMenu(helpMenu);
 	menuBar()->addAction(exitAction);
 
 	backArticleHistoryAction->setSoftKeyRole(QAction::NegativeSoftKey);

@@ -83,6 +83,9 @@ private:
     zim::File* zimFile;
     int zoomLevel;
     bool hasTouchScreen;
+    QString fromUTF8EncodedStdString(std::string s) {
+    	return QString::fromUtf8(s.data(), int(s.size())); 
+    }
     QString getArticleTextByUrl(QString articleUrl);   
     QString getArticleTextByIdx(QString articleIdx);         
     QString getArticleTextByTitle(QString articleTitle);
