@@ -1,9 +1,8 @@
 
 #Set to 1 or 0. SwEvent Capability requested only if not selfsigned.
 IS_SELFSIGNED = 1
-DEFINES += "__IS_SELFSIGNED___"=$$IS_SELFSIGNED
-
-VERSION = 0.0.36
+DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
+VERSION = 0.0.37
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 TARGET = WikiOnBoard

@@ -124,7 +124,7 @@
 
 WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	QMainWindow(parent), m_bgc(bgc)
-	{
+	{			
 	//For now assume that: S60 rd 3dition devices have no touch screen, all other devices have touch screen.
 	// TODO Consider changing to QSystemDeviceInfo when Qt Mobility available for all supported devices
 	hasTouchScreen = true;
@@ -726,15 +726,16 @@ bool WikiOnBoard::openExternalLink(QUrl url)
 	QString bugText = QString(tr("[TRANLATOR]Explain that may not work if browser running.", "only displayed if self_signed or QT<4.7.0"));
 #if defined(Q_OS_SYMBIAN)
 	#if __IS_SELFSIGNED__==0
+		QString qtVersion = QLatin1String(qVersion());
+		// A little dirty, but there is not earlier version than 4.6 for symbian.
+		if (!qtVersion.startsWith(QLatin1String("4.6"))) {
 			bugText = QLatin1String("");
+		}		
 	#endif
-	QString qtVersion = QLatin1String(qVersion());
-	// A little dirty, but there is not earlier version than 4.6 for symbian.
-	if (!qtVersion.startsWith(QLatin1String("4.6"))) {
-		bugText = QLatin1String("");
-	}
 #endif
-	
+#if !defined(Q_OS_SYMBIAN)
+	bugText = QLatin1String("");
+#endif
 	QString
 			informativeText =
 					QString(
@@ -1007,7 +1008,7 @@ void WikiOnBoard::about()
 			"Uses zimlib (openzim.org) and liblzma.\n"
 			"Build date: %3\n")).arg(
 					QString::fromLocal8Bit(__APPVERSIONSTRING__),
-					QString::fromUtf8("Christian P\252hringer"),
+					tr("Christian Puehringer"), 
 					QString::fromLocal8Bit(__DATE__)
 	);
 	//TODO: Why are all other msgBox basically fullscreen, but this one is
