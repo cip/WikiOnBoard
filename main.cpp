@@ -105,19 +105,30 @@ int main(int argc, char *argv[])
 	{
 	MyApplication a(argc, argv);
 
-	QString locale = QLocale::system().name();
-	qDebug() << "System locale is: " << locale; 		
-	qDebug() << "Language of system locale is: " << locale; 
-	
 	//Load translation
-	QTranslator translator;
+	QTranslator translatorDefault;
+	QTranslator translatorLocale;
+		
+	
+	//First load english tranlsations. (replaces translation from source code, to separate text and code more)
+	if (translatorDefault.load(QLatin1String("wikionboard_en"))) {
+		qDebug() <<"Installing translator for english. (Replaces (some) texts from source code)";
+		a.installTranslator(&translatorDefault);			
+	} else {
+		qWarning() << "Loading translation file for english failed. Will use text from source code instead, which may be less complete/polished";
+	}	
+	QString locale = QLocale::system().name(); 				
+	//Load tranlsation for local language, if available.
 	//Note: If translator.load does not find locale file, it automatically strips local name and tries again.
 	//  E.g. If wikionboard_de_AT.qsf does not exist, it tries wikionboard_de.qsf next. 
-	if (!translator.load(QLatin1String("wikionboard_") + locale)) {
-		qDebug() << "Loading translation file for locale " << locale << " failed. Use english as default";
-	}
-	a.installTranslator(&translator);
-	     
+	//Note: In case of english locale the same translator is installed twice. This should however
+	// not have a negative impact.
+	if (translatorLocale.load(QLatin1String("wikionboard_") + locale)) {
+		qDebug() << "Installing transloator for locale: "<<locale; 
+		a.installTranslator(&translatorLocale);					
+	} else {
+		qDebug() << "Loading translation file for locale " << locale << " failed. (english translator is used instead)";
+	}		     
 	//Workaround for now softkeys in fullscreen mode
 	// See: http://discussion.forum.nokia.com/forum/showthread.php?t=192624
 	// In QT 4.6.3 this has been fixed. (new  Qt::WindowSoftkeysVisibleHint flag.

@@ -1,5 +1,5 @@
 
-VERSION = 0.0.34
+VERSION = 0.0.35
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 TARGET = WikiOnBoard
@@ -12,7 +12,8 @@ FORMS += wikionboard.ui
 RESOURCES += 
 include(../kineticscroller/qtscroller.pri)
 
-TRANSLATIONS = wikionboard_de.ts \
+TRANSLATIONS = wikionboard_en.ts \
+			   wikionboard_de.ts \
                wikionboard_es.ts 
                
 # TODO This is a workaround, final fix should rename zimlib to libzim for symbian as well.
