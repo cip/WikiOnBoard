@@ -1350,3 +1350,17 @@ void WikiOnBoard::hideWaitCursor()
 }
 
 
+    
+void WikiOnBoard::approachingEndOfList(bool up) {
+	qDebug()<< "WikiOnBoard::approachingEndOfList";
+	if (up) {
+		populateArticleList(ui.articleListWidget->item(0)->data(ArticleTitleRole).toString(),0,true, true);
+	} else {
+		qDebug()<< "ui.articleListWidget->count()"<< ui.articleListWidget->count();
+		qDebug()<< "ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString()"<<ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString();
+		qDebug()<< "ui.articleListWidget->item(ui.articleListWidget->count()-1)->text(): "<<ui.articleListWidget->item(ui.articleListWidget->count()-1)->text();
+				
+		populateArticleList(ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString(),0,false, true);
+	}	
+}
+
