@@ -385,6 +385,8 @@ QString WikiOnBoard::getArticleTextByIdx(QString articleIdx)
 	return articleText;
 	}
 
+//Note: expects encoded URL (as used in articles). Therefore don't use
+// this for decoded URL (as in zim file index)
 QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 	{
 	QString articleText = QLatin1String("ERROR");
@@ -409,22 +411,25 @@ QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 			qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" does not start with A/ or /A/. Assume it is a relative URL to A/";			
 		}			
 			
-		std::string articleNameStdStr = std::string(strippedArticleUrl.toUtf8());
-		std::string articleNameDecodedStdStr = zim::urldecode(articleNameStdStr);
+		std::string articleUrlStdStr = std::string(strippedArticleUrl.toUtf8());
+		std::string articleUrlDecodedStdStr = zim::urldecode(articleUrlStdStr);
 		qDebug() << "Open article by URL.\n QString: " << articleUrl
 				<< "QString article namespace stripped:" << strippedArticleUrl
-				<< "\n std:string: " << fromUTF8EncodedStdString(articleNameStdStr)
+				<< "\n std:string: " << fromUTF8EncodedStdString(articleUrlStdStr)
 				<< "\n decoded: " << fromUTF8EncodedStdString(
-				articleNameDecodedStdStr);
+				articleUrlDecodedStdStr);
 		
-		zim::File::const_iterator it = zimFile->find('A', articleNameDecodedStdStr);
-		if (it == zimFile->end())
+		zim::File::const_iterator it = zimFile->find('A', articleUrlDecodedStdStr);
+		//TODO: Actually not really clean, because if URL not found just closest match displayed.
+		if (it == zimFile->end())			
 			throw std::runtime_error("article not found");
 		if (it->isRedirect())
 			{
-			articleNameStdStr = it->getRedirectArticle().getUrl();
+			//Redirect stores decoded URLs. (as in index) 
+			articleUrlDecodedStdStr = it->getRedirectArticle().getUrl();
+			qDebug() << "Is redirect to url " << fromUTF8EncodedStdString(articleUrlDecodedStdStr);
 			zim::File::const_iterator it1 = zimFile->find('A',
-					articleNameStdStr);
+					articleUrlDecodedStdStr);
 			blob = it1->getData();
 			}
 		else
@@ -490,7 +495,7 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 		{
 		try
 			{ 
-			//Zim index is (appearantly?) UTF8 encoded. Therefore use utf8 functions to access
+			//Zim index is UTF8 encoded. Therefore use utf8 functions to access
 			// it.
 			std::string articleNameStdStr = std::string(articleName.toUtf8());
 			//Find article, if not an exact match,  Iterator may point to end, or to 
@@ -537,6 +542,13 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 							delete lastItem;
 						}
 						}
+					//Note: zimFile->begin() actually does not necessarily point 
+					// to same article as it if the are equal. (Because it is in title
+					// order while zimFile->begin() uses url order. However, it is fine to detect
+					// that it is entry 0, because only the index is compared.
+					// there is also beginByTitle(), but end() has the same behavior,
+					// and there is not title order equivalent, therefore for both 
+					// the url order is used. 
 					if (it == zimFile->begin())
 						break;
 					--it;
@@ -1335,19 +1347,6 @@ void WikiOnBoard::hideWaitCursor()
         #if defined(Q_OS_SYMBIAN)
             QApplication::setNavigationMode(Qt::NavigationModeNone);
         #endif
-        }
-
-void WikiOnBoard::approachingEndOfList(bool up) {
-	qDebug()<< "WikiOnBoard::approachingEndOfList";
-	if (up) {
-		populateArticleList(ui.articleListWidget->item(0)->data(ArticleTitleRole).toString(),0,true, true);
-	} else {
-		qDebug()<< "ui.articleListWidget->count()"<< ui.articleListWidget->count();
-		qDebug()<< "ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString()"<<ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString();
-		qDebug()<< "ui.articleListWidget->item(ui.articleListWidget->count()-1)->text(): "<<ui.articleListWidget->item(ui.articleListWidget->count()-1)->text();
-				
-		populateArticleList(ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString(),0,false, true);
-	
-	}	
 }
+
 
