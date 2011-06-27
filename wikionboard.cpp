@@ -101,7 +101,10 @@
 																<< lw->verticalScrollBar()->maximum();
 														
 								//emit approachingEndOfList(false);
+							    QtScroller::scroller(w)->stop();				
+														
 								approachingEndOfList(false);
+								return true;												
 							}
 													
 						}														
@@ -1441,6 +1444,7 @@ void WikiOnBoard::approachingEndOfList(bool up)
 					}
 
 				int insertedItemsCount = 0;
+				//TODO: use constants (for this and for delete limit)
 				while (insertedItemsCount < 100)
 					{
 					--it;
@@ -1550,10 +1554,12 @@ void WikiOnBoard::approachingEndOfList(bool up)
 					articleItem->setData(ArticleUrlRole, articleUrl);
 					ui.articleListWidget->addItem(articleItem);
 					//Remove first item to avoid eating up to much memory. 
-					//TODO: perhaps only use if numer larger than X )
-					QListWidgetItem *firstItem =
+					//TODO: increase overlap. (User scrolls one direction than other else leads directly to reload)
+					if (ui.articleListWidget->count()>120) {
+						QListWidgetItem *firstItem =
 							ui.articleListWidget->takeItem(0);
-					delete firstItem;
+						delete firstItem;
+					}
 					insertedItemsCount++;
 					if (it == zimFile->end())
 						{
@@ -1563,17 +1569,16 @@ void WikiOnBoard::approachingEndOfList(bool up)
 						break;
 						}
 					} //End while
-					QListWidgetItem *firstNewItem = ui.articleListWidget->item(insertedItemsCount-1);
-								QString	titleFirstNewItem =
-										firstNewItem->data(
-												ArticleTitleRole).toString();
-								QString	idxFirstNewItem=
-										firstNewItem->data(
-														ArticleIndexRole).toString();
-															
-								
-					qDebug() << insertedItemsCount <<" items inserted in beginning of list. Scroll so that firstly newly added article " << titleFirstNewItem << " ["<< idxFirstNewItem <<"] is at top of list. ";
-								ui.articleListWidget->scrollToItem(firstNewItem,QAbstractItemView::PositionAtTop);
+					QListWidgetItem *firstNewItem = ui.articleListWidget->item(120-insertedItemsCount); 
+					QString	titleFirstNewItem =
+							firstNewItem->data(
+									ArticleTitleRole).toString();
+					QString	idxFirstNewItem=
+							firstNewItem->data(
+									ArticleIndexRole).toString();
+																							
+					qDebug() << insertedItemsCount <<" items appended to end of list. Scroll so that firstly newly added article " << titleFirstNewItem << " ["<< idxFirstNewItem <<"] is at bottom of list. ";
+								ui.articleListWidget->scrollToItem(firstNewItem,QAbstractItemView::PositionAtBottom);
 								
 				} // End else (up=false)
 			} //End try
