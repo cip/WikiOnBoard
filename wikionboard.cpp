@@ -76,12 +76,9 @@
 		case QtScrollEvent::Scroll:
 			{
 			QtScrollEvent *se = static_cast<QtScrollEvent *> (e);
-			qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
-					<< " contentPos: " << se->contentPos();
-
+			
 			QWidget *w = static_cast<QWidget *> (o);
-			qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
-
+			
 			if (w->parentWidget())
 				{
 				if (QListWidget *lw = qobject_cast<QListWidget *>(w->parentWidget()))
@@ -91,24 +88,54 @@
 							// Asssume <20 left to end 20*42=840.
 					if (lw->viewport() == w)
 						{
-						qDebug() << "ArticleList: vmaximum "
-								<< lw->verticalScrollBar()->maximum();
 						if (se->contentPos().y() > lw->verticalScrollBar()->maximum() -delta)
 								
 						{
-							if (QtScroller::scroller(w)->velocity().y() > 0.0)
+							if (QtScroller::scroller(w)->velocity().y() > 0.0) {
+								qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
+												<< " contentPos: " << se->contentPos();
+								qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
+								qDebug() << "ArticleList: vminimum "	<< lw->verticalScrollBar()->minimum();
+											
+								qDebug() << "ArticleList: vmaximum "
+																<< lw->verticalScrollBar()->maximum();
+														
 								//emit approachingEndOfList(false);
 								approachingEndOfList(false);
-							qDebug() << "ArticleList: vminimum "	<< lw->verticalScrollBar()->minimum();
+							}
 													
 						}														
 						 else if (se->contentPos().y() < lw->verticalScrollBar()->minimum()+delta)													
 						{
-							if (QtScroller::scroller(w)->velocity().y() < 0.0)
+							if (QtScroller::scroller(w)->velocity().y() < 0.0) {
 								//emit approachingEndOfList(true);
+							    qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
+												<< " contentPos: " << se->contentPos();
+							    qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
+								qDebug() << "ArticleList: vminimum "	<< lw->verticalScrollBar()->minimum();											
+							    qDebug() << "ArticleList: vmaximum "
+							    								<< lw->verticalScrollBar()->maximum();
+							    QtScroller::scroller(w)->stop();						
 								approachingEndOfList(true);
-								//return true;
+								//Return true to prevent that default QScroller eventfilter scrolls  
+								// to beginning of list and stop scroller. (Nicer would be sure
+								// if it would continue scrolling from the new position with 
+								// the same speed). TODO try to do this (e.g. void QScroller::resendPrepareEvent () )
+								// QtScroller::scroller(w)->stop(); //Does not really work. Sometimes it works. (Stops, and shows
+								//   element focused by approachingEndOflist, but mostly it "jumps" to first element of list)
+								//Interestingly behavior basically uncahnged with resendPr. 
+								//TODO
+								//QtScroller::scroller(w)->resendPrepareEvent();
+								//Note:Without deleting elements in approachingEndOfList this worked better.
+								//Note: Could this be a concurrency issue? (are events queued??)=> Try with stopping before.
+								// => Looks like with stopping before it works fine. (Although a little rough, as it jumps the last
+								// (use scrollTo of scroller for smooth scrolling??) do something clever with resendPrepareEvent()? (Diffuclt)
+								// Perhaps also just reload when first element hit. (stopping before is useless if it cannot continue later)
+								// (Or throw all away and use modelview framework)
+								// TODO: If this finally works, do same for scroll down direction. 
+								return true;
 							}
+						}
 
 						}
 					}
@@ -1437,10 +1464,14 @@ void WikiOnBoard::approachingEndOfList(bool up)
 					ui.articleListWidget->insertItem(0, articleItem);
 					insertedItemsCount++;
 					//Remove last item to avoid eating up to much memory. 
-					//TODO: perhaps only use if numer larger than X )
-					QListWidgetItem *lastItem = ui.articleListWidget->takeItem(
+					//(But ensure that that there enough "old" items left
+					// to fill the article list. (first added new item 
+					// should be on top of list at the end)
+					if (ui.articleListWidget->count()>120) {
+						QListWidgetItem *lastItem = ui.articleListWidget->takeItem(
 							ui.articleListWidget->count() - 1);
-					delete lastItem;
+						delete lastItem;
+					}
 					//order is different					
 					if (it == zimFile->beginByTitle())
 						{
@@ -1450,6 +1481,17 @@ void WikiOnBoard::approachingEndOfList(bool up)
 						break;
 						}
 					} //End while
+				QListWidgetItem *firstNewItem = ui.articleListWidget->item(insertedItemsCount-1);
+				QString	titleFirstNewItem =
+						firstNewItem->data(
+								ArticleTitleRole).toString();
+				QString	idxFirstNewItem=
+						firstNewItem->data(
+										ArticleIndexRole).toString();
+											
+				qDebug() << insertedItemsCount <<" items inserted in beginning of list. Scroll so that firstly newly added article " << titleFirstNewItem << " ["<< idxFirstNewItem <<"] is at top of list. ";
+				ui.articleListWidget->scrollToItem(firstNewItem,QAbstractItemView::PositionAtTop);
+									
 				}
 			else
 				{// end  (if up()). => up=false
@@ -1521,6 +1563,18 @@ void WikiOnBoard::approachingEndOfList(bool up)
 						break;
 						}
 					} //End while
+					QListWidgetItem *firstNewItem = ui.articleListWidget->item(insertedItemsCount-1);
+								QString	titleFirstNewItem =
+										firstNewItem->data(
+												ArticleTitleRole).toString();
+								QString	idxFirstNewItem=
+										firstNewItem->data(
+														ArticleIndexRole).toString();
+															
+								
+					qDebug() << insertedItemsCount <<" items inserted in beginning of list. Scroll so that firstly newly added article " << titleFirstNewItem << " ["<< idxFirstNewItem <<"] is at top of list. ";
+								ui.articleListWidget->scrollToItem(firstNewItem,QAbstractItemView::PositionAtTop);
+								
 				} // End else (up=false)
 			} //End try
 		catch (const std::exception& e)
