@@ -76,33 +76,38 @@
 		case QtScrollEvent::Scroll:
 			{
 			QtScrollEvent *se = static_cast<QtScrollEvent *> (e);
-		//	qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
-			//		<< " contentPos: " << se->contentPos();
+			qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
+					<< " contentPos: " << se->contentPos();
 
 			QWidget *w = static_cast<QWidget *> (o);
-			//qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
+			qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
 
 			if (w->parentWidget())
 				{
 				if (QListWidget *lw = qobject_cast<QListWidget *>(w->parentWidget()))
 					{
+					qreal delta= 840.0; //FIXME don't use constant
+							// Verticalscrollbarmaxim=4289, 100 items => itemheight ~42
+							// Asssume <20 left to end 20*42=840.
 					if (lw->viewport() == w)
 						{
-					//	qDebug() << "ArticleList: vmaximum "
-						//		<< lw->verticalScrollBar()->maximum();
-						if (lw->verticalScrollBar()->maximum() * 0.9
-								< se->contentPos().y())
-							{
+						qDebug() << "ArticleList: vmaximum "
+								<< lw->verticalScrollBar()->maximum();
+						if (se->contentPos().y() > lw->verticalScrollBar()->maximum() -delta)
+								
+						{
 							if (QtScroller::scroller(w)->velocity().y() > 0.0)
 								//emit approachingEndOfList(false);
 								approachingEndOfList(false);
-							}
-						else if (lw->verticalScrollBar()->minimum()
-								< se->contentPos().y() / 0.9)
-							{
+							qDebug() << "ArticleList: vminimum "	<< lw->verticalScrollBar()->minimum();
+													
+						}														
+						 else if (se->contentPos().y() < lw->verticalScrollBar()->minimum()+delta)													
+						{
 							if (QtScroller::scroller(w)->velocity().y() < 0.0)
 								//emit approachingEndOfList(true);
 								approachingEndOfList(true);
+								//return true;
 							}
 
 						}
@@ -1349,7 +1354,7 @@ void WikiOnBoard::hideWaitCursor()
         #endif
 }
 
-
+/*
     
 void WikiOnBoard::approachingEndOfList(bool up) {
 	qDebug()<< "WikiOnBoard::approachingEndOfList";
@@ -1363,4 +1368,166 @@ void WikiOnBoard::approachingEndOfList(bool up) {
 		populateArticleList(ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString(),0,false, true);
 	}	
 }
+*/
+//TODO Consider merging with regular populate Article List 
+void WikiOnBoard::approachingEndOfList(bool up)
+	{
+	qDebug() << "WikiOnBoard::approachingEndOfList";
+	if (zimFile != NULL)
+		{
+		try
+			{
+			if (up)
+				{
+				//populateArticleList(ui.articleListWidget->item(0)->data(ArticleTitleRole).toString(),0,true, true);
+				qDebug()
+						<< "Approaching end of article list while scrolling up";
+				QString
+						titleFirstArticleInCurrentList =
+								ui.articleListWidget->item(0)->data(
+										ArticleTitleRole).toString();
+				QString
+										idxFirstArticleInCurrentList =
+												ui.articleListWidget->item(0)->data(
+														ArticleIndexRole).toString();
+								
+				//Zim index is UTF8 encoded. Therefore use utf8 functions to access
+				// it.
+				std::string articleTitleStdStr = std::string(
+						titleFirstArticleInCurrentList.toUtf8());
+				qDebug() << " Title of first article in current list is: ["<< idxFirstArticleInCurrentList  << "] "
+						<< fromUTF8EncodedStdString(articleTitleStdStr);
+
+				std::pair<bool, zim::File::const_iterator> r =
+						zimFile->findxByTitle('A', articleTitleStdStr);
+				if (!r.first)
+					{
+					qWarning()
+							<< " No exact match found. (Only possible if bug in wikionboard)";
+					}
+				zim::File::const_iterator it = r.second;
+				if (it == zimFile->beginByTitle())
+					{
+					qDebug()
+							<< " Current entry is first entry in index => Do nothing";
+					return;
+					}
+
+				int insertedItemsCount = 0;
+				while (insertedItemsCount < 100)
+					{
+					--it;
+					QString articleTitle = fromUTF8EncodedStdString(
+							it->getTitle());
+					QUrl articleUrl(fromUTF8EncodedStdString(it->getUrl()));
+					QString articleIdx = QString::number(it->getIndex());
+					if (it->getNamespace() != 'A')
+						{
+						qDebug()
+								<< " Previous index entry is not in article namespace. Stop adding titles. \n\tArticle Title: ["<< articleIdx  << "] "
+								<< articleTitle << "\n\tArticle Namespace: "
+								<< it->getNamespace();
+						break;
+						}
+					QListWidgetItem* articleItem = new QListWidgetItem();
+					articleItem->setText(articleTitle);
+					articleItem->setData(ArticleTitleRole, articleTitle);
+					articleItem->setData(ArticleIndexRole, articleIdx);
+					articleItem->setData(ArticleUrlRole, articleUrl);
+					ui.articleListWidget->insertItem(0, articleItem);
+					insertedItemsCount++;
+					//Remove last item to avoid eating up to much memory. 
+					//TODO: perhaps only use if numer larger than X )
+					QListWidgetItem *lastItem = ui.articleListWidget->takeItem(
+							ui.articleListWidget->count() - 1);
+					delete lastItem;
+					//order is different					
+					if (it == zimFile->beginByTitle())
+						{
+						qDebug()
+								<< "Beginning of title index reached. Stop adding titles. Last added title :["<< articleIdx  << "] " 
+								<< articleTitle;
+						break;
+						}
+					} //End while
+				}
+			else
+				{// end  (if up()). => up=false
+				qDebug()
+						<< "Approaching end of article list while scrolling down";
+				QString titleLastArticleInCurrentList =
+						ui.articleListWidget->item(
+								ui.articleListWidget->count() - 1)->data(
+								ArticleTitleRole).toString();
+				QString  idxLastArticleInCurrentList =
+										ui.articleListWidget->item(
+												ui.articleListWidget->count() - 1)->data(
+												ArticleIndexRole).toString();
+								
+				//Zim index is UTF8 encoded. Therefore use utf8 functions to access
+				// it.
+				std::string articleTitleStdStr = std::string(
+						titleLastArticleInCurrentList.toUtf8());
+				qDebug() << " Title of last article in current list is: ["<< idxLastArticleInCurrentList  << "] "
+						<< fromUTF8EncodedStdString(articleTitleStdStr);
+
+				std::pair<bool, zim::File::const_iterator> r =
+						zimFile->findxByTitle('A', articleTitleStdStr);
+				if (!r.first)
+					{
+					qWarning()
+							<< " No exact match found. (Only possible if bug in wikionboard)";
+					}
+				zim::File::const_iterator it = r.second;
+				if (it == zimFile->end())
+					{
+					qDebug()
+							<< " Current entry is last entry in index => Do nothing";
+					return;
+					}
+				int insertedItemsCount = 0;
+				while (insertedItemsCount < 100)
+					{
+					++it;
+					QString articleTitle = fromUTF8EncodedStdString(
+							it->getTitle());
+					QUrl articleUrl(fromUTF8EncodedStdString(it->getUrl()));
+					QString articleIdx = QString::number(it->getIndex());
+					if (it->getNamespace() != 'A')
+						{
+						qDebug()
+								<< " Next index entry is not in article namespace. Stop adding titles. \n\tArticle Title: ["<< articleIdx  << "] "
+								<< articleTitle << "\n\tArticle Namespace: "
+								<< it->getNamespace();
+						break;
+						}
+					QListWidgetItem* articleItem = new QListWidgetItem();
+					articleItem->setText(articleTitle);
+					articleItem->setData(ArticleTitleRole, articleTitle);
+					articleItem->setData(ArticleIndexRole, articleIdx);
+					articleItem->setData(ArticleUrlRole, articleUrl);
+					ui.articleListWidget->addItem(articleItem);
+					//Remove first item to avoid eating up to much memory. 
+					//TODO: perhaps only use if numer larger than X )
+					QListWidgetItem *firstItem =
+							ui.articleListWidget->takeItem(0);
+					delete firstItem;
+					insertedItemsCount++;
+					if (it == zimFile->end())
+						{
+						qDebug()
+								<< "End of title index reached. Stop adding titles. Last added title: ["<< articleIdx  << "] "
+								<< articleTitle;
+						break;
+						}
+					} //End while
+				} // End else (up=false)
+			} //End try
+		catch (const std::exception& e)
+			{
+			ui.articleListWidget->addItem(QLatin1String("Error occured"));
+			}
+		} //End if (zimFile!=NULL)
+	}	
+
 
