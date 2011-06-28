@@ -136,6 +136,14 @@
 								// Perhaps also just reload when first element hit. (stopping before is useless if it cannot continue later)
 								// (Or throw all away and use modelview framework)
 								// TODO: If this finally works, do same for scroll down direction. 
+								
+								//TODO: knwn issues:
+								//	Crash on scrolling up if first. (only ebookexport?)
+								//  Still showing images
+								//	Jumps some articles. (Because adding article is started before first article visible
+								//		Simple fix would be to start adding articles only when first/last article reached. 
+								//		However of this starting earlier that adding is done in background. (More complex option)
+								//=> For now plan is to use model-view instead, and go back to current approach only if not working.
 								return true;
 							}
 						}
