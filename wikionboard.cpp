@@ -110,9 +110,8 @@
 														
 								QtScroller::scroller(w)->stop();				
 														
-							    //if not items added return false (event further processed for overhoot) 
-								return approachingEndOfList(false);
-																				
+							    approachingEndOfList(false);
+								return true;												
 							}
 													
 						}														
@@ -129,9 +128,10 @@
 							    qDebug() << "ArticleList: vmaximum "
 							    								<< lw->verticalScrollBar()->maximum();
 							    QtScroller::scroller(w)->stop();						
-							    //if not items added return false (event further processed for overhoot) 							    								
-							    return approachingEndOfList(true);
-								//Return true to prevent that default QScroller eventfilter scrolls  
+							    //TODO: Overshoot. Trial not working: if not items added return false (event further processed for overhoot) 							    								
+							    approachingEndOfList(true);
+							    return true;
+							    //Return true to prevent that default QScroller eventfilter scrolls  
 								// to beginning of list and stop scroller. (Nicer would be sure
 								// if it would continue scrolling from the new position with 
 								// the same speed). TODO try to do this (e.g. void QScroller::resendPrepareEvent () )
