@@ -561,19 +561,24 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 			while (true)
 				{
 
-				QString articleTitle = QString::fromUtf8(
-						it->getTitle().c_str(), it->getTitle().size());
-				QUrl articleUrl(QString::fromUtf8(it->getUrl().c_str(),
-						it->getUrl().size()));
+				QString articleTitle = fromUTF8EncodedStdString(it->getTitle());
+				QUrl articleUrl(fromUTF8EncodedStdString(it->getUrl()));
 				QString articleIdx = QString::number(it->getIndex());
+				if (it->getNamespace() != 'A')
+					{
+					qDebug()
+							<< " Next index entry is not in article namespace. Stop adding titles. \n\tArticle Title: ["
+							<< articleIdx << "] " << articleTitle
+							<< "\n\tArticle Namespace: " << it->getNamespace();
+					break;
+					}
 				QListWidgetItem* articleItem = new QListWidgetItem();
 				articleItem->setText(articleTitle);
-
 				articleItem->setData(ArticleTitleRole, articleTitle);
 				articleItem->setData(ArticleIndexRole, articleIdx);
 				articleItem->setData(ArticleUrlRole, articleUrl);
-				// articleItem->setToolTip(articleIdx); ////TODO check to better use model list view,
-				// easily save url as well.
+				ui.articleListWidget->addItem(articleItem);
+																
 				if (direction_up)
 					{
 					if (i >= ignoreFirstN)
@@ -1493,17 +1498,20 @@ void WikiOnBoard::approachingEndOfList(bool up)
 						break;
 						}
 					} //End while
-				QListWidgetItem *firstNewItem = ui.articleListWidget->item(insertedItemsCount-1);
-				QString	titleFirstNewItem =
+				if (insertedItemsCount>0) {
+					QListWidgetItem *firstNewItem = ui.articleListWidget->item(insertedItemsCount-1);
+					QString	titleFirstNewItem =
 						firstNewItem->data(
 								ArticleTitleRole).toString();
-				QString	idxFirstNewItem=
+					QString	idxFirstNewItem=
 						firstNewItem->data(
 										ArticleIndexRole).toString();
 											
-				qDebug() << insertedItemsCount <<" items inserted in beginning of list. Scroll so that firstly newly added article " << titleFirstNewItem << " ["<< idxFirstNewItem <<"] is at top of list. ";
-				ui.articleListWidget->scrollToItem(firstNewItem,QAbstractItemView::PositionAtTop);
-									
+					qDebug() << insertedItemsCount <<" items inserted in beginning of list. Scroll so that firstly newly added article " << titleFirstNewItem << " ["<< idxFirstNewItem <<"] is at top of list. ";
+					ui.articleListWidget->scrollToItem(firstNewItem,QAbstractItemView::PositionAtTop);
+				}	else {
+					qDebug() << "No items inserted";
+				}
 				}
 			else
 				{// end  (if up()). => up=false
@@ -1577,17 +1585,26 @@ void WikiOnBoard::approachingEndOfList(bool up)
 						break;
 						}
 					} //End while
-					QListWidgetItem *firstNewItem = ui.articleListWidget->item(120-insertedItemsCount); 
-					QString	titleFirstNewItem =
-							firstNewItem->data(
-									ArticleTitleRole).toString();
-					QString	idxFirstNewItem=
-							firstNewItem->data(
-									ArticleIndexRole).toString();
-																							
-					qDebug() << insertedItemsCount <<" items appended to end of list. Scroll so that firstly newly added article " << titleFirstNewItem << " ["<< idxFirstNewItem <<"] is at bottom of list. ";
-								ui.articleListWidget->scrollToItem(firstNewItem,QAbstractItemView::PositionAtBottom);
-								
+					int indexFirstNewItem = ui.articleListWidget->count()-insertedItemsCount;
+					if ((indexFirstNewItem >= 0) && (indexFirstNewItem
+						< ui.articleListWidget->count()))
+					{
+						QListWidgetItem *firstNewItem = ui.articleListWidget->item(
+							indexFirstNewItem);
+						QString titleFirstNewItem = firstNewItem->data(
+							ArticleTitleRole).toString();
+						QString idxFirstNewItem = firstNewItem->data(
+							ArticleIndexRole).toString();
+
+						qDebug() << insertedItemsCount
+							<< " items appended to end of list. Scroll so that firstly newly added article "
+							<< titleFirstNewItem << " [" << idxFirstNewItem
+							<< "] is at bottom of list. ";
+						ui.articleListWidget->scrollToItem(firstNewItem,
+							QAbstractItemView::PositionAtBottom);
+					}	else {
+						qDebug() << "No items inserted";
+					}
 				} // End else (up=false)
 			} //End try
 		catch (const std::exception& e)
