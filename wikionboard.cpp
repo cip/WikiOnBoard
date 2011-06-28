@@ -71,6 +71,7 @@
 			{
 			QtScrollPrepareEvent *se = static_cast<QtScrollPrepareEvent *> (e);
 			qDebug() << " ScrollPrepare: " << se->startPos();
+			QWidget *w = static_cast<QWidget *> (o);				
 			return false;
 			}
 		case QtScrollEvent::Scroll:
@@ -80,18 +81,25 @@
 			QWidget *w = static_cast<QWidget *> (o);
 			
 			if (w->parentWidget())
-				{
+				{				
 				if (QListWidget *lw = qobject_cast<QListWidget *>(w->parentWidget()))
 					{
-					qreal delta= 840.0; //FIXME don't use constant
+					qreal delta= 40.0; //FIXME don't use constant
+								
+				//	qreal delta= 840.0; //FIXME don't use constant
 							// Verticalscrollbarmaxim=4289, 100 items => itemheight ~42
 							// Asssume <20 left to end 20*42=840.
 					if (lw->viewport() == w)
 						{
+						if (se->scrollState()==QtScrollEvent::ScrollStarted) {
+							qDebug() << "New Scrolling activity started. ";
+							qDebug() << " Scroller final position: " << QtScroller::scroller(w)->finalPosition();
+						}						
 						if (se->contentPos().y() > lw->verticalScrollBar()->maximum() -delta)
-								
+					//	if (QtScroller::scroller(w)->finalPosition().y()==lw->verticalScrollBar()->maximum())
 						{
 							if (QtScroller::scroller(w)->velocity().y() > 0.0) {
+								qDebug() << " Scroller final position: " << QtScroller::scroller(w)->finalPosition();
 								qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
 												<< " contentPos: " << se->contentPos();
 								qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
@@ -100,26 +108,29 @@
 								qDebug() << "ArticleList: vmaximum "
 																<< lw->verticalScrollBar()->maximum();
 														
-								//emit approachingEndOfList(false);
-							    QtScroller::scroller(w)->stop();				
+								QtScroller::scroller(w)->stop();				
 														
-								approachingEndOfList(false);
-								return true;												
+							    //if not items added return false (event further processed for overhoot) 
+								return approachingEndOfList(false);
+																				
 							}
 													
 						}														
 						 else if (se->contentPos().y() < lw->verticalScrollBar()->minimum()+delta)													
-						{
+						//else if (QtScroller::scroller(w)->finalPosition().y()==lw->verticalScrollBar()->minimum())
+							
+							{
 							if (QtScroller::scroller(w)->velocity().y() < 0.0) {
-								//emit approachingEndOfList(true);
-							    qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
+								qDebug() << " Scroller final position: " << QtScroller::scroller(w)->finalPosition();		
+								qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
 												<< " contentPos: " << se->contentPos();
 							    qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
 								qDebug() << "ArticleList: vminimum "	<< lw->verticalScrollBar()->minimum();											
 							    qDebug() << "ArticleList: vmaximum "
 							    								<< lw->verticalScrollBar()->maximum();
 							    QtScroller::scroller(w)->stop();						
-								approachingEndOfList(true);
+							    //if not items added return false (event further processed for overhoot) 							    								
+							    return approachingEndOfList(true);
 								//Return true to prevent that default QScroller eventfilter scrolls  
 								// to beginning of list and stop scroller. (Nicer would be sure
 								// if it would continue scrolling from the new position with 
@@ -135,16 +146,12 @@
 								// (use scrollTo of scroller for smooth scrolling??) do something clever with resendPrepareEvent()? (Diffuclt)
 								// Perhaps also just reload when first element hit. (stopping before is useless if it cannot continue later)
 								// (Or throw all away and use modelview framework)
-								// TODO: If this finally works, do same for scroll down direction. 
 								
 								//TODO: knwn issues:
-								//	Crash on scrolling up if first. (only ebookexport?)
-								//  Still showing images
 								//	Jumps some articles. (Because adding article is started before first article visible
-								//		Simple fix would be to start adding articles only when first/last article reached. 
+								//		DONE Simple fix would be to start adding articles only when first/last article reached. 
 								//		However of this starting earlier that adding is done in background. (More complex option)
-								//=> For now plan is to use model-view instead, and go back to current approach only if not working.
-								return true;
+								
 							}
 						}
 
@@ -1397,23 +1404,8 @@ void WikiOnBoard::hideWaitCursor()
         #endif
 }
 
-/*
-    
-void WikiOnBoard::approachingEndOfList(bool up) {
-	qDebug()<< "WikiOnBoard::approachingEndOfList";
-	if (up) {
-		populateArticleList(ui.articleListWidget->item(0)->data(ArticleTitleRole).toString(),0,true, true);
-	} else {
-		qDebug()<< "ui.articleListWidget->count()"<< ui.articleListWidget->count();
-		qDebug()<< "ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString()"<<ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString();
-		qDebug()<< "ui.articleListWidget->item(ui.articleListWidget->count()-1)->text(): "<<ui.articleListWidget->item(ui.articleListWidget->count()-1)->text();
-				
-		populateArticleList(ui.articleListWidget->item(ui.articleListWidget->count()-1)->data(ArticleTitleRole).toString(),0,false, true);
-	}	
-}
-*/
 //TODO Consider merging with regular populate Article List 
-void WikiOnBoard::approachingEndOfList(bool up)
+bool WikiOnBoard::approachingEndOfList(bool up)
 	{
 	qDebug() << "WikiOnBoard::approachingEndOfList";
 	if (zimFile != NULL)
@@ -1453,7 +1445,7 @@ void WikiOnBoard::approachingEndOfList(bool up)
 					{
 					qDebug()
 							<< " Current entry is first entry in index => Do nothing";
-					return;
+					return false;
 					}
 
 				int insertedItemsCount = 0;
@@ -1509,8 +1501,10 @@ void WikiOnBoard::approachingEndOfList(bool up)
 											
 					qDebug() << insertedItemsCount <<" items inserted in beginning of list. Scroll so that firstly newly added article " << titleFirstNewItem << " ["<< idxFirstNewItem <<"] is at top of list. ";
 					ui.articleListWidget->scrollToItem(firstNewItem,QAbstractItemView::PositionAtTop);
+					return true;
 				}	else {
 					qDebug() << "No items inserted";
+					return false;
 				}
 				}
 			else
@@ -1545,7 +1539,7 @@ void WikiOnBoard::approachingEndOfList(bool up)
 					{
 					qDebug()
 							<< " Current entry is last entry in index => Do nothing";
-					return;
+					return false;
 					}
 				int insertedItemsCount = 0;
 				while (insertedItemsCount < 100)
@@ -1602,8 +1596,10 @@ void WikiOnBoard::approachingEndOfList(bool up)
 							<< "] is at bottom of list. ";
 						ui.articleListWidget->scrollToItem(firstNewItem,
 							QAbstractItemView::PositionAtBottom);
+						return true;
 					}	else {
 						qDebug() << "No items inserted";
+						return false;
 					}
 				} // End else (up=false)
 			} //End try
@@ -1612,6 +1608,7 @@ void WikiOnBoard::approachingEndOfList(bool up)
 			ui.articleListWidget->addItem(QLatin1String("Error occured"));
 			}
 		} //End if (zimFile!=NULL)
+		return false;
 	}	
 
 

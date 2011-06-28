@@ -134,7 +134,7 @@ private slots:
      void zoom(int zoomDelta);
      void zoomOut();
      void zoomIn();
-     void approachingEndOfList(bool up);
+     bool approachingEndOfList(bool up);
 };
 
 class ArticleListFilter : public QObject {
@@ -146,7 +146,7 @@ protected:
 	
     bool eventFilter(QObject *o, QEvent *e);
 signals: 
-	void approachingEndOfList(bool up);
+	bool approachingEndOfList(bool up);
 };
 
 
