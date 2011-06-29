@@ -84,16 +84,16 @@
 				{				
 				if (QListWidget *lw = qobject_cast<QListWidget *>(w->parentWidget()))
 					{
-					qreal delta= 40.0; //FIXME don't use constant
 								
-				//	qreal delta= 840.0; //FIXME don't use constant
-							// Verticalscrollbarmaxim=4289, 100 items => itemheight ~42
-							// Asssume <20 left to end 20*42=840.
 					if (lw->viewport() == w)
 						{
+						qreal delta = lw->visualItemRect(
+															lw->item(0)).height();
+								
 						if (se->scrollState()==QtScrollEvent::ScrollStarted) {
 							qDebug() << "New Scrolling activity started. ";
 							qDebug() << " Scroller final position: " << QtScroller::scroller(w)->finalPosition();
+							qDebug() << "delta: " <<delta;
 						}						
 						if (se->contentPos().y() > lw->verticalScrollBar()->maximum() -delta)
 					//	if (QtScroller::scroller(w)->finalPosition().y()==lw->verticalScrollBar()->maximum())
@@ -722,7 +722,13 @@ void WikiOnBoard::articleListOpenArticle()
 	QListWidgetItem *item = ui.articleListWidget->currentItem();
 	if (item != NULL)
 		{		
-		ui.textBrowser->setSource(item->data(ArticleUrlRole).toUrl());
+		
+		QUrl url = item->data(ArticleUrlRole).toUrl();
+		QString urlDecoded =  url.toString();
+		QString urlEncoded = QString::fromUtf8(url.toEncoded().data(),url.toEncoded().length());
+		qDebug() << "articleListOpenArticle: url (decoded): " <<urlDecoded<<"\nurl (encoded):"<<urlEncoded ;
+			
+		ui.textBrowser->setSource(url);
 		switchToArticlePage();
 		}
 	}
@@ -730,6 +736,9 @@ void WikiOnBoard::articleListOpenArticle()
 void WikiOnBoard::openArticleByUrl(QUrl url)
 	{
 	QString path = url.path();
+	QString encodedPath = QString::fromUtf8(url.encodedPath().data(),url.encodedPath().length());
+	
+	qDebug() << "openArticleByUrl: " <<url.toString()<<"\nurl.path():"<<path << "\nurl.encodedPath():"<< encodedPath;
 	//Only read article, if not same as currently
 	//viewed article (thus don´t reload for article internal links)
 	//TODO: this does not work as appearantly before calling changedSource
@@ -737,11 +746,12 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 	// Optimize (by handling in anchorClicked, but check what happens
 	//	to history then)
 	//if (!path.isEmpty() && (currentlyViewedUrl.path()!=url.path())) {	
+	//TODO: Fix this, url is not necessarily human readable
 	ui.articleName->setText(path);
 	
         //QElapsedTimer timer;
         //timer.start();
-        QString articleText = getArticleTextByUrl(path);
+        QString articleText = getArticleTextByUrl(encodedPath);
         //qDebug() << "Reading article " <<path <<" from zim file took" << timer.elapsed() << " milliseconds";
         //timer.start();
 
@@ -839,6 +849,7 @@ bool WikiOnBoard::openExternalLink(QUrl url)
 
 void WikiOnBoard::on_textBrowser_anchorClicked(QUrl url)
 	{
+	qDebug() << "on_textBrowser_anchorClicked: Url: " << url.toString();
 	if (!QString::compare(url.scheme(), QLatin1String("http"), Qt::CaseInsensitive))
 		{
 			openExternalLink(url);
