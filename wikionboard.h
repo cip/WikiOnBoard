@@ -86,6 +86,8 @@ private:
     QString fromUTF8EncodedStdString(std::string s) {
     	return QString::fromUtf8(s.data(), int(s.size())); 
     }
+    zim::File::const_iterator WikiOnBoard::getArticleByUrl(QString articleUrl);
+    QString getArticleTitleByUrl(QString articleUrl);           
     QString getArticleTextByUrl(QString articleUrl);   
     QString getArticleTextByIdx(QString articleIdx);         
     QString getArticleTextByTitle(QString articleTitle);

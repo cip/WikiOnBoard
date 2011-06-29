@@ -435,6 +435,44 @@ QString WikiOnBoard::getArticleTextByIdx(QString articleIdx)
 	return articleText;
 	}
 
+
+zim::File::const_iterator WikiOnBoard::getArticleByUrl(QString articleUrl) {
+	QString strippedArticleUrl;
+	//Supported article urls are:
+	// A/Url  (Expected by zimlib find(Url) )
+	// /A/Url  (Appearanlty used by
+	// Url  (Without namespace /A/.), assume it is article. (Either relative or other namespace)
+	if (articleUrl.startsWith(QLatin1String("/A/"))) {			
+		strippedArticleUrl=articleUrl.remove(0, 3); //Remove /A/
+		qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with /A/./A/ refers to article name space."; 
+		
+	} else if (articleUrl.startsWith(QLatin1String("A/"))) {
+		//TODO remove this when correct behavior clarified.
+		strippedArticleUrl=articleUrl.remove(0, 2); //Remove /A
+		qWarning() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with A/. Assume A/ refers to article name space. ";
+	} else {
+		strippedArticleUrl=articleUrl; 
+		qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" does not start with A/ or /A/. Assume it is a relative URL to A/";			
+	}			
+		
+	std::string articleUrlStdStr = std::string(strippedArticleUrl.toUtf8());
+	std::string articleUrlDecodedStdStr = zim::urldecode(articleUrlStdStr);
+	qDebug() << "Open article by URL.\n QString: " << articleUrl
+			<< "QString article namespace stripped:" << strippedArticleUrl
+			<< "\n std:string: " << fromUTF8EncodedStdString(articleUrlStdStr)
+			<< "\n decoded: " << fromUTF8EncodedStdString(
+			articleUrlDecodedStdStr);
+	
+	zim::File::const_iterator it = zimFile->find('A', articleUrlDecodedStdStr);
+	return it;
+}
+
+QString WikiOnBoard::getArticleTitleByUrl(QString articleUrl) {
+	zim::File::const_iterator it = getArticleByUrl(articleUrl);
+	if (it == zimFile->end()) return QString(tr("Error: article not found. (URL: %1 )").arg(articleUrl));			
+	return fromUTF8EncodedStdString(it->getTitle());
+}
+
 //Note: expects encoded URL (as used in articles). Therefore don't use
 // this for decoded URL (as in zim file index)
 QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
@@ -443,40 +481,14 @@ QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 	zim::Blob blob;
 	try
 		{
-		QString strippedArticleUrl;
-		//Supported article urls are:
-		// A/Url  (Expected by zimlib find(Url) )
-		// /A/Url  (Appearanlty used by
-		// Url  (Without namespace /A/.), assume it is article. (Either relative or other namespace)
-		if (articleUrl.startsWith(QLatin1String("/A/"))) {			
-			strippedArticleUrl=articleUrl.remove(0, 3); //Remove /A/
-			qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with /A/./A/ refers to article name space."; 
-			
-		} else if (articleUrl.startsWith(QLatin1String("A/"))) {
-			//TODO remove this when correct behavior clarified.
-			strippedArticleUrl=articleUrl.remove(0, 2); //Remove /A
-			qWarning() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with A/. Assume A/ refers to article name space. ";
-		} else {
-			strippedArticleUrl=articleUrl; 
-			qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" does not start with A/ or /A/. Assume it is a relative URL to A/";			
-		}			
-			
-		std::string articleUrlStdStr = std::string(strippedArticleUrl.toUtf8());
-		std::string articleUrlDecodedStdStr = zim::urldecode(articleUrlStdStr);
-		qDebug() << "Open article by URL.\n QString: " << articleUrl
-				<< "QString article namespace stripped:" << strippedArticleUrl
-				<< "\n std:string: " << fromUTF8EncodedStdString(articleUrlStdStr)
-				<< "\n decoded: " << fromUTF8EncodedStdString(
-				articleUrlDecodedStdStr);
-		
-		zim::File::const_iterator it = zimFile->find('A', articleUrlDecodedStdStr);
+		zim::File::const_iterator it = getArticleByUrl(articleUrl);
 		//TODO: Actually not really clean, because if URL not found just closest match displayed.
 		if (it == zimFile->end())			
 			throw std::runtime_error("article not found");
 		if (it->isRedirect())
 			{
 			//Redirect stores decoded URLs. (as in index) 
-			articleUrlDecodedStdStr = it->getRedirectArticle().getUrl();
+			std::string articleUrlDecodedStdStr = it->getRedirectArticle().getUrl();
 			qDebug() << "Is redirect to url " << fromUTF8EncodedStdString(articleUrlDecodedStdStr);
 			zim::File::const_iterator it1 = zimFile->find('A',
 					articleUrlDecodedStdStr);
@@ -735,7 +747,7 @@ void WikiOnBoard::articleListOpenArticle()
 		}
 	}
 
-void WikiOnBoard::openArticleByUrl(QUrl url)
+ void WikiOnBoard::openArticleByUrl(QUrl url)
 	{
 	QString path = url.path();
 	QString encodedPath = QString::fromUtf8(url.encodedPath().data(),url.encodedPath().length());
@@ -748,8 +760,10 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 	// Optimize (by handling in anchorClicked, but check what happens
 	//	to history then)
 	//if (!path.isEmpty() && (currentlyViewedUrl.path()!=url.path())) {	
-	//TODO: Fix this, url is not necessarily human readable
-	ui.articleName->setText(path);
+	
+	QString articleTitle = getArticleTitleByUrl(encodedPath);
+	qDebug() << "Set index search field to title of article: "<< articleTitle;   	
+	ui.articleName->setText(articleTitle);
 	
         //QElapsedTimer timer;
         //timer.start();
