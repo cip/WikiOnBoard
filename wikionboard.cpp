@@ -569,7 +569,9 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 				{
 
 				QString articleTitle = fromUTF8EncodedStdString(it->getTitle());
-				QUrl articleUrl(fromUTF8EncodedStdString(it->getUrl()));
+				QUrl articleUrl = QUrl::fromEncoded(QUrl::toPercentEncoding(fromUTF8EncodedStdString(it->getUrl())));				
+				
+				
 				QString articleIdx = QString::number(it->getIndex());
 				if (it->getNamespace() != 'A')
 					{
@@ -1466,7 +1468,7 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 					--it;
 					QString articleTitle = fromUTF8EncodedStdString(
 							it->getTitle());
-					QUrl articleUrl(fromUTF8EncodedStdString(it->getUrl()));
+					QUrl articleUrl = QUrl::fromEncoded(QUrl::toPercentEncoding(fromUTF8EncodedStdString(it->getUrl())));													
 					QString articleIdx = QString::number(it->getIndex());
 					if (it->getNamespace() != 'A')
 						{
@@ -1558,7 +1560,7 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 					++it;
 					QString articleTitle = fromUTF8EncodedStdString(
 							it->getTitle());
-					QUrl articleUrl(fromUTF8EncodedStdString(it->getUrl()));
+					QUrl articleUrl = QUrl::fromEncoded(QUrl::toPercentEncoding(fromUTF8EncodedStdString(it->getUrl())));				
 					QString articleIdx = QString::number(it->getIndex());
 					if (it->getNamespace() != 'A')
 						{
