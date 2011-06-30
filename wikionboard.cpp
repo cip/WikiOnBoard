@@ -1094,16 +1094,26 @@ void WikiOnBoard::aboutCurrentZimFile()
 
 void WikiOnBoard::about()
 	{
+	
+	QString selfSignedText = QLatin1String("");
+	#if defined(Q_OS_SYMBIAN)
+		#if __IS_SELFSIGNED__==1
+		selfSignedText.append(tr("application is self-signed", "only displayed if application is self-signed"));
+		#endif
+	#endif
+	
 	QMessageBox msgBox;
-	msgBox.setText(tr("About"));
+	msgBox.setText(tr("About"));	
 	QString text = QString (tr(""
 			"WikiOnBoard %1\n"
 			"Author: %2\n"
 			"Uses zimlib (openzim.org) and liblzma.\n"
-			"Build date: %3\n")).arg(
+			"Build date: %3\n"
+			"%4\n")).arg(
 					QString::fromLocal8Bit(__APPVERSIONSTRING__),
 					tr("Christian Puehringer"), 
-					QString::fromLocal8Bit(__DATE__)
+					QString::fromLocal8Bit(__DATE__),
+					selfSignedText
 	);
 	//TODO: Why are all other msgBox basically fullscreen, but this one is
 	//not even large enough to display complete text without scrolling?

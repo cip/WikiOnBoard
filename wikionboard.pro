@@ -1,8 +1,9 @@
+#Set to 1 or 0. Changes UID used, and SwEvent Capability requested only if not selfsigned.
+#IS_SELFSIGNED = 1
+IS_SELFSIGNED = 0
 
-#Set to 1 or 0. SwEvent Capability requested only if not selfsigned.
-IS_SELFSIGNED = 1
 DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
-VERSION = 0.0.40
+VERSION = 0.0.41
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 TARGET = WikiOnBoard
@@ -53,25 +54,34 @@ symbian: {
         128kb, \
         Max \
         32Mb
-    #Required to let browser load page and switch to foreground if browser already open
-    # on QDesktopServices::openUrl call
-    #Note that capability not available for self-signed apps. 
-    contains(IS_SELFSIGNED,0): {	
- 	 TARGET.CAPABILITY+= SwEvent 	 
- 	}
- 		
- #Deploy files for translation (qm extension) to application's private directory    
-    translationfiles.sources = *.qm    
-    DEPLOYMENT +=translationfiles 
-}
-symbian:LIBS += -lavkon \
-    -leikcoctl \
-    -lcone
-symbian:TARGET.UID3 = 0xA89FA6F6
-symbian:
-{
+    LIBS += -lavkon \
+    	-leikcoctl \
+    	-lcone
     ICON = wikionboard.svg
+    contains(IS_SELFSIGNED,0): {	
+ 		#Nokia assigned UID 
+	 	TARGET.UID3 = 0x20045592
+ 		#Required to let browser load page and switch to foreground if browser already open
+   		# on QDesktopServices::openUrl call
+    	#Note that capability not available for self-signed apps. 
+ 	 	TARGET.CAPABILITY+= SwEvent
+ 	 	# Use correct UID for wrapper (wikionboard_installer.sis) package.
+ 	 	DEPLOYMENT.installer_header = 0x2002CCCF 	 	 
+ 		message(Configuring for nokia signed app. UID3 = $$TARGET.UID3 $$CAPABILITY)
+ 	} else {
+ 		#UID for self-signing
+		symbian:TARGET.UID3 = 0xA89FA6F6
+		message(Configuring for self-signed app. UID3 = $$TARGET.UID3 $$CAPABILITY)
+	}	
+ 	#Include Vendorinfo in sis. (Note umlaut does not work in makesis)
+ 	vendorinfo = "%{\"Christian Puehringer\"}" ":\"Christian Puehringer\""
+ 	my_deployment.pkg_prerules = vendorinfo
+ 	DEPLOYMENT += my_deployment
+ 	#Deploy files for translation (qm extension) to application's private directory    
+    translationfiles.sources = *.qm    
+    DEPLOYMENT +=translationfiles
 }
+
 #Maemo
 INCLUDEPATH += ../zimlib/include
 
