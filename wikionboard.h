@@ -86,13 +86,13 @@ private:
     QString fromUTF8EncodedStdString(std::string s) {
     	return QString::fromUtf8(s.data(), int(s.size())); 
     }
-    zim::File::const_iterator WikiOnBoard::getArticleByUrl(QString articleUrl);
+    zim::File::const_iterator getArticleByUrl(QString articleUrl);
     QString getArticleTitleByUrl(QString articleUrl);           
     QString getArticleTextByUrl(QString articleUrl);   
     QString getArticleTextByIdx(QString articleIdx);         
     QString getArticleTextByTitle(QString articleTitle);
-    std::pair<bool, QString> WikiOnBoard::getMetaData(QString key);
-    QString WikiOnBoard::getMetaDataString(QString key);
+    std::pair<bool, QString> getMetaData(QString key);
+    QString getMetaDataString(QString key);
     QString byteArray2HexQString(const QByteArray & byteArray);
     QUrl currentlyViewedUrl;    
     void openArticleByUrl(QUrl url);
