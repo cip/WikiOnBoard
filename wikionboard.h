@@ -53,8 +53,8 @@ class WikiOnBoard : public QMainWindow
 
 public:
 	WikiOnBoard(void* bgc, QWidget *parent = 0);
-    ~WikiOnBoard();
-protected:    
+        ~WikiOnBoard();
+protected:
     void keyPressEvent(QKeyEvent *event);    
     void resizeEvent ( QResizeEvent * event );  
 private:     
@@ -96,6 +96,8 @@ private:
     QString byteArray2HexQString(const QByteArray & byteArray);
     QUrl currentlyViewedUrl;    
     void openArticleByUrl(QUrl url);
+    QString articleListItemToString(QListWidgetItem *);
+    std::pair <bool, QListWidgetItem*> getArticleListItem(zim::File::const_iterator it);
     void populateArticleList(); 
     void populateArticleList(QString articleName, int ignoreFirstN, bool direction_up, bool noDelete=false);
     void articleListSelectPreviousEntry();

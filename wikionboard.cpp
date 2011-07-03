@@ -542,6 +542,40 @@ QString WikiOnBoard::getArticleTextByTitle(QString articleTitle)
 	return articleText;
 	}
 
+//For debug output
+QString WikiOnBoard::articleListItemToString(QListWidgetItem* item) {
+    QUrl url = item->data(ArticleUrlRole).toUrl();
+    QString urlEncoded = QString::fromUtf8(url.toEncoded().data(),url.toEncoded().length());
+
+    QString s = QString(QLatin1String("arcticleListItem: \n\tindex: %1\n"
+                              "\ttitle: %2\n"
+                        "\turl (encoded): %3\n")).arg(item->data(ArticleIndexRole).toString(),
+                                                      item->data(ArticleTitleRole).toString(),
+                                                      urlEncoded);
+    return s;
+}
+
+std::pair <bool, QListWidgetItem*> WikiOnBoard::getArticleListItem(zim::File::const_iterator it) {
+    QString articleTitle = fromUTF8EncodedStdString(it->getTitle());
+    QUrl articleUrl = QUrl::fromEncoded(QUrl::toPercentEncoding(fromUTF8EncodedStdString(it->getUrl())));
+    QString articleIdx = QString::number(it->getIndex());
+    QListWidgetItem* articleItem = new QListWidgetItem();
+    if (it->getNamespace() != 'A')
+    {
+        qDebug()
+                << " Index entry to be added is not in article namespace. Stop adding titles. \n\tArticle Title: ["
+                << articleIdx << "] " << articleTitle
+                << "\n\tArticle Namespace: " << it->getNamespace();
+        return std::pair<bool, QListWidgetItem*> (false, articleItem);
+    }
+    articleItem->setText(articleTitle);
+    articleItem->setData(ArticleTitleRole, articleTitle);
+    articleItem->setData(ArticleIndexRole, articleIdx);
+    articleItem->setData(ArticleUrlRole, articleUrl);
+    ui.articleListWidget->addItem(articleItem);
+    return std::pair<bool, QListWidgetItem*> (true, articleItem);
+}
+
 void WikiOnBoard::populateArticleList() {	
 	populateArticleList(ui.articleName->text(), 0, false);
 	ui.articleListWidget->setCurrentRow(0); //Select first found item
@@ -579,32 +613,15 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 			int insertedItemsCount = 0;
 			while (true)
 				{
-
-				QString articleTitle = fromUTF8EncodedStdString(it->getTitle());
-				QUrl articleUrl = QUrl::fromEncoded(QUrl::toPercentEncoding(fromUTF8EncodedStdString(it->getUrl())));				
-				
-				
-				QString articleIdx = QString::number(it->getIndex());
-				if (it->getNamespace() != 'A')
-					{
-					qDebug()
-							<< " Next index entry is not in article namespace. Stop adding titles. \n\tArticle Title: ["
-							<< articleIdx << "] " << articleTitle
-							<< "\n\tArticle Namespace: " << it->getNamespace();
-					break;
-					}
-				QListWidgetItem* articleItem = new QListWidgetItem();
-				articleItem->setText(articleTitle);
-				articleItem->setData(ArticleTitleRole, articleTitle);
-				articleItem->setData(ArticleIndexRole, articleIdx);
-				articleItem->setData(ArticleUrlRole, articleUrl);
-				ui.articleListWidget->addItem(articleItem);
-																
+                                 std::pair <bool, QListWidgetItem*> articleItemPair =  getArticleListItem(it);
+                                 if (!articleItemPair.first) {
+                                    break;
+                                }
 				if (direction_up)
 					{
 					if (i >= ignoreFirstN)
 						{
-						ui.articleListWidget->insertItem(0, articleItem);
+                                                ui.articleListWidget->insertItem(0, articleItemPair.second);
 						insertedItemsCount++;
 						if (noDelete==false) {
 							QListWidgetItem *lastItem = ui.articleListWidget->takeItem(ui.articleListWidget->count() - 1);
@@ -626,7 +643,7 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 					{
 					if (i >= ignoreFirstN)
 						{
-						ui.articleListWidget->addItem(articleItem);
+                                                ui.articleListWidget->addItem(articleItemPair.second);
 						insertedItemsCount++;
 						}
 					if (it == zimFile->end())
@@ -1451,24 +1468,19 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 			{
 			if (up)
 				{
-				//populateArticleList(ui.articleListWidget->item(0)->data(ArticleTitleRole).toString(),0,true, true);
-				qDebug()
+                                qDebug()
 						<< "Approaching end of article list while scrolling up";
-				QString
+                                QListWidgetItem * firstArticleInCurrentList = ui.articleListWidget->item(0);
+                                QString
 						titleFirstArticleInCurrentList =
-								ui.articleListWidget->item(0)->data(
+                                                                firstArticleInCurrentList->data(
 										ArticleTitleRole).toString();
-				QString
-										idxFirstArticleInCurrentList =
-												ui.articleListWidget->item(0)->data(
-														ArticleIndexRole).toString();
-								
+
 				//Zim index is UTF8 encoded. Therefore use utf8 functions to access
 				// it.
 				std::string articleTitleStdStr = std::string(
 						titleFirstArticleInCurrentList.toUtf8());
-				qDebug() << " Title of first article in current list is: ["<< idxFirstArticleInCurrentList  << "] "
-						<< fromUTF8EncodedStdString(articleTitleStdStr);
+                                qDebug() << " First article in current list is: "<< articleListItemToString(firstArticleInCurrentList);
 
 				std::pair<bool, zim::File::const_iterator> r =
 						zimFile->findxByTitle('A', articleTitleStdStr);
@@ -1490,24 +1502,11 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 				while (insertedItemsCount < 100)
 					{
 					--it;
-					QString articleTitle = fromUTF8EncodedStdString(
-							it->getTitle());
-					QUrl articleUrl = QUrl::fromEncoded(QUrl::toPercentEncoding(fromUTF8EncodedStdString(it->getUrl())));													
-					QString articleIdx = QString::number(it->getIndex());
-					if (it->getNamespace() != 'A')
-						{
-						qDebug()
-								<< " Previous index entry is not in article namespace. Stop adding titles. \n\tArticle Title: ["<< articleIdx  << "] "
-								<< articleTitle << "\n\tArticle Namespace: "
-								<< it->getNamespace();
-						break;
-						}
-					QListWidgetItem* articleItem = new QListWidgetItem();
-					articleItem->setText(articleTitle);
-					articleItem->setData(ArticleTitleRole, articleTitle);
-					articleItem->setData(ArticleIndexRole, articleIdx);
-					articleItem->setData(ArticleUrlRole, articleUrl);
-					ui.articleListWidget->insertItem(0, articleItem);
+                                        std::pair <bool, QListWidgetItem*> articleItemPair =  getArticleListItem(it);
+                                        if (!articleItemPair.first) {
+                                            break;
+                                        }
+                                        ui.articleListWidget->insertItem(0, articleItemPair.second);
 					insertedItemsCount++;
 					//Remove last item to avoid eating up to much memory. 
 					//(But ensure that that there enough "old" items left
@@ -1522,21 +1521,16 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 					if (it == zimFile->beginByTitle())
 						{
 						qDebug()
-								<< "Beginning of title index reached. Stop adding titles. Last added title :["<< articleIdx  << "] " 
-								<< articleTitle;
+                                                                << "Beginning of title index reached. Stop adding titles. Last added title :"<< articleListItemToString(articleItemPair.second);
 						break;
 						}
 					} //End while
 				if (insertedItemsCount>0) {
 					QListWidgetItem *firstNewItem = ui.articleListWidget->item(insertedItemsCount-1);
-					QString	titleFirstNewItem =
-						firstNewItem->data(
-								ArticleTitleRole).toString();
-					QString	idxFirstNewItem=
-						firstNewItem->data(
-										ArticleIndexRole).toString();
-											
-					qDebug() << insertedItemsCount <<" items inserted in beginning of list. Scroll so that firstly newly added article " << titleFirstNewItem << " ["<< idxFirstNewItem <<"] is at top of list. ";
+                                        qDebug() << insertedItemsCount
+                                                << " items inserted in beginning of list. Scroll so that firstly newly added article is at bottom of list. Firstly new added article: "<<articleListItemToString(firstNewItem);
+
+                                        qDebug() << insertedItemsCount <<" items . Scroll so that firstly newly added article is at top of list. Firstly new added article: "<<articleListItemToString(firstNewItem);
 					ui.articleListWidget->scrollToItem(firstNewItem,QAbstractItemView::PositionAtTop);
 					return true;
 				}	else {
@@ -1548,21 +1542,18 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 				{// end  (if up()). => up=false
 				qDebug()
 						<< "Approaching end of article list while scrolling down";
-				QString titleLastArticleInCurrentList =
-						ui.articleListWidget->item(
-								ui.articleListWidget->count() - 1)->data(
+                                QListWidgetItem* lastArticleInCurrentList = ui.articleListWidget->item(
+                                            ui.articleListWidget->count() - 1);
+                                QString titleLastArticleInCurrentList =
+                                                lastArticleInCurrentList->data(
 								ArticleTitleRole).toString();
-				QString  idxLastArticleInCurrentList =
-										ui.articleListWidget->item(
-												ui.articleListWidget->count() - 1)->data(
-												ArticleIndexRole).toString();
-								
+
 				//Zim index is UTF8 encoded. Therefore use utf8 functions to access
 				// it.
 				std::string articleTitleStdStr = std::string(
 						titleLastArticleInCurrentList.toUtf8());
-				qDebug() << " Title of last article in current list is: ["<< idxLastArticleInCurrentList  << "] "
-						<< fromUTF8EncodedStdString(articleTitleStdStr);
+                                qDebug() << " Last article in current list is: " << articleListItemToString(ui.articleListWidget->item(
+                                                                                                                ui.articleListWidget->count() - 1));
 
 				std::pair<bool, zim::File::const_iterator> r =
 						zimFile->findxByTitle('A', articleTitleStdStr);
@@ -1582,24 +1573,11 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 				while (insertedItemsCount < 100)
 					{
 					++it;
-					QString articleTitle = fromUTF8EncodedStdString(
-							it->getTitle());
-					QUrl articleUrl = QUrl::fromEncoded(QUrl::toPercentEncoding(fromUTF8EncodedStdString(it->getUrl())));				
-					QString articleIdx = QString::number(it->getIndex());
-					if (it->getNamespace() != 'A')
-						{
-						qDebug()
-								<< " Next index entry is not in article namespace. Stop adding titles. \n\tArticle Title: ["<< articleIdx  << "] "
-								<< articleTitle << "\n\tArticle Namespace: "
-								<< it->getNamespace();
-						break;
-						}
-					QListWidgetItem* articleItem = new QListWidgetItem();
-					articleItem->setText(articleTitle);
-					articleItem->setData(ArticleTitleRole, articleTitle);
-					articleItem->setData(ArticleIndexRole, articleIdx);
-					articleItem->setData(ArticleUrlRole, articleUrl);
-					ui.articleListWidget->addItem(articleItem);
+                                        std::pair <bool, QListWidgetItem*> articleItemPair =  getArticleListItem(it);
+                                        if (!articleItemPair.first) {
+                                            break;
+                                        }
+                                        ui.articleListWidget->addItem(articleItemPair.second);
 					//Remove first item to avoid eating up to much memory. 
 					//TODO: increase overlap. (User scrolls one direction than other else leads directly to reload)
 					if (ui.articleListWidget->count()>120) {
@@ -1611,8 +1589,7 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 					if (it == zimFile->end())
 						{
 						qDebug()
-								<< "End of title index reached. Stop adding titles. Last added title: ["<< articleIdx  << "] "
-								<< articleTitle;
+                                                                << "End of title index reached. Stop adding titles. Last added title: "<< articleListItemToString(articleItemPair.second);
 						break;
 						}
 					} //End while
@@ -1622,15 +1599,8 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 					{
 						QListWidgetItem *firstNewItem = ui.articleListWidget->item(
 							indexFirstNewItem);
-						QString titleFirstNewItem = firstNewItem->data(
-							ArticleTitleRole).toString();
-						QString idxFirstNewItem = firstNewItem->data(
-							ArticleIndexRole).toString();
-
-						qDebug() << insertedItemsCount
-							<< " items appended to end of list. Scroll so that firstly newly added article "
-							<< titleFirstNewItem << " [" << idxFirstNewItem
-							<< "] is at bottom of list. ";
+                                                qDebug() << insertedItemsCount
+                                                        << " items appended to end of list. Scroll so that firstly newly added article is at bottom of list. Firstly new added article: "<<articleListItemToString(firstNewItem);
 						ui.articleListWidget->scrollToItem(firstNewItem,
 							QAbstractItemView::PositionAtBottom);
 						return true;

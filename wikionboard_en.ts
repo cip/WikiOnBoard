@@ -28,7 +28,7 @@
     <message>
         <location filename="wikionboard.cpp" line="230"/>
         <source>Open Zimfile</source>
-        <translation>Open a eBook</translation>
+        <translation type="unfinished">Open an eBook</translation>
     </message>
     <message>
         <location filename="wikionboard.cpp" line="234"/>
