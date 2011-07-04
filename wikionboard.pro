@@ -3,7 +3,7 @@
 IS_SELFSIGNED = 0
 
 DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
-VERSION = 0.0.41
+VERSION = 0.0.42
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 TARGET = WikiOnBoard
@@ -17,8 +17,9 @@ RESOURCES +=
 include(../kineticscroller/qtscroller.pri)
 
 TRANSLATIONS = wikionboard_en.ts \
-			   wikionboard_de.ts \
-               wikionboard_es.ts 
+               wikionboard_es.ts \
+               wikionboard_it.ts \
+               wikionboard_de.ts
                
 # TODO This is a workaround, final fix should rename zimlib to libzim for symbian as well.
 # Note that unix includes symbian and therefore cannot be used.
@@ -45,7 +46,10 @@ symbian: {
 DEFINES += QT_NO_CAST_FROM_ASCII \
            QT_NO_CAST_TO_ASCII
 
+message(QT_VERSION: $$QT_VERSION)
 symbian: { 
+    message(S60_VERSION: $$S60_VERSION)
+    message(SYMBIAN_VERSION: $$SYMBIAN_VERSION)
     TARGET.EPCSTACKSIZE = 0x14000
     TARGET.EPOCHEAPSIZE = 0x20000 \
         0x2000000 \
@@ -92,7 +96,13 @@ OTHER_FILES += \
     debian/copyright \
     debian/README \
     debian/rules \
-    WikiOnBoard.desktop
+    WikiOnBoard.desktop \
+    qtc_packaging/debian_harmattan/rules \
+    qtc_packaging/debian_harmattan/README \
+    qtc_packaging/debian_harmattan/copyright \
+    qtc_packaging/debian_harmattan/control \
+    qtc_packaging/debian_harmattan/compat \
+    qtc_packaging/debian_harmattan/changelog
 
 unix:!symbian {
     maemo5 {

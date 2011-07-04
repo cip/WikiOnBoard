@@ -84,7 +84,7 @@
     <message>
         <location filename="wikionboard.cpp" line="360"/>
         <source>Toggle Fullscreen</source>
-        <translation type="unfinished">Toggle full screen</translation>
+        <translation>Toggle full screen</translation>
     </message>
     <message>
         <location filename="wikionboard.cpp" line="366"/>
@@ -104,7 +104,7 @@
     <message>
         <location filename="wikionboard.cpp" line="408"/>
         <source>Error on opening zim file</source>
-        <translation type="unfinished">Error: Can not open eBook</translation>
+        <translation>Error: Can not open eBook</translation>
     </message>
     <message>
         <location filename="wikionboard.cpp" line="472"/>
