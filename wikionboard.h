@@ -97,6 +97,7 @@ private:
     QUrl currentlyViewedUrl;    
     void openArticleByUrl(QUrl url);
     QString articleListItemToString(QListWidgetItem *);
+
     std::pair <bool, QListWidgetItem*> getArticleListItem(zim::File::const_iterator it);
     void populateArticleList(); 
     void populateArticleList(QString articleName, int ignoreFirstN, bool direction_up, bool noDelete=false);
@@ -138,7 +139,8 @@ private slots:
      void zoom(int zoomDelta);
      void zoomOut();
      void zoomIn();
-     bool approachingEndOfList(bool up);
+     int addItemsToArticleList(bool up, int addCount=100, int maxCount=120);
+
 };
 
 class ArticleListFilter : public QObject {

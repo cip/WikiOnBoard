@@ -232,7 +232,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	QtScroller::grabGesture(ui.articleListWidget->viewport(), QtScroller::LeftMouseButtonGesture);
 	ArticleListFilter *articleListFilter = new ArticleListFilter();
 	ui.articleListWidget->viewport()->installEventFilter(articleListFilter);
-	connect(articleListFilter,SIGNAL(approachingEndOfList(bool)),this, SLOT(approachingEndOfList(bool)));
+        connect(articleListFilter,SIGNAL(approachingEndOfList(bool)),this, SLOT(addItemsToArticleList(bool)));
 	QtScrollerProperties properties = QtScroller::scroller(ui.textBrowser->viewport())->scrollerProperties();
 	//properties.setScrollMetric(QtScrollerProperties::DragStartDistance,
 	 //	                                QVariant(1.0/1000)); 
@@ -572,13 +572,11 @@ std::pair <bool, QListWidgetItem*> WikiOnBoard::getArticleListItem(zim::File::co
     articleItem->setData(ArticleTitleRole, articleTitle);
     articleItem->setData(ArticleIndexRole, articleIdx);
     articleItem->setData(ArticleUrlRole, articleUrl);
-    ui.articleListWidget->addItem(articleItem);
     return std::pair<bool, QListWidgetItem*> (true, articleItem);
 }
 
 void WikiOnBoard::populateArticleList() {	
 	populateArticleList(ui.articleName->text(), 0, false);
-	ui.articleListWidget->setCurrentRow(0); //Select first found item
 }
 
 void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
@@ -596,7 +594,6 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 			std::string articleNameStdStr = std::string(articleName.toUtf8());
 			//Find article, if not an exact match,  Iterator may point to end, or to 
 			// element of other namespace. (like image (I) or metadata (M))		
-			//FIXME
 			zim::File::const_iterator it = zimFile->findByTitle('A',
 					articleNameStdStr);
 			
@@ -611,7 +608,7 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 			}
 			int i = 0;
 			int insertedItemsCount = 0;
-			while (true)
+                        while (true)
 				{
                                  std::pair <bool, QListWidgetItem*> articleItemPair =  getArticleListItem(it);
                                  if (!articleItemPair.first) {
@@ -661,8 +658,7 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 				else if (insertedItemsCount > 0)
 					{
 					//Non-Touch: Only fill visible area, no scrolling
-					//TODO: Consider to enable for non-touch
-					//Calculate height of all inserted items, and stop
+                                        //Calculate height of all inserted items, and stop
 					//insertion when visible area of list is full.
 					int itemHeight = ui.articleListWidget->visualItemRect(
 							ui.articleListWidget->item(0)).height();
@@ -681,8 +677,29 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 						break;
 						}
 					}
-				}				
-			} 
+                                }
+                        if (hasTouchScreen) {
+
+                            //Add some items before found item (For smoother scrolling up)
+                            int addedItemsCount = addItemsToArticleList(true,20);
+
+                            qDebug() << " Added " << addedItemsCount << " items before searched item. select searched item and scroll it to top of screen";
+
+                            //Select found item. (i.p. useful for phones which have a keypad as well, and if not enough items left below found item to fill list)
+                            ui.articleListWidget->setCurrentRow(addedItemsCount);
+                            //Scroll to found item. (addItemsToArticleList scrolled to first added item, which is one too early)
+                            ui.articleListWidget->scrollToItem (ui.articleListWidget->currentItem() , QAbstractItemView::PositionAtTop );
+
+
+
+                            qDebug() << "First item of list (after add)" << articleListItemToString(ui.articleListWidget->item(0));
+                            qDebug() << "Last item of list (after add)" << articleListItemToString(ui.articleListWidget->item(ui.articleListWidget->count()-1));
+                          } else {
+                            //Non-touchscreen
+                            ui.articleListWidget->setCurrentRow(0); //Select first found item
+                            }
+
+                    }
 
 		catch (const std::exception& e)
 			{
@@ -1356,7 +1373,7 @@ void WikiOnBoard::resizeEvent(QResizeEvent * event)
 				{
 				populateArticleList(item->data(ArticleTitleRole).toString(), 0,
 						false);
-				ui.articleListWidget->setCurrentRow(0);
+                                //ui.articleListWidget->setCurrentRow(0);
 				}
 			}
 
@@ -1447,8 +1464,13 @@ void WikiOnBoard::showWaitCursor()
         #if defined(Q_OS_SYMBIAN)
             QApplication::setNavigationMode(Qt::NavigationModeCursorForceVisible);
         #endif
+        //On Symbian^3 waitcursor not working for some reason.
+        //TODO: waitcursor may be displayed outside of screen. Find out how to move it.
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-	}
+        // processEvent leads clears article page while loading.
+        // (At least some user feedback on S^3 that something is going on...)
+        qApp->processEvents();
+}
 
 void WikiOnBoard::hideWaitCursor()
 	{	
@@ -1459,9 +1481,12 @@ void WikiOnBoard::hideWaitCursor()
 }
 
 //TODO Consider merging with regular populate Article List 
-bool WikiOnBoard::approachingEndOfList(bool up)
+//addCount: Number of article entries to be added (at most)
+//maxCount: maximumCount of article entries allowed. Deletes items furthest away
+//from added item for each item added
+int WikiOnBoard::addItemsToArticleList(bool up, int addCount, int maxCount)
 	{
-	qDebug() << "WikiOnBoard::approachingEndOfList";
+    qDebug() << "WikiOnBoard::addItemsToArticleList (up:"<<up<<" addCount: "<<addCount <<" maxCount: "<<maxCount;
 	if (zimFile != NULL)
 		{
 		try
@@ -1469,7 +1494,7 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 			if (up)
 				{
                                 qDebug()
-						<< "Approaching end of article list while scrolling up";
+                                                << "AddItems to beginning of list";
                                 QListWidgetItem * firstArticleInCurrentList = ui.articleListWidget->item(0);
                                 QString
 						titleFirstArticleInCurrentList =
@@ -1494,12 +1519,11 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 					{
 					qDebug()
 							<< " Current entry is first entry in index => Do nothing";
-					return false;
+                                        return 0;
 					}
 
 				int insertedItemsCount = 0;
-				//TODO: use constants (for this and for delete limit)
-				while (insertedItemsCount < 100)
+                                while (insertedItemsCount < addCount)
 					{
 					--it;
                                         std::pair <bool, QListWidgetItem*> articleItemPair =  getArticleListItem(it);
@@ -1512,7 +1536,7 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 					//(But ensure that that there enough "old" items left
 					// to fill the article list. (first added new item 
 					// should be on top of list at the end)
-					if (ui.articleListWidget->count()>120) {
+                                        if (ui.articleListWidget->count()>maxCount) {
 						QListWidgetItem *lastItem = ui.articleListWidget->takeItem(
 							ui.articleListWidget->count() - 1);
 						delete lastItem;
@@ -1520,28 +1544,27 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 					//order is different					
 					if (it == zimFile->beginByTitle())
 						{
-						qDebug()
+                                                qDebug()
                                                                 << "Beginning of title index reached. Stop adding titles. Last added title :"<< articleListItemToString(articleItemPair.second);
 						break;
-						}
+                                                }
 					} //End while
 				if (insertedItemsCount>0) {
 					QListWidgetItem *firstNewItem = ui.articleListWidget->item(insertedItemsCount-1);
                                         qDebug() << insertedItemsCount
-                                                << " items inserted in beginning of list. Scroll so that firstly newly added article is at bottom of list. Firstly new added article: "<<articleListItemToString(firstNewItem);
+                                                << " items inserted at beginning of list. Scroll so that firstly newly added article is at bottom of list. Firstly new added article: "<<articleListItemToString(firstNewItem);
 
-                                        qDebug() << insertedItemsCount <<" items . Scroll so that firstly newly added article is at top of list. Firstly new added article: "<<articleListItemToString(firstNewItem);
-					ui.articleListWidget->scrollToItem(firstNewItem,QAbstractItemView::PositionAtTop);
-					return true;
+                                        ui.articleListWidget->scrollToItem(firstNewItem,QAbstractItemView::PositionAtTop);
+                                        return insertedItemsCount;
 				}	else {
 					qDebug() << "No items inserted";
-					return false;
+                                        return 0;
 				}
 				}
 			else
 				{// end  (if up()). => up=false
 				qDebug()
-						<< "Approaching end of article list while scrolling down";
+                                                << "AddItems to end of list";
                                 QListWidgetItem* lastArticleInCurrentList = ui.articleListWidget->item(
                                             ui.articleListWidget->count() - 1);
                                 QString titleLastArticleInCurrentList =
@@ -1567,10 +1590,10 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 					{
 					qDebug()
 							<< " Current entry is last entry in index => Do nothing";
-					return false;
+                                        return 0;
 					}
 				int insertedItemsCount = 0;
-				while (insertedItemsCount < 100)
+                                while (insertedItemsCount < addCount)
 					{
 					++it;
                                         std::pair <bool, QListWidgetItem*> articleItemPair =  getArticleListItem(it);
@@ -1580,7 +1603,7 @@ bool WikiOnBoard::approachingEndOfList(bool up)
                                         ui.articleListWidget->addItem(articleItemPair.second);
 					//Remove first item to avoid eating up to much memory. 
 					//TODO: increase overlap. (User scrolls one direction than other else leads directly to reload)
-					if (ui.articleListWidget->count()>120) {
+                                        if (ui.articleListWidget->count()>maxCount) {
 						QListWidgetItem *firstItem =
 							ui.articleListWidget->takeItem(0);
 						delete firstItem;
@@ -1601,12 +1624,12 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 							indexFirstNewItem);
                                                 qDebug() << insertedItemsCount
                                                         << " items appended to end of list. Scroll so that firstly newly added article is at bottom of list. Firstly new added article: "<<articleListItemToString(firstNewItem);
-						ui.articleListWidget->scrollToItem(firstNewItem,
+                                                ui.articleListWidget->scrollToItem(firstNewItem,
 							QAbstractItemView::PositionAtBottom);
-						return true;
+                                                return insertedItemsCount;
 					}	else {
 						qDebug() << "No items inserted";
-						return false;
+                                                return 0;
 					}
 				} // End else (up=false)
 			} //End try
@@ -1615,7 +1638,7 @@ bool WikiOnBoard::approachingEndOfList(bool up)
 			ui.articleListWidget->addItem(QLatin1String("Error occured"));
 			}
 		} //End if (zimFile!=NULL)
-		return false;
+                return 0;
 	}	
 
 
