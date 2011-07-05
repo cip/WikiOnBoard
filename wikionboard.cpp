@@ -129,10 +129,10 @@
 							    								<< lw->verticalScrollBar()->maximum();
 							    QtScroller::scroller(w)->stop();						
 							    //TODO: Overshoot. Trial not working: if not items added return false (event further processed for overhoot) 							    								
-							    approachingEndOfList(true);
+                                                            emit approachingEndOfList(true);
 							    return true;
 							    //Return true to prevent that default QScroller eventfilter scrolls  
-								// to beginning of list and stop scroller. (Nicer would be sure
+                                                                // to beginning of list and stop scroller. (Nicer would be for sure
 								// if it would continue scrolling from the new position with 
 								// the same speed). TODO try to do this (e.g. void QScroller::resendPrepareEvent () )
 								// QtScroller::scroller(w)->stop(); //Does not really work. Sometimes it works. (Stops, and shows
@@ -146,12 +146,9 @@
 								// (use scrollTo of scroller for smooth scrolling??) do something clever with resendPrepareEvent()? (Diffuclt)
 								// Perhaps also just reload when first element hit. (stopping before is useless if it cannot continue later)
 								// (Or throw all away and use modelview framework)
-								
-								//TODO: knwn issues:
-								//	Jumps some articles. (Because adding article is started before first article visible
-								//		DONE Simple fix would be to start adding articles only when first/last article reached. 
-								//		However of this starting earlier that adding is done in background. (More complex option)
-								
+                                                                //TODO bounce not working anymore.(Probably necessary to not stop (return true) if nothing can be added.
+
+
 							}
 						}
 
