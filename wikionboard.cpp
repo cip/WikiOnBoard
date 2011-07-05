@@ -276,8 +276,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 		showMaximized();
 		}
 	currentlyViewedUrl = QUrl(QLatin1String(""));
-
-	openZimFileDialogAction = new QAction(tr("Open Zimfile"), this);
+        openZimFileDialogAction = new QAction(tr("Open Zimfile"), this);
 	connect(openZimFileDialogAction, SIGNAL(triggered()), this,
 			SLOT(openZimFileDialog()));
 
@@ -371,6 +370,52 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	zoomOutAction = new QAction(tr("Zoom out"), this);
 	connect(zoomOutAction, SIGNAL(triggered()), this, SLOT(zoomOut()));
 	connect(zoomInAction, SIGNAL(triggered()), this, SLOT(zoomIn()));
+
+        //Sub menus
+        QMenu* optionsMenuIndexPage = new QMenu(tr("Options", "Option menu"),this);
+        optionsMenuIndexPage->addAction(toggleFullScreenAction);
+
+        QMenu* optionsMenuArticlePage = new QMenu(tr("Options", "Option menu"),this);
+        optionsMenuArticlePage->addAction(zoomInAction);
+        optionsMenuArticlePage->addAction(zoomOutAction);
+        optionsMenuArticlePage->addAction(toggleFullScreenAction);
+
+        QMenu* helpMenu = new QMenu(tr("Help", "Help menu"),this);
+        helpMenu->addAction(gotoHomepageAction);
+        helpMenu->addAction(aboutCurrentZimFileAction);
+        helpMenu->addAction(aboutAction);
+        helpMenu->addAction(aboutQtAction);
+
+
+        menuIndexPage = new QMenu(this);
+        menuIndexPage->addAction(openArticleAction);
+        menuIndexPage->addAction(openZimFileDialogAction);
+        menuIndexPage->addAction(downloadZimFileAction);
+        menuIndexPage->addMenu(optionsMenuIndexPage);
+        menuIndexPage->addMenu(helpMenu);
+        menuIndexPage->addAction(exitAction);
+
+        menuArticlePage = new QMenu(this);
+        menuArticlePage->addAction(switchToIndexPageAction);
+        menuArticlePage->addAction(openZimFileDialogAction);
+        menuArticlePage->addAction(downloadZimFileAction);
+        menuArticlePage->addMenu(optionsMenuArticlePage);
+        menuArticlePage->addMenu(helpMenu);
+        menuArticlePage->addAction(exitAction);
+
+        //Used to allow translation of softkey with menu.
+        // (Actually should be translated automatically, but
+        // appearantly not working, therefore just assign our
+        // own (translatable) text)
+        positiveSoftKeyActionMenuIndexPage = new QAction(tr("TRANLATOR Indexpage Menu Name"),this);
+        positiveSoftKeyActionMenuIndexPage->setMenu(menuIndexPage);
+        this->addAction(positiveSoftKeyActionMenuIndexPage);
+
+        positiveSoftKeyActionMenuArticlePage = new QAction(tr("TRANLATOR Articlepage Menu Name"),this);
+        positiveSoftKeyActionMenuArticlePage->setMenu(menuArticlePage);
+        this->addAction(positiveSoftKeyActionMenuArticlePage);
+
+
 
 	// Set context menu policy for widgets to suppress the useless 'Actions' submenu
 #ifdef Q_OS_SYMBIAN
@@ -867,7 +912,7 @@ bool WikiOnBoard::openExternalLink(QUrl url)
 			informativeText =
 					QString(
 							tr(
-									"[TRANSLATOR] Explain that link %1 clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.%2")).arg(
+                        "[TRANSLATOR] Explain that link %1 clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.\n%2")).arg(
 							url.toString(), bugText);
 	msgBox.setInformativeText(informativeText);
 	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
@@ -1078,8 +1123,8 @@ void WikiOnBoard::aboutCurrentZimFile()
 	QByteArray uuidBA =QByteArray(zimFile->getFileheader().getUuid().data, zimFile->getFileheader().getUuid().size());
 	informativeText = QString(tr(""
 			 "Current Zim File: %1\n"
-			 "Articles : %2, Images: %3, Categories: %4\n"
-			 )).arg(
+                         "Articles : %2, Images: %3, Categories: %4\n",
+                                     "Add new line after text")).arg(
 					 QString::fromStdString(zimFile->getFilename()),
 					 QString::number(zimFile->getNamespaceCount('A')), //Including redirects
 					 QString::number(zimFile->getNamespaceCount('I')),
@@ -1093,7 +1138,7 @@ void WikiOnBoard::aboutCurrentZimFile()
 			 "Source: %4\n"
 			 "Description: %5\n"					 			 
 			 "Language: %6\n" 
-			 "Relation: %7\n")).arg(
+                                    "Relation: %7\n", "Add newline after Text")).arg(
 					 getMetaDataString(QLatin1String("Title")),
 					 getMetaDataString(QLatin1String("Creator")),
 					 getMetaDataString(QLatin1String("Date")),
@@ -1143,7 +1188,8 @@ void WikiOnBoard::about()
 			"Author: %2\n"
 			"Uses zimlib (openzim.org) and liblzma.\n"
 			"Build date: %3\n"
-			"%4\n")).arg(
+                        "%4\n",
+                        "Add new line after text")).arg(
 					QString::fromLocal8Bit(__APPVERSIONSTRING__),
 					tr("Christian Puehringer"), 
 					QString::fromLocal8Bit(__DATE__),
@@ -1166,38 +1212,11 @@ void WikiOnBoard::about()
 	#endif
     }
 
-//Remove all actions from menu, required for switching
-// (Appearantly on stacked widget items not symbian style menu
-//	can be created)
-void WikiOnBoard::clearMenu()
-	{
-	QList<QAction *> al = menuBar()->actions();
-	while (!al.isEmpty())
-		{
-		ui.menuBar->removeAction(al.takeFirst());
-		}
-	}
-
 void WikiOnBoard::switchToArticlePage()
-	{
-	clearMenu();
-	menuBar()->addAction(switchToIndexPageAction);
-	menuBar()->addAction(openZimFileDialogAction);
-	menuBar()->addAction(downloadZimFileAction);
-	
-	optionsMenu = new QMenu(tr("Options", "Option menu"));
-	optionsMenu->addAction(zoomInAction);
-	optionsMenu->addAction(zoomOutAction);
-	optionsMenu->addAction(toggleFullScreenAction);
-	helpMenu = new QMenu(tr("Help", "Help menu"));
-	helpMenu->addAction(gotoHomepageAction);
-	helpMenu->addAction(aboutCurrentZimFileAction);
-	helpMenu->addAction(aboutAction);
-	helpMenu->addAction(aboutQtAction);
+        {
 
-	menuBar()->addMenu(optionsMenu);
-	menuBar()->addMenu(helpMenu);
-	menuBar()->addAction(exitAction);
+        positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::PositiveSoftKey);
+        positiveSoftKeyActionMenuIndexPage->setSoftKeyRole(QAction::NoSoftKey);
 
 	backArticleHistoryAction->setSoftKeyRole(QAction::NegativeSoftKey);
 	clearSearchAction->setSoftKeyRole(QAction::NoSoftKey);
@@ -1208,23 +1227,9 @@ void WikiOnBoard::switchToArticlePage()
 	}
 void WikiOnBoard::switchToIndexPage()
 	{
-	clearMenu();
-	//	menuBar()->addAction(searchArticleAction);
-	menuBar()->addAction(openArticleAction);
-	menuBar()->addAction(openZimFileDialogAction);
-	menuBar()->addAction(downloadZimFileAction);
-	optionsMenu = new QMenu(tr("Options", "Option menu"));
-	optionsMenu->addAction(toggleFullScreenAction);
-	
-	helpMenu = new QMenu(tr("Help", "Help menu"));
-	helpMenu->addAction(gotoHomepageAction);
-	helpMenu->addAction(aboutCurrentZimFileAction);
-	helpMenu->addAction(aboutAction);
-	helpMenu->addAction(aboutQtAction);
-			
-	menuBar()->addMenu(optionsMenu);
-	menuBar()->addMenu(helpMenu);
-	menuBar()->addAction(exitAction);
+
+        positiveSoftKeyActionMenuIndexPage->setSoftKeyRole(QAction::PositiveSoftKey);
+        positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::NoSoftKey);
 
 	backArticleHistoryAction->setSoftKeyRole(QAction::NoSoftKey);
 	clearSearchAction->setSoftKeyRole(QAction::NegativeSoftKey);
@@ -1455,9 +1460,9 @@ void WikiOnBoard::zoomIn()
 
 void WikiOnBoard::showWaitCursor() 
 	{
-	//If mouse cursor in edge of screen (which is the case for non-touch
-	// smartphones often, move it to the middle of main widget)
-	if ((QCursor::pos().x() == 0) && (QCursor::pos().y()==0)) {
+        //If mouse cursor in edge of screen (which is the case for non-touch
+        // smartphones often, move it to the middle of main widget)
+        if ((QCursor::pos().x() == 0) && (QCursor::pos().y()==0)) {
 		QCursor::setPos(this->mapToGlobal(QPoint(this->width()/2,this->height()/2)));
 	}
 	//Force cursor visible on all platforms
@@ -1465,7 +1470,6 @@ void WikiOnBoard::showWaitCursor()
             QApplication::setNavigationMode(Qt::NavigationModeCursorForceVisible);
         #endif
         //On Symbian^3 waitcursor not working for some reason.
-        //TODO: waitcursor may be displayed outside of screen. Find out how to move it.
         QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
         // processEvent leads clears article page while loading.
         // (At least some user feedback on S^3 that something is going on...)

@@ -60,9 +60,10 @@ protected:
 private:     
     Ui::WikiOnBoard ui;
     void* m_bgc;
-    /*QAction* scrollUpAction;
-    QAction* scrollDownAction;*/
-    QMenu *optionsMenu;
+    QAction* positiveSoftKeyActionMenuIndexPage;
+    QAction* positiveSoftKeyActionMenuArticlePage;
+    QMenu *menuIndexPage;
+    QMenu *menuArticlePage;
     QAction* zoomInAction;
     QAction* zoomOutAction;
     QAction* searchArticleAction;
@@ -106,7 +107,6 @@ private:
         
     
     void openZimFile(QString zimFileName);   
-    void clearMenu();
     void moveTextBrowserTextCursorToVisibleArea();
     void showWaitCursor();
     void hideWaitCursor();
