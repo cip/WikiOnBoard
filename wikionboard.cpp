@@ -597,11 +597,16 @@ QString WikiOnBoard::articleListItemToString(QListWidgetItem* item) {
     return s;
 }
 
+
 std::pair <bool, QListWidgetItem*> WikiOnBoard::getArticleListItem(zim::File::const_iterator it) {
+    QListWidgetItem* articleItem = new QListWidgetItem();
+    if (it==zimFile->end()) {
+        qDebug() << "getArticleListItem iterator points is end of article list. ";
+        return std::pair<bool, QListWidgetItem*> (false, articleItem);
+    }
     QString articleTitle = fromUTF8EncodedStdString(it->getTitle());
     QUrl articleUrl = QUrl::fromEncoded(QUrl::toPercentEncoding(fromUTF8EncodedStdString(it->getUrl())));
     QString articleIdx = QString::number(it->getIndex());
-    QListWidgetItem* articleItem = new QListWidgetItem();
     if (it->getNamespace() != 'A')
     {
         qDebug()
@@ -638,7 +643,18 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 			// element of other namespace. (like image (I) or metadata (M))		
 			zim::File::const_iterator it = zimFile->findByTitle('A',
 					articleNameStdStr);
-			
+                        if (((it==zimFile->end()) || (it->getNamespace() != 'A') )) {
+                            qDebug() << " No valid article >= \"" << articleName << "\" found. Try using previous entry in zim file instead";
+                            if (it==zimFile->begin()) {
+                                    qDebug() << " zim file contains no entries. Add nothing to list";
+                                    return;
+                            }
+                            --it;
+                            if ((it==zimFile->end()) || (it->getNamespace() != 'A') ) {
+                                qWarning() << " Previous entry is neither a valid article. Bug?. Add nothing to list";
+                                return;
+                            }
+                        }
 			if (!direction_up) {
 				// If populating in reverse direction, don´t clear items now
 				// but instead each time a new item is added. This avoids
@@ -1488,28 +1504,34 @@ void WikiOnBoard::hideWaitCursor()
 int WikiOnBoard::addItemsToArticleList(bool up, int addCount, int maxCount)
 	{
     qDebug() << "WikiOnBoard::addItemsToArticleList (up:"<<up<<" addCount: "<<addCount <<" maxCount: "<<maxCount;
-	if (zimFile != NULL)
+    if (zimFile != NULL)
 		{
 		try
 			{
-			if (up)
+                        if (ui.articleListWidget->count()==0) {
+                            qWarning() << "articleList empty. addItemsToArticleList requires a least on article in the article list." ;
+                            return 0;
+                        }
+
+                        if (up)
 				{
                                 qDebug()
                                                 << "AddItems to beginning of list";
+
                                 QListWidgetItem * firstArticleInCurrentList = ui.articleListWidget->item(0);
                                 QString
 						titleFirstArticleInCurrentList =
                                                                 firstArticleInCurrentList->data(
 										ArticleTitleRole).toString();
 
-				//Zim index is UTF8 encoded. Therefore use utf8 functions to access
-				// it.
-				std::string articleTitleStdStr = std::string(
+                                //Zim index is UTF8 encoded. Therefore use utf8 functions to access
+                                // it.
+                                std::string articleTitleStdStr = std::string(
 						titleFirstArticleInCurrentList.toUtf8());
                                 qDebug() << " First article in current list is: "<< articleListItemToString(firstArticleInCurrentList);
 
-				std::pair<bool, zim::File::const_iterator> r =
-						zimFile->findxByTitle('A', articleTitleStdStr);
+                                std::pair<bool, zim::File::const_iterator> r =
+                                                zimFile->findxByTitle('A', articleTitleStdStr);
 				if (!r.first)
 					{
 					qWarning()
