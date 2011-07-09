@@ -181,8 +181,20 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 		hasTouchScreen = false;
 	}
 	#endif
-	
-	qDebug() << "WikiOnBoard::WikiOnBoard. Version: " << QString::fromLocal8Bit(__APPVERSIONSTRING__) << " QT Version: "<<qVersion();
+        //Used by QSettings
+        QCoreApplication::setOrganizationName(QLatin1String("Christian Puehringer"));
+        QCoreApplication::setApplicationName(QLatin1String("WikiOnBoard"));
+
+        #ifdef Q_OS_SYMBIAN
+        // Save settings files to private application directory, to ensure
+        // that uninstaller removes settings. (see also
+        //  http://bugreports.qt.nokia.com/browse/QTBUG-16229)
+            QSettings::setPath(QSettings::NativeFormat, QSettings::UserScope, QCoreApplication::applicationDirPath());
+            QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::applicationDirPath());
+            QSettings::setPath(QSettings::NativeFormat, QSettings::SystemScope, QCoreApplication::applicationDirPath());
+            QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, QCoreApplication::applicationDirPath());
+        #endif
+        qDebug() << "WikiOnBoard::WikiOnBoard. Version: " << QString::fromLocal8Bit(__APPVERSIONSTRING__) << " QT Version: "<<qVersion();
 	qDebug() << " hasTouchScreen: "<<hasTouchScreen;
 	
 	zimFile = NULL; //zimFile unitialized until,
