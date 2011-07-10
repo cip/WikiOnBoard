@@ -142,7 +142,7 @@ private slots:
      void zoomOut();
      void zoomIn();
      int addItemsToArticleList(bool up, int addCount=100, int maxCount=120);
-
+     void enableSplitScreen(); //Enable Split-screen virtual keyboard for symbian.
 };
 
 class ArticleListFilter : public QObject {

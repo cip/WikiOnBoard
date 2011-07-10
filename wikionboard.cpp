@@ -45,6 +45,14 @@
 #include <QtScroller>
 #include <qtscrollevent>
 
+//For split-screen software keyboard
+#ifdef Q_OS_SYMBIAN
+    #include <aknedsts.h>
+    #include <coeaui.h>
+    #include <coemain.h>
+    #include <w32std.h>
+    #define EAknEditorFlagEnablePartialScreen 0x200000
+#endif
 
 
 //#include <QElapsedTimer>
@@ -439,7 +447,8 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         }
 
 	switchToIndexPage();
-	}
+        enableSplitScreen();
+        }
 
 WikiOnBoard::~WikiOnBoard()
 	{
@@ -1732,4 +1741,20 @@ int WikiOnBoard::addItemsToArticleList(bool up, int addCount, int maxCount)
                 return 0;
 	}	
 
+//http://www.developer.nokia.com/Community/Wiki/Implementing_a_split_screen_for_software_keyboard
+// Qt slot that sets the approriate flag to the text editor.
+void WikiOnBoard::enableSplitScreen()
+{
+    // The text editor must be open before setting the partial screen flag.
 
+#ifdef Q_OS_SYMBIAN
+    MCoeFepAwareTextEditor *fte = CCoeEnv::Static()->AppUi()->InputCapabilities().FepAwareTextEditor();
+
+    // FepAwareTextEditor() returns 0 if no text editor is present
+    if (fte)
+    {
+        CAknEdwinState *state = STATIC_CAST(CAknEdwinState*, fte->Extension1()->State(KNullUid));
+        state->SetFlags(state->Flags() | EAknEditorFlagEnablePartialScreen);
+    }
+#endif
+}

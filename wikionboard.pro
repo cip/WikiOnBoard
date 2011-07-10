@@ -63,6 +63,10 @@ symbian: {
     LIBS += -lavkon \
     	-leikcoctl \
     	-lcone
+
+    # FOR ENABLING SPLIT SCREEN VIRTUAL KEYBOARD
+    LIBS += -lcone -lws32 -lavkon -leikctl -leikcoctl -luiklaf -lform -lfepbase
+
     ICON = wikionboard.svg
     contains(IS_SELFSIGNED,0): {	
  		#Nokia assigned UID 
