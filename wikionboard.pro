@@ -3,7 +3,7 @@
 IS_SELFSIGNED = 0
 
 DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
-VERSION = 0.0.47
+VERSION = 0.0.48
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 
@@ -65,7 +65,7 @@ symbian: {
     	-lcone
 
     # FOR ENABLING SPLIT SCREEN VIRTUAL KEYBOARD
-    LIBS += -lcone -lws32 -lavkon -leikctl -leikcoctl -luiklaf -lform -lfepbase
+    LIBS += -lfepbase
 
     ICON = wikionboard.svg
     contains(IS_SELFSIGNED,0): {	
