@@ -386,6 +386,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         optionsMenuArticlePage->addAction(toggleFullScreenAction);
 
         QMenu* helpMenu = new QMenu(tr("Help", "Help menu"),this);
+        helpMenu->addAction(downloadZimFileAction);
         helpMenu->addAction(gotoHomepageAction);
         helpMenu->addAction(aboutCurrentZimFileAction);
         helpMenu->addAction(aboutAction);
@@ -395,7 +396,6 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         menuIndexPage = new QMenu(this);
         menuIndexPage->addAction(openArticleAction);
         menuIndexPage->addAction(openZimFileDialogAction);
-        menuIndexPage->addAction(downloadZimFileAction);
         menuIndexPage->addMenu(optionsMenuIndexPage);
         menuIndexPage->addMenu(helpMenu);
         menuIndexPage->addAction(exitAction);
@@ -403,7 +403,6 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         menuArticlePage = new QMenu(this);
         menuArticlePage->addAction(switchToIndexPageAction);
         menuArticlePage->addAction(openZimFileDialogAction);
-        menuArticlePage->addAction(downloadZimFileAction);
         menuArticlePage->addMenu(optionsMenuArticlePage);
         menuArticlePage->addMenu(helpMenu);
         menuArticlePage->addAction(exitAction);
@@ -444,7 +443,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 
 WikiOnBoard::~WikiOnBoard()
 	{
-
+            delete zimFile;
 	}
 
 bool WikiOnBoard::openZimFile(QString zimFileName)
@@ -462,7 +461,11 @@ bool WikiOnBoard::openZimFile(QString zimFileName)
 	    //TODO: Default is latin1 encoding. Correct? (at least zim files with
 	    // special characters do not open correctly, but can this be fixed by other encoding?)
                 zimfilename = zimFileName.toStdString();
-		zimFile = new zim::File(zimfilename);
+                zim::File* oldZimFile = zimFile;
+                zimFile = new zim::File(zimfilename);
+                //If opensuccesful, delete pointer to previously openend zim file.
+                // If open fails keep previously opened zim file open.
+                delete oldZimFile;
                 return true;
                 }
 	catch (const std::exception& e)
@@ -1011,61 +1014,77 @@ void WikiOnBoard::backArticleHistoryOrIndexPage()
 	}
 
 void WikiOnBoard::openZimFileDialog()
-	{
-	QString path;
-	if (zimFile == NULL)
-		{
-		path = QDir::homePath();
-		}
-	else
-		{
-	//TODO: Default is latin1 encoding. Correct?
-		path = QString::fromStdString(zimFile->getFilename());
-		}
+{
+    QString path;
+    if (zimFile == NULL)
+    {
         #if defined(Q_OS_SYMBIAN)
-            QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+            //Hard code path to memory card/mass memory.  Tried QDir::homePath(); and QDesktopServices::DataLocation,
+             // both return app private dir on c:
+            path = QLatin1String("e:\\");
         #endif
-	//Enable virtual mouse cursor on non-touch devices, as 
-	// else file dialog not useable
-            
+        #if !defined(Q_OS_SYMBIAN)
+            path = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+        #endif
+        qDebug() << "No zim file open. Use  path for file dialog : "<<path;
+    }
+    else
+    {
+	//TODO: Default is latin1 encoding. Correct?
+        path = QString::fromStdString(zimFile->getFilename());
+    }
+#if defined(Q_OS_SYMBIAN)
+    QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+#endif
+    //Enable virtual mouse cursor on non-touch devices, as
+    // else file dialog not useable
+
     //Extension is .zim for single file zim files,
     // or .zima for splitted zim files. (.zima is extension
     // of first file)
-	QString file = QFileDialog::getOpenFileName(this,
-			tr("Choose eBook in zim format to open"), path,
-                        tr("eBooks (*.zim *.zimaa)"));
-        #if defined(Q_OS_SYMBIAN)
-            QApplication::setNavigationMode(Qt::NavigationModeNone);
-        #endif
-        if (!file.isNull() && openZimFile(file)) {
-                qDebug() << "Opened zim file: " << file;
-
-		QSettings settings;
-		// Store this file to settings, and automatically open next time app is started
-		settings.beginGroup(QLatin1String("ZimFile"));
-		settings.setValue(QLatin1String("lastZimFile"), file);
-		settings.endGroup();
-		ui.textBrowser->clearHistory();
-		switchToIndexPage(); //In case currently viewing an article.
-		populateArticleList();
-        } else if (zimFile==NULL) {
-            qDebug() << "No zim file selected or open zim file failed, and no zim was open before => Display download or open ebook dialog";
-           downloadOrOpenZimFile();
+    QString file = QFileDialog::getOpenFileName(this,
+                                                tr("Choose eBook in zim format to open"), path,
+                                                tr("eBooks (*.zim *.zimaa)"));
+#if defined(Q_OS_SYMBIAN)
+    QApplication::setNavigationMode(Qt::NavigationModeNone);
+#endif
+    if (!file.isNull() && openZimFile(file)) {
+        qDebug() << "Opened zim file: " << file;
+        QSettings settings;
+        // Store this file to settings, and automatically open next time app is started
+        settings.beginGroup(QLatin1String("ZimFile"));
+        settings.setValue(QLatin1String("lastZimFile"), file);
+        settings.endGroup();
+        ui.textBrowser->clearHistory();
+        switchToIndexPage(); //In case currently viewing an article.
+        populateArticleList();
+    } else {
+        //Either no file selected or open failed.
+        if (zimFile==NULL) {
+            if (file.isNull()) {
+                qDebug() << "No zim file selected and no file was opene before => close application";
+                QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
+            } else {
+                qDebug() << "Open failed and not file was open before => Display download or open field";
+                downloadOrOpenZimFile();
+            }
         }
+    } // else: no  zim file selected, or open failed => keep previously openend zim file open
+}
 
-	}
 void WikiOnBoard::downloadOrOpenZimFile()
         {
         QString zimDownloadUrl = QString(tr("https://github.com/cip/WikiOnBoard/wiki/Get-eBooks","Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE"));
+        QString getEBookButtonCaption = QString(tr("Download zimfile", "button, keep is short"));
+        QString openEBookButtonCaption = QString(tr("Open zimfile", "button, keep is short"));
+
         QMessageBox msgBox;
         msgBox.setText(tr("Download ZIM file"));
-        QString informativeText = QString(tr("[TRANSLATOR] No zimfile selected. Open %1 with info where to get eBooks, or open zimfile on mobile")).arg(zimDownloadUrl);
+        QString informativeText = QString(tr("[TRANSLATOR] No zimfile selected. Button %1 Open url %3 with info where to get eBooks. Button %2 open zimfile on mobile")).arg(getEBookButtonCaption,openEBookButtonCaption,zimDownloadUrl);
 
         msgBox.setInformativeText(informativeText);
-
-
-        QPushButton *getEBookButton = msgBox.addButton(tr("Download zimfile", "button, keep is short"), QMessageBox::AcceptRole);
-        QPushButton *openEBookButton = msgBox.addButton(tr("Open Zimfile","button, keep is short"), QMessageBox::RejectRole);
+        QPushButton *getEBookButton = msgBox.addButton(getEBookButtonCaption, QMessageBox::AcceptRole);
+        QPushButton *openEBookButton = msgBox.addButton(openEBookButtonCaption, QMessageBox::RejectRole);
         msgBox.setDefaultButton(getEBookButton);
         #if defined(Q_OS_SYMBIAN)
             QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
@@ -1079,6 +1098,7 @@ void WikiOnBoard::downloadOrOpenZimFile()
         #endif
         if ((QPushButton*)msgBox.clickedButton() == getEBookButton) {
                     QDesktopServices::openUrl(zimDownloadUrl);
+                    downloadOrOpenZimFile();
         }   else if ((QPushButton*)msgBox.clickedButton() == openEBookButton ) {
                     openZimFileDialog();
                 }
