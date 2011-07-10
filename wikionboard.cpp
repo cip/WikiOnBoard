@@ -1048,8 +1048,8 @@ void WikiOnBoard::openZimFileDialog()
 		ui.textBrowser->clearHistory();
 		switchToIndexPage(); //In case currently viewing an article.
 		populateArticleList();
-        } else {
-            qDebug() << "No zim file selected or open zim file failed => Display download or open ebook dialog";
+        } else if (zimFile==NULL) {
+            qDebug() << "No zim file selected or open zim file failed, and no zim was open before => Display download or open ebook dialog";
            downloadOrOpenZimFile();
         }
 
