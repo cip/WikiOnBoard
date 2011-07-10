@@ -80,7 +80,8 @@ private:
     QAction* gotoHomepageAction;
     QAction* aboutCurrentZimFileAction;
     QAction* aboutAction;
-    QAction* aboutQtAction;
+    QAction* aboutQtAction;    
+
     zim::File* zimFile;
     int zoomLevel;
     bool hasTouchScreen;
@@ -106,7 +107,7 @@ private:
     void articleListSelectNextEntry();
         
     
-    void openZimFile(QString zimFileName);   
+    bool openZimFile(QString zimFileName);
     void moveTextBrowserTextCursorToVisibleArea();
     void showWaitCursor();
     void hideWaitCursor();
@@ -126,6 +127,7 @@ private slots:
     	 
      
      void openZimFileDialog();
+     void downloadOrOpenZimFile();
      void downloadZimFile();
      void gotoHomepage();
      void aboutCurrentZimFile();

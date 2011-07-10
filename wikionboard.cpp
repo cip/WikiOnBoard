@@ -207,10 +207,6 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 
 	QString lastZimFile = settings.value(QLatin1String("lastZimFile")).toString();
 	settings.endGroup();
-	if (!lastZimFile.isEmpty())
-		{
-		openZimFile(lastZimFile);
-		}
 
 	ui.setupUi(this);
 	setStatusBar(0); //Remove status bar to increase useable screen size.
@@ -436,6 +432,13 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 			}
 #endif
 
+        if (lastZimFile.isEmpty() ||  !openZimFile(lastZimFile)) {
+                //If no zim file loaded yet (e.g. first start)
+                // or open failed, show info how to download or open
+                //ebooks.
+                downloadOrOpenZimFile();
+        }
+
 	switchToIndexPage();
 	}
 
@@ -444,25 +447,32 @@ WikiOnBoard::~WikiOnBoard()
 
 	}
 
-void WikiOnBoard::openZimFile(QString zimFileName)
+bool WikiOnBoard::openZimFile(QString zimFileName)
 	{
-	try
+        std::string zimfilename;
+        try
 		{
+                //If zim file is split extension of first file is zimaa
+                // zim::File however expects zim as extension, if it does
+                // not find it, it tries zima
+                // => Change extension in filename from zima to zim
 		QRegExp rx(QLatin1String("(.*\\.zim)\\D\\D"));
 	    rx.setCaseSensitivity(Qt::CaseInsensitive);
 	    zimFileName.replace(rx,QLatin1String("\\1"));
 	    //TODO: Default is latin1 encoding. Correct? (at least zim files with
 	    // special characters do not open correctly, but can this be fixed by other encoding?)
-		std::string zimfilename = zimFileName.toStdString(); 
+                zimfilename = zimFileName.toStdString();
 		zimFile = new zim::File(zimfilename);
-		}
+                return true;
+                }
 	catch (const std::exception& e)
 		{
 			QMessageBox::StandardButton reply;
-		     reply = QMessageBox::critical(this, tr("Error on opening zim file"),
-		                                     QString::fromStdString(e.what()),
+                     reply = QMessageBox::critical(this, tr("Error on opening zim file"),
+                                                            QString(tr("Error on opening zim file %1.\nError message:%2\n").arg(fromUTF8EncodedStdString(zimfilename),QString::fromStdString(e.what()))),
 		                                     QMessageBox::Ok);		 
-		}
+                     return false;
+                }
 	}
 
 QString WikiOnBoard::getArticleTextByIdx(QString articleIdx)
@@ -1023,13 +1033,13 @@ void WikiOnBoard::openZimFileDialog()
     // of first file)
 	QString file = QFileDialog::getOpenFileName(this,
 			tr("Choose eBook in zim format to open"), path,
-			tr("eBooks (*.zim *.zima)"));
+                        tr("eBooks (*.zim *.zimaa)"));
         #if defined(Q_OS_SYMBIAN)
             QApplication::setNavigationMode(Qt::NavigationModeNone);
         #endif
-        if (!file.isNull())
-		{
-		openZimFile(file);
+        if (!file.isNull() && openZimFile(file)) {
+                qDebug() << "Opened zim file: " << file;
+
 		QSettings settings;
 		// Store this file to settings, and automatically open next time app is started
 		settings.beginGroup(QLatin1String("ZimFile"));
@@ -1038,26 +1048,52 @@ void WikiOnBoard::openZimFileDialog()
 		ui.textBrowser->clearHistory();
 		switchToIndexPage(); //In case currently viewing an article.
 		populateArticleList();
-		}
+        } else {
+            qDebug() << "No zim file selected or open zim file failed => Display download or open ebook dialog";
+           downloadOrOpenZimFile();
+        }
 
 	}
+void WikiOnBoard::downloadOrOpenZimFile()
+        {
+        QString zimDownloadUrl = QString(tr("https://github.com/cip/WikiOnBoard/wiki/Get-eBooks","Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE"));
+        QMessageBox msgBox;
+        msgBox.setText(tr("Download ZIM file"));
+        QString informativeText = QString(tr("[TRANSLATOR] No zimfile selected. Open %1 with info where to get eBooks, or open zimfile on mobile")).arg(zimDownloadUrl);
+
+        msgBox.setInformativeText(informativeText);
+
+
+        QPushButton *getEBookButton = msgBox.addButton(tr("Download zimfile", "button, keep is short"), QMessageBox::AcceptRole);
+        QPushButton *openEBookButton = msgBox.addButton(tr("Open Zimfile","button, keep is short"), QMessageBox::RejectRole);
+        msgBox.setDefaultButton(getEBookButton);
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
+        #endif
+        //Enable virtual mouse cursor on non-touch devices, as
+        // else no scrolling possible. (TODO: change this so that
+        // scrolling works with cursor keys. Unclear why not working out of the box)
+        msgBox.exec();
+        #if defined(Q_OS_SYMBIAN)
+            QApplication::setNavigationMode(Qt::NavigationModeNone);
+        #endif
+        if ((QPushButton*)msgBox.clickedButton() == getEBookButton) {
+                    QDesktopServices::openUrl(zimDownloadUrl);
+        }   else if ((QPushButton*)msgBox.clickedButton() == openEBookButton ) {
+                    openZimFileDialog();
+                }
+        }
 
 void WikiOnBoard::downloadZimFile()
 	{
-	QString zimDownloadUrl(tr("http://openzim.org/ZIM_File_Archive","Change link to page with localized zim files if available."));
-	QMessageBox msgBox;
+        QString zimDownloadUrl = QString(tr("https://github.com/cip/WikiOnBoard/wiki/Get-eBooks","Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE"));
+        QMessageBox msgBox;
 	msgBox.setText(tr("Download ZIM file"));
-	QString informativeText = QString(tr("Open a webbrowser to download zim files from %1?\n"
-								"Note that zim files may be very large and thus it can be"
-								"expensive to download one over the mobile network. "
-								"You should consider download from a desktop system"
-								"and transfer the file later to the memory card of your phone.\n"
-								"Furthermore, note that current Symbian phones do not support files which"
-								"are larger than 2 GB. You cannot download such files directly on the phone,"
-								"but you have to download on a PC and follow the instructions on"
-								"to split them.")).arg(zimDownloadUrl,tr("http://wiki.github.com/cip/WikiOnBoard/","Change link to localized webpage if/when available."));
-	msgBox.setInformativeText(informativeText);
-	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        QString informativeText = QString(tr("[TRANSLATOR] Open %1 with info where to get eBooks")).arg(zimDownloadUrl);
+
+        msgBox.setInformativeText(informativeText);
+
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 	msgBox.setDefaultButton(QMessageBox::Ok);
         #if defined(Q_OS_SYMBIAN)
             QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);

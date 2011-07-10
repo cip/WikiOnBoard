@@ -3,10 +3,12 @@
 IS_SELFSIGNED = 0
 
 DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
-VERSION = 0.0.44
+VERSION = 0.0.46
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
-TARGET = WikiOnBoard
+
+
+
 QT += core \
     gui
 HEADERS += wikionboard.h
@@ -85,6 +87,24 @@ symbian: {
     translationfiles.sources = *.qm    
     DEPLOYMENT +=translationfiles
 }
+
+symbian: {
+    # Fix for Issue 47
+    TARGET = WikiOnBoard_$${TARGET.UID3}
+    TARGET.NAME = WikiOnBoard
+    message("Modify loc file")
+    modify_caption.target = $${TARGET}.loc.~
+    modify_caption.depends = $${TARGET}.loc
+    modify_caption.commands = perl -i.~ -p -e \"s/$${TARGET}/$${TARGET.NAME}/g;\" $${TARGET}.loc
+
+    QMAKE_EXTRA_TARGETS += modify_caption
+    PRE_TARGETDEPS += $${modify_caption.target}
+    QMAKE_DISTCLEAN += $${modify_caption.target}
+}
+!symbian: {
+    TARGET = WikiOnBoard
+}
+
 
 #Maemo
 INCLUDEPATH += ../zimlib/include
