@@ -511,7 +511,7 @@ QString WikiOnBoard::getArticleTextByIdx(QString articleIdx)
 	return articleText;
 	}
 
-
+//Article URL must be percent encoded.
 zim::File::const_iterator WikiOnBoard::getArticleByUrl(QString articleUrl) {
 	QString strippedArticleUrl;
 	//Supported article urls are:
@@ -539,9 +539,28 @@ zim::File::const_iterator WikiOnBoard::getArticleByUrl(QString articleUrl) {
 			<< "\n decoded: " << fromUTF8EncodedStdString(
 			articleUrlDecodedStdStr);
 	
-	zim::File::const_iterator it = zimFile->find('A', articleUrlDecodedStdStr);
-	return it;
-}
+
+        std::pair<bool, zim::File::const_iterator> r = zimFile->findx('A', articleUrlDecodedStdStr);
+        if (!r.first) {
+            qWarning() << " article not found. URL encoded: "<< strippedArticleUrl << " decoded: "  << fromUTF8EncodedStdString(
+                              articleUrlDecodedStdStr) << "\n";
+            strippedArticleUrl.replace(QLatin1String("+"),QLatin1String("%2B"));
+            articleUrlStdStr = std::string(strippedArticleUrl.toUtf8());
+            articleUrlDecodedStdStr = zim::urldecode(articleUrlStdStr);
+            qWarning() << " Try whether article for url without replacing + with spaces exists";
+            qDebug() << "Original URL: " << articleUrl
+                            << "Stripped URL, + replaced by %2B " << strippedArticleUrl
+                            << "\n std:string: " << fromUTF8EncodedStdString(articleUrlStdStr)
+                            << "\n decoded: " << fromUTF8EncodedStdString(
+                            articleUrlDecodedStdStr);
+
+            r = zimFile->findx('A', articleUrlDecodedStdStr);
+            if (!r.first) {
+                qWarning() << "Neither exists. Return closest match. (With + not replaced by spaces)";
+            }
+        }
+        return r.second;
+ }
 
 QString WikiOnBoard::getArticleTitleByUrl(QString articleUrl) {
 	zim::File::const_iterator it = getArticleByUrl(articleUrl);
@@ -1450,8 +1469,7 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 	}
 
 void WikiOnBoard::resizeEvent(QResizeEvent * event)
-	{
-	
+        {
 	if (ui.stackedWidget->currentWidget() == ui.indexPage)
 		{
 		if (ui.articleListWidget->count() > 0)
