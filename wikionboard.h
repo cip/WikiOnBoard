@@ -54,6 +54,8 @@ class WikiOnBoard : public QMainWindow
 public:
 	WikiOnBoard(void* bgc, QWidget *parent = 0);
         ~WikiOnBoard();
+
+
 protected:
     void keyPressEvent(QKeyEvent *event);    
     void resizeEvent ( QResizeEvent * event );  
@@ -85,6 +87,7 @@ private:
     zim::File* zimFile;
     int zoomLevel;
     bool hasTouchScreen;
+    bool fullScreen;
     QString fromUTF8EncodedStdString(std::string s) {
     	return QString::fromUtf8(s.data(), int(s.size())); 
     }
@@ -143,6 +146,7 @@ private slots:
      void zoomIn();
      int addItemsToArticleList(bool up, int addCount=100, int maxCount=120);
      void enableSplitScreen(); //Enable Split-screen virtual keyboard for symbian.
+     void workAreaResized(int screen);
 };
 
 class ArticleListFilter : public QObject {

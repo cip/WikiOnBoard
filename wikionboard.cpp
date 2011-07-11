@@ -39,6 +39,7 @@
 #include <QMessageBox>
 #include <QStringBuilder>
 #include <QTextCodec>
+#include <QDesktopWidget>
 //"Official" kinetic scrolling. (Backport from Qt 4.8) 
 //	See http://qt.gitorious.org/qt-labs/kineticscroller/commits/solution and
 //		http://bugreports.qt.nokia.com/browse/QTBUG-9054?focusedCommentId=130700&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#action_130700
@@ -223,7 +224,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 
 	settings.beginGroup(QLatin1String("UISettings"));
 	int zoomInit = settings.value(QLatin1String("zoomLevel"), -1).toInt();
-	bool fullScreen = settings.value(QLatin1String("fullScreen"), false).toBool();
+        fullScreen = settings.value(QLatin1String("fullScreen"), false).toBool();
 	settings.endGroup();
 	QTextDocument* defaultStyleSheetDocument = new QTextDocument(this);
 	//Override link color. At least on symbian per default textbrowser uses phone color scheme which is
@@ -236,7 +237,8 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	ui.textBrowser->setDocument(defaultStyleSheetDocument);		
 	zoomLevel = 0;
 	zoom(zoomInit);
-	//  LeftMouseButtonGesture used, as use of TouchGesture together
+        connect(QApplication::desktop(), SIGNAL(workAreaResized(int)), this, SLOT(workAreaResized(int)));
+        //  LeftMouseButtonGesture used, as use of TouchGesture together
 	// with mouse click events (like link clicked) problematic.
 	QtScroller::grabGesture(ui.textBrowser->viewport(), QtScroller::LeftMouseButtonGesture);
 					
@@ -1466,13 +1468,18 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 			}
 		}
 
-	}
+        }
 
 void WikiOnBoard::resizeEvent(QResizeEvent * event)
         {
+    qDebug() << "resizeEvent:\n "
+                "New size: width: " << event->size().width() <<" height: " << event->size().height() << ""
+                "Old size: width: " << event->oldSize().width() <<" height: " << event->oldSize().height();
+    qDebug() << "  Wikionboard: width: " << this->width() << " height:" << this->height();
 	if (ui.stackedWidget->currentWidget() == ui.indexPage)
 		{
-		if (ui.articleListWidget->count() > 0)
+
+                if (ui.articleListWidget->count() > 0)
 			{
 			//Current item (if none first) is new first item of list. 
 			// TODO: Keeping offset would be nicer, but more complex 
@@ -1493,14 +1500,41 @@ void WikiOnBoard::resizeEvent(QResizeEvent * event)
 		}
 	}
 
+
+
+void WikiOnBoard::workAreaResized(int screen) {
+    qDebug() << "In work area resized";
+    QRect avail = QApplication::desktop()->availableGeometry();
+    qDebug()<< "availableGeometry: Width: " << avail.width() << " Height: "<<avail.height();
+#if defined(Q_OS_SYMBIAN)
+    if (hasTouchScreen) {
+        //Workaround for problem that with
+        //  split screen virtual keyboard orientation switch shrinks the wikionboard window to size
+        // above keyboard. (issue 51)
+        // Not understood why workaround  works, therefore significant risk of sideeffects.
+        //   One countermeasure is to restrict execution of workaround to minimal set: only symbian
+        //      touchscreen devices.
+        //  TODO: restrict to s^3 only, as no splitscreen keyboard on S^1 devices available
+        //Note: ui->articleName->clearFocus was used in resizeEvent() to hide virtual keyboard before
+        //          Hiding does not work anymore with workaround.(but is anyway note required)
+        qDebug() << "Workaround for splitscreen keyboard orientation change issue. (hide and show main widget)";
+        setVisible(false);
+        QApplication::processEvents();
+        setVisible(true);
+    }
+#endif
+}
 void WikiOnBoard::toggleFullScreen()
 	{
-	if (isFullScreen())
+        if (fullScreen)
 		{
-		showMaximized();
+                 fullScreen = false;
+                 showMaximized();
+
 		}
 	else
 		{
+                fullScreen = true;
 		showFullScreen();
 
 		//Workaround for softkeys in fullscreen mode.see main.cpp for details
@@ -1516,9 +1550,9 @@ void WikiOnBoard::toggleFullScreen()
 	QSettings settings;
 	settings.beginGroup(QLatin1String("UISettings"));
 	if ((!settings.contains(QLatin1String("fullScreen"))) || (settings.value(QLatin1String("fullScreen"),
-			false).toBool() != isFullScreen()))
+                        false).toBool() != fullScreen))
 		{
-		settings.setValue(QLatin1String("fullScreen"), isFullScreen());
+                settings.setValue(QLatin1String("fullScreen"), fullScreen);
 		}
 	settings.endGroup();
 	}
