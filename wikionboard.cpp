@@ -284,7 +284,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 #endif
 	if (fullScreen)
 		{
-		toggleFullScreen();
+                showFullScreen();
 		}
 	else
 		{
@@ -1507,6 +1507,7 @@ void WikiOnBoard::workAreaResized(int screen) {
     QRect avail = QApplication::desktop()->availableGeometry();
     qDebug()<< "availableGeometry: Width: " << avail.width() << " Height: "<<avail.height();
 #if defined(Q_OS_SYMBIAN)
+    #if __ENABLE_SPLITSCREENKEYBOARD__==1
     if (hasTouchScreen) {
         //Workaround for problem that with
         //  split screen virtual keyboard orientation switch shrinks the wikionboard window to size
@@ -1522,6 +1523,7 @@ void WikiOnBoard::workAreaResized(int screen) {
         QApplication::processEvents();
         setVisible(true);
     }
+    #endif
 #endif
 }
 void WikiOnBoard::toggleFullScreen()
@@ -1799,7 +1801,9 @@ void WikiOnBoard::enableSplitScreen()
 {
     // The text editor must be open before setting the partial screen flag.
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN)
+    #if __ENABLE_SPLITSCREENKEYBOARD__==1
+
     MCoeFepAwareTextEditor *fte = CCoeEnv::Static()->AppUi()->InputCapabilities().FepAwareTextEditor();
 
     // FepAwareTextEditor() returns 0 if no text editor is present
@@ -1808,5 +1812,6 @@ void WikiOnBoard::enableSplitScreen()
         CAknEdwinState *state = STATIC_CAST(CAknEdwinState*, fte->Extension1()->State(KNullUid));
         state->SetFlags(state->Flags() | EAknEditorFlagEnablePartialScreen);
     }
+    #endif
 #endif
 }
