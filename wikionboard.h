@@ -50,8 +50,10 @@ private:
     void* m_bgc;
     QAction* positiveSoftKeyActionMenuIndexPage;
     QAction* positiveSoftKeyActionMenuArticlePage;
-    QMenu *menuIndexPage;
-    QMenu *menuArticlePage;
+    QAction* positiveSoftKeyActionMenuArticlePageNoFileOpen;
+    QMenu* menuIndexPage;
+    QMenu* menuArticlePage;
+    QMenu* menuArticlePageNoFileOpen;
     QAction* zoomInAction;
     QAction* zoomOutAction;
     QAction* searchArticleAction;
@@ -60,10 +62,11 @@ private:
     QAction* openArticleAction;
     QAction* switchToIndexPageAction;
     QAction* backArticleHistoryAction;
+    QAction* emptyAction;
     QAction* toggleFullScreenAction;
     QAction* exitAction;
     QAction* openZimFileDialogAction;
-    QAction* downloadZimFileAction;
+    QAction* showWelcomePageAction;
     QMenu *helpMenu;
     QAction* gotoHomepageAction;
     QAction* aboutCurrentZimFileAction;
@@ -74,6 +77,7 @@ private:
     int zoomLevel;
     bool hasTouchScreen;
     bool fullScreen;
+    const QUrl welcomeUrl;
     QString fromUTF8EncodedStdString(std::string s) {
     	return QString::fromUtf8(s.data(), int(s.size())); 
     }
@@ -104,7 +108,7 @@ private:
 private slots:
 	 void switchToArticlePage();
 	 void switchToIndexPage();
- 
+         void switchToWelcomePage();
 	 void searchArticle();
      
     //void on_textBrowser_anchorClicked(QUrl url);  
@@ -116,8 +120,6 @@ private slots:
     	 
      
      void openZimFileDialog();
-     void downloadOrOpenZimFile();
-     void downloadZimFile();
      void gotoHomepage();
      void aboutCurrentZimFile();
      void about();

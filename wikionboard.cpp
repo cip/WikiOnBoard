@@ -165,7 +165,8 @@
     
 
 WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
-	QMainWindow(parent), m_bgc(bgc)
+    QMainWindow(parent), m_bgc(bgc), welcomeUrl(QUrl(QLatin1String("wikionboard://welcome")))
+
 	{			
 	//For now assume that: S60 rd 3dition devices have no touch screen, all other devices have touch screen.
 	// TODO Consider changing to QSystemDeviceInfo when Qt Mobility available for all supported devices
@@ -281,9 +282,9 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	connect(openZimFileDialogAction, SIGNAL(triggered()), this,
 			SLOT(openZimFileDialog()));
 
-	downloadZimFileAction = new QAction(tr("Download Zimfile"), this);
-	connect(downloadZimFileAction, SIGNAL(triggered()), this,
-			SLOT(downloadZimFile()));
+        showWelcomePageAction = new QAction(tr("show Welcomepage"), this);
+        connect(showWelcomePageAction, SIGNAL(triggered()), this,
+                        SLOT(switchToWelcomePage()));
 	gotoHomepageAction = new QAction(tr("Goto Homepage"), this);
 	connect(gotoHomepageAction, SIGNAL(triggered()), this,
 			SLOT(gotoHomepage()));
@@ -356,7 +357,9 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	connect(backArticleHistoryAction, SIGNAL(triggered()), this,
 			SLOT(backArticleHistoryOrIndexPage()));
 	this->addAction(backArticleHistoryAction); 
-	
+        emptyAction = new QAction( tr( "", "Empty. Displayed as right soft key if nothing opened"), this );
+        addAction( emptyAction );
+
 	toggleFullScreenAction = new QAction(tr("Toggle Fullscreen"), this); //TODO shortcut
 	toggleFullScreenAction->setShortcutContext(Qt::ApplicationShortcut); //Or Qt::WindowShortcut?
 	connect(toggleFullScreenAction, SIGNAL(triggered()), this,
@@ -382,7 +385,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         optionsMenuArticlePage->addAction(toggleFullScreenAction);
 
         QMenu* helpMenu = new QMenu(tr("Help", "Help menu"),this);
-        helpMenu->addAction(downloadZimFileAction);
+        helpMenu->addAction(showWelcomePageAction);
         helpMenu->addAction(gotoHomepageAction);
         helpMenu->addAction(aboutCurrentZimFileAction);
         helpMenu->addAction(aboutAction);
@@ -403,6 +406,12 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         menuArticlePage->addMenu(helpMenu);
         menuArticlePage->addAction(exitAction);
 
+        menuArticlePageNoFileOpen = new QMenu(this);
+        menuArticlePageNoFileOpen->addAction(openZimFileDialogAction);
+        menuArticlePageNoFileOpen->addMenu(optionsMenuArticlePage);
+        menuArticlePageNoFileOpen->addMenu(helpMenu);
+        menuArticlePageNoFileOpen->addAction(exitAction);
+
         //Used to allow translation of softkey with menu.
         // (Actually should be translated automatically, but
         // appearantly not working, therefore just assign our
@@ -415,6 +424,9 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         positiveSoftKeyActionMenuArticlePage->setMenu(menuArticlePage);
         this->addAction(positiveSoftKeyActionMenuArticlePage);
 
+        positiveSoftKeyActionMenuArticlePageNoFileOpen = new QAction(tr("TRANLATOR Articlepage (no zimfile open) Menu Name"),this);
+        positiveSoftKeyActionMenuArticlePageNoFileOpen->setMenu(menuArticlePageNoFileOpen);
+        this->addAction(positiveSoftKeyActionMenuArticlePageNoFileOpen);
 
 
 	// Set context menu policy for widgets to suppress the useless 'Actions' submenu
@@ -426,16 +438,15 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 			w->setContextMenuPolicy(Qt::NoContextMenu);
 			}
 #endif
-
+        enableSplitScreen();
         if (lastZimFile.isEmpty() ||  !openZimFile(lastZimFile)) {
                 //If no zim file loaded yet (e.g. first start)
                 // or open failed, show info how to download or open
                 //ebooks.
-                downloadOrOpenZimFile();
+                switchToWelcomePage();
+        } else {
+            switchToIndexPage();
         }
-
-	switchToIndexPage();
-        enableSplitScreen();
         }
 
 WikiOnBoard::~WikiOnBoard()
@@ -880,13 +891,25 @@ void WikiOnBoard::articleListOpenArticle()
 		}
 	}
 
- void WikiOnBoard::openArticleByUrl(QUrl url)
-	{
-	QString path = url.path();
-	QString encodedPath = QString::fromUtf8(url.encodedPath().data(),url.encodedPath().length());
-	
-	qDebug() << "openArticleByUrl: " <<url.toString()<<"\nurl.path():"<<path << "\nurl.encodedPath():"<< encodedPath;
-	//Only read article, if not same as currently
+void WikiOnBoard::openArticleByUrl(QUrl url)
+{
+    QString path = url.path();
+    QString encodedPath = QString::fromUtf8(url.encodedPath().data(),url.encodedPath().length());
+
+    qDebug() << "openArticleByUrl: " <<url.toString()<<"\nurl.path():"<<path << "\nurl.encodedPath():"<< encodedPath;
+
+    if (url==welcomeUrl) {
+        qDebug()  << "Url is welcome URL. Set article text to welcome text";
+        QString zimDownloadUrl = QString(tr("https://github.com/cip/WikiOnBoard/wiki/Get-eBooks","Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE"));
+        QString getEBookLinkCaption = QString(tr("Download zimfile", "link"));
+        QString zimDownloadUrlHtml = QString(tr("<a href=\"%1\">%2</a>", "DON'T translate this").arg(zimDownloadUrl,getEBookLinkCaption));
+
+        QString informativeText = QString(tr("[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Menu option %2 in option menu %4 opens zimfile on mobile", "Text is interpreted as HTML. Html for body and link (%1) automatically added. Other Html tags can be used if desired")).arg(zimDownloadUrlHtml,openZimFileDialogAction->text(),zimDownloadUrl, positiveSoftKeyActionMenuArticlePage->text());
+        ui.textBrowser->setHtml(informativeText);
+
+    } else if (zimFile!=NULL) {
+
+        //Only read article, if not same as currently
 	//viewed article (thus don´t reload for article internal links)
 	//TODO: this does not work as appearantly before calling changedSource
 	// content is deleted. Therefore for now just reload in any case url.
@@ -907,42 +930,44 @@ void WikiOnBoard::articleListOpenArticle()
         ui.textBrowser->setHtml(articleText);
         //qDebug() << "Loading article into textview (setHtml()) took" << timer.restart() << " milliseconds";
 	if (url.hasFragment())
-		{
-		//Either a link within current file (if path was empty), or to   newly opened file
-		QString fragment = url.fragment();
-		ui.textBrowser->scrollToAnchor(fragment);
-		//Now text visible, but cursor not moved.
-		//=> Move cursor to current visisble location. 
-		// TODO: no better way to achieve this. Furthermore, actually
-		//	cursor reason for problem or something else?)
-		moveTextBrowserTextCursorToVisibleArea();
-		}
+        {
+            //Either a link within current file (if path was empty), or to   newly opened file
+            QString fragment = url.fragment();
+            ui.textBrowser->scrollToAnchor(fragment);
+            //Now text visible, but cursor not moved.
+            //=> Move cursor to current visisble location.
+            // TODO: no better way to achieve this. Furthermore, actually
+            //	cursor reason for problem or something else?)
+            moveTextBrowserTextCursorToVisibleArea();
+        }
 	else
-		{
-		QTextCursor cursor = ui.textBrowser->textCursor();
+        {
+            QTextCursor cursor = ui.textBrowser->textCursor();
 
-		//Move cursor to start of file
-		cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-		ui.textBrowser->setTextCursor(cursor);
-		if (hasTouchScreen == false)
-			{
-			//FIXME: This is a really ugly hack for the nextprevious link problem
-			// described in keyEventHandler. Note that for links with anchor this 
-			// does not work
-			// On touchscreen devices workaround is not performed.
-			QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-					Qt::Key_Up, Qt::NoModifier, QString(), false, 1);
-			QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
-			remappedKeyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
-					Qt::NoModifier, QString(), false, 1);
-			QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
+            //Move cursor to start of file
+            cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+            ui.textBrowser->setTextCursor(cursor);
+            if (hasTouchScreen == false)
+            {
+                //FIXME: This is a really ugly hack for the nextprevious link problem
+                // described in keyEventHandler. Note that for links with anchor this
+                // does not work
+                // On touchscreen devices workaround is not performed.
+                QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
+                                                            Qt::Key_Up, Qt::NoModifier, QString(), false, 1);
+                QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
+                remappedKeyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
+                                                 Qt::NoModifier, QString(), false, 1);
+                QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
 
-			}
-		}
+            }
+        }
 	/// ui.stackedWidget->setCurrentWidget(ui.articlePage);
         //qDebug() << "Loading article into textview (gotoAnchor/moveposition) took" << timer.restart() << " milliseconds";
-
-	}
+    } else {
+        qWarning() << "openArticleByUrl called with non welcome page url while no zim file open. Should not happen";
+    }
+}
 
 bool WikiOnBoard::openExternalLink(QUrl url)
 	{
@@ -999,12 +1024,16 @@ bool WikiOnBoard::openExternalLink(QUrl url)
 void WikiOnBoard::on_textBrowser_anchorClicked(QUrl url)
 	{
 	qDebug() << "on_textBrowser_anchorClicked: Url: " << url.toString();
-	if (!QString::compare(url.scheme(), QLatin1String("http"), Qt::CaseInsensitive))
+        qDebug() << " Check  url.scheme(). " <<url.scheme();
+        if ((QString::compare(url.scheme(), QLatin1String("http"), Qt::CaseInsensitive)==0)||
+                (QString::compare(url.scheme(), QLatin1String("https"), Qt::CaseInsensitive)==0))
 		{
-			openExternalLink(url);
+                    qDebug() << "url scheme is http or https => open in browser";
+                    openExternalLink(url);
 		}
 	else
-		{	
+                {
+                        qDebug() << "Url is not an external website => search in zim file";
 			ui.textBrowser->setSource(url);
 		}
 	}
@@ -1034,19 +1063,19 @@ void WikiOnBoard::openZimFileDialog()
     QString path;
     if (zimFile == NULL)
     {
-        #if defined(Q_OS_SYMBIAN)
-            //Hard code path to memory card/mass memory.  Tried QDir::homePath(); and QDesktopServices::DataLocation,
-             // both return app private dir on c:
-            path = QLatin1String("e:\\");
-        #endif
-        #if !defined(Q_OS_SYMBIAN)
-            path = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-        #endif
+#if defined(Q_OS_SYMBIAN)
+        //Hard code path to memory card/mass memory.  Tried QDir::homePath(); and QDesktopServices::DataLocation,
+        // both return app private dir on c:
+        path = QLatin1String("e:\\");
+#endif
+#if !defined(Q_OS_SYMBIAN)
+        path = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+#endif
         qDebug() << "No zim file open. Use  path for file dialog : "<<path;
     }
     else
     {
-	//TODO: Default is latin1 encoding. Correct?
+        //TODO: Default is latin1 encoding. Correct?
         path = QString::fromStdString(zimFile->getFilename());
     }
 #if defined(Q_OS_SYMBIAN)
@@ -1077,79 +1106,12 @@ void WikiOnBoard::openZimFileDialog()
     } else {
         //Either no file selected or open failed.
         if (zimFile==NULL) {
-            if (file.isNull()) {
-                qDebug() << "No zim file selected and no file was opene before => close application";
-                QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
-            } else {
-                qDebug() << "Open failed and not file was open before => Display download or open field";
-                downloadOrOpenZimFile();
-            }
+            qDebug() << "Open failed or cancelled and not file was open before => Show welcome page";
+            switchToWelcomePage();
         }
-    } // else: no  zim file selected, or open failed => keep previously openend zim file open
+    }// else: no  zim file selected, or open failed => keep previously openend zim file open
 }
 
-void WikiOnBoard::downloadOrOpenZimFile()
-        {
-        QString zimDownloadUrl = QString(tr("https://github.com/cip/WikiOnBoard/wiki/Get-eBooks","Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE"));
-        QString getEBookButtonCaption = QString(tr("Download zimfile", "button, keep is short"));
-        QString openEBookButtonCaption = QString(tr("Open zimfile", "button, keep is short"));
-
-        QMessageBox msgBox;
-        msgBox.setText(tr("Download ZIM file"));
-        QString informativeText = QString(tr("[TRANSLATOR] No zimfile selected. Button %1 Open url %3 with info where to get eBooks. Button %2 open zimfile on mobile")).arg(getEBookButtonCaption,openEBookButtonCaption,zimDownloadUrl);
-
-        msgBox.setInformativeText(informativeText);
-        QPushButton *getEBookButton = msgBox.addButton(getEBookButtonCaption, QMessageBox::AcceptRole);
-        QPushButton *openEBookButton = msgBox.addButton(openEBookButtonCaption, QMessageBox::RejectRole);
-        msgBox.setDefaultButton(getEBookButton);
-        #if defined(Q_OS_SYMBIAN)
-            QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
-        #endif
-        //Enable virtual mouse cursor on non-touch devices, as
-        // else no scrolling possible. (TODO: change this so that
-        // scrolling works with cursor keys. Unclear why not working out of the box)
-        msgBox.exec();
-        #if defined(Q_OS_SYMBIAN)
-            QApplication::setNavigationMode(Qt::NavigationModeNone);
-        #endif
-        if ((QPushButton*)msgBox.clickedButton() == getEBookButton) {
-                    QDesktopServices::openUrl(zimDownloadUrl);
-                    downloadOrOpenZimFile();
-        }   else if ((QPushButton*)msgBox.clickedButton() == openEBookButton ) {
-                    openZimFileDialog();
-                }
-        }
-
-void WikiOnBoard::downloadZimFile()
-	{
-        QString zimDownloadUrl = QString(tr("https://github.com/cip/WikiOnBoard/wiki/Get-eBooks","Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE"));
-        QMessageBox msgBox;
-	msgBox.setText(tr("Download ZIM file"));
-        QString informativeText = QString(tr("[TRANSLATOR] Open %1 with info where to get eBooks")).arg(zimDownloadUrl);
-
-        msgBox.setInformativeText(informativeText);
-
-        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-	msgBox.setDefaultButton(QMessageBox::Ok);
-        #if defined(Q_OS_SYMBIAN)
-            QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
-        #endif
-        //Enable virtual mouse cursor on non-touch devices, as
-	// else no scrolling possible. (TODO: change this so that
-	// scrolling works with cursor keys. Unclear why not working out of the box)
-	int ret = msgBox.exec();
-        #if defined(Q_OS_SYMBIAN)
-            QApplication::setNavigationMode(Qt::NavigationModeNone);
-        #endif
-        switch (ret)
-		{
-		case QMessageBox::Ok:
-			QDesktopServices::openUrl(zimDownloadUrl);
-			break;
-		default:
-			break;
-		}
-	}
 
 void WikiOnBoard::gotoHomepage()
 	{
@@ -1312,23 +1274,44 @@ void WikiOnBoard::about()
 void WikiOnBoard::switchToArticlePage()
         {
 
-        positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::PositiveSoftKey);
+        if (zimFile!=NULL) {
+            positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::PositiveSoftKey);
+            positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::NoSoftKey);
+            backArticleHistoryAction->setSoftKeyRole(QAction::NegativeSoftKey);
+            emptyAction->setSoftKeyRole(QAction::NoSoftKey);
+        } else {
+            qDebug() << " switchToArticlePage with no zim file opened. (Basically happens for Welcome page) Display menu without goto index.  And don't display back. ";
+            positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::PositiveSoftKey);
+            emptyAction->setSoftKeyRole(QAction::NegativeSoftKey);
+            positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::NoSoftKey);
+            backArticleHistoryAction->setSoftKeyRole(QAction::NoSoftKey);
+        }
         positiveSoftKeyActionMenuIndexPage->setSoftKeyRole(QAction::NoSoftKey);
 
-	backArticleHistoryAction->setSoftKeyRole(QAction::NegativeSoftKey);
-	clearSearchAction->setSoftKeyRole(QAction::NoSoftKey);
+        clearSearchAction->setSoftKeyRole(QAction::NoSoftKey);
 	
 	ui.stackedWidget->setCurrentWidget(ui.articlePage);
 
 	ui.textBrowser->setFocus();
 	}
+
+
+void WikiOnBoard::switchToWelcomePage()
+{
+    ui.textBrowser->setSource(welcomeUrl);
+    switchToArticlePage();
+}
+
+
 void WikiOnBoard::switchToIndexPage()
 	{
 
         positiveSoftKeyActionMenuIndexPage->setSoftKeyRole(QAction::PositiveSoftKey);
         positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::NoSoftKey);
+        positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::NoSoftKey);
 
 	backArticleHistoryAction->setSoftKeyRole(QAction::NoSoftKey);
+        emptyAction->setSoftKeyRole(QAction::NoSoftKey);
 	clearSearchAction->setSoftKeyRole(QAction::NegativeSoftKey);
 
 	ui.stackedWidget->setCurrentWidget(ui.indexPage);
