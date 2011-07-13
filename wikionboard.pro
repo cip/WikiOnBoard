@@ -7,7 +7,7 @@ DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
 ENABLE_SPLITSCREENKEYBOARD = 0
 DEFINES += "__ENABLE_SPLITSCREENKEYBOARD__=$$ENABLE_SPLITSCREENKEYBOARD"
 
-VERSION = 0.0.51
+VERSION = 0.0.53
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 
@@ -23,10 +23,10 @@ RESOURCES +=
 include(../kineticscroller/qtscroller.pri)
 
 TRANSLATIONS = wikionboard_en.ts \
-               wikionboard_es.ts \
-               wikionboard_it.ts \
                wikionboard_de.ts
-               
+# Not yet available               wikionboard_es.ts \
+#               wikionboard_it.ts \
+
 # TODO This is a workaround, final fix should rename zimlib to libzim for symbian as well.
 # Note that unix includes symbian and therefore cannot be used.
 linux-g++: {
