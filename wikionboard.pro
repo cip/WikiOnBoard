@@ -1,13 +1,13 @@
 #Set to 1 or 0. Changes UID used, and SwEvent Capability requested only if not selfsigned.
-#IS_SELFSIGNED = 1
-IS_SELFSIGNED = 0
+IS_SELFSIGNED = 1
+#IS_SELFSIGNED = 0
 DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
 #Set to 1 or 0. Set to 1 to enable split screen keyboard support (Symbian^3)
 # Note that feature should not be used for released version (see https://github.com/cip/WikiOnBoard/issues/51 )
 ENABLE_SPLITSCREENKEYBOARD = 0
 DEFINES += "__ENABLE_SPLITSCREENKEYBOARD__=$$ENABLE_SPLITSCREENKEYBOARD"
 
-VERSION = 0.0.55
+VERSION = 0.0.56
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 
@@ -97,10 +97,10 @@ symbian: {
  	} else {
  		#UID for self-signing
                 symbian:TARGET.UID3 = 0xA89FA6F6
-                # WikionBoard Unsigned instead of WikiOnBoard_<UID> sis package name. (See above)
-                pkgname.pkg_prerules = "$${LITERAL_HASH}{\"WikiOnBoard Unsigned\"},($$TARGET.UID3),$$version_string_pkg"
-                # Use correct UID for wrapper (wikionboard_installer.sis) package, and use package name WikiOnboard Installer Unsigned.
-                DEPLOYMENT.installer_header += "$${LITERAL_HASH}{\"WikiOnBoard Installer Unsigned\"},(0xA000D7CE),$$version_string_pkg"
+                # WikionBoard Self-Signed instead of WikiOnBoard_<UID> sis package name. (See above)
+                pkgname.pkg_prerules = "$${LITERAL_HASH}{\"WikiOnBoard Self-Signed\"},($$TARGET.UID3),$$version_string_pkg"
+                # Use correct UID for wrapper (wikionboard_installer.sis) package, and use package name WikiOnboard Installer Self-Signed.
+                DEPLOYMENT.installer_header += "$${LITERAL_HASH}{\"WikiOnBoard Installer Self-Signed\"},(0xA000D7CE),$$version_string_pkg"
 
 		message(Configuring for self-signed app. UID3 = $$TARGET.UID3 $$CAPABILITY)
 	}	
