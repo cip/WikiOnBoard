@@ -51,7 +51,7 @@
     </message>
     <message>
         <location filename="wikionboard.cpp" line="294"/>
-        <location filename="wikionboard.cpp" line="1244"/>
+        <location filename="wikionboard.cpp" line="1257"/>
         <source>About</source>
         <translation>Über WikiOnBoard</translation>
     </message>
@@ -139,19 +139,19 @@ Fehlermeldung: &quot;%2&quot;</translation>
         <translation>Fehler: Artikel nicht gefunden URL: %1</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="904"/>
+        <location filename="wikionboard.cpp" line="917"/>
         <source>Download zimfile</source>
         <comment>link</comment>
         <translation>E-Books herunterladen</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="905"/>
+        <location filename="wikionboard.cpp" line="918"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;</source>
         <comment>DON&apos;T translate this</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="907"/>
+        <location filename="wikionboard.cpp" line="920"/>
         <source>[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Menu option %2 in option menu %4 opens zimfile on mobile</source>
         <comment>Text is interpreted as HTML. Html for body and link (%1) automatically added. Other Html tags can be used if desired</comment>
         <translation>Vielen Dank, dass du WikiOnBoard verwendest.&lt;p&gt;
@@ -162,32 +162,32 @@ empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem M
 </translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="976"/>
+        <location filename="wikionboard.cpp" line="989"/>
         <source>Open link in browser</source>
         <translation>Link in Browser öffnen</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="977"/>
+        <location filename="wikionboard.cpp" line="990"/>
         <source>[TRANLATOR]Explain that may not work if browser running.</source>
         <comment>only displayed if self_signed or QT&lt;4.7.0</comment>
-        <translation>Achtung: Bei der aktuellen Konfiguration lassen sich Artikel wahrscheinlich nur öffnen wenn der Internet-Browser nicht geöffnet ist. 
+        <translation>Achtung: In der aktuellen Konfiguration lassen sich Artikel wahrscheinlich nur öffnen wenn der Internet-Browser nicht geöffnet ist. 
 Wenn sich der Artikel nicht öffnen lässt, schließe den Internet-Browser und versuche es erneut.</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="993"/>
+        <location filename="wikionboard.cpp" line="1006"/>
         <source>[TRANSLATOR] Explain that link %1 clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
 %2</source>
-        <translation>Der Link %1 ist nicht Teil dieses E-Books. Drücke OK um den Link im Internet-Browser zu öffnen.
+        <translation>Der Link &quot;%1&quot; ist nicht Teil dieses E-Books. Drücke OK um den Link im Internet-Browser zu öffnen.
 %2
 </translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1092"/>
+        <location filename="wikionboard.cpp" line="1105"/>
         <source>eBooks (*.zim *.zimaa)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="903"/>
+        <location filename="wikionboard.cpp" line="916"/>
         <source>https://github.com/cip/WikiOnBoard/wiki/Get-eBooks</source>
         <comment>Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE</comment>
         <translation>https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE</translation>
@@ -218,12 +218,12 @@ empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem M
 </translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1118"/>
+        <location filename="wikionboard.cpp" line="1131"/>
         <source>http://wiki.github.com/cip/WikiOnBoard</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1183"/>
+        <location filename="wikionboard.cpp" line="1196"/>
         <source>Current Zim File: %1
 Articles : %2, Images: %3, Categories: %4
 </source>
@@ -233,7 +233,7 @@ Artikel: %2, Bilder: %3, Kategorien: %4
 </translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1193"/>
+        <location filename="wikionboard.cpp" line="1206"/>
         <source>Title: %1
 Creator: %2
 Date: %3
@@ -253,13 +253,13 @@ Relation: %7
 </translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1210"/>
+        <location filename="wikionboard.cpp" line="1223"/>
         <source>UUID: %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1245"/>
+        <location filename="wikionboard.cpp" line="1258"/>
         <source>WikiOnBoard %1
 Author: %2
 Uses zimlib (openzim.org) and liblzma.
@@ -276,7 +276,7 @@ Version vom: %3
 </translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1253"/>
+        <location filename="wikionboard.cpp" line="1266"/>
         <source>Christian Puehringer</source>
         <translation></translation>
     </message>
@@ -285,7 +285,7 @@ Version vom: %3
         <translation type="obsolete">Der Link %1 ist nicht Teil dieses E-Books. Drücke OK um den Link im Internet-Browser zu öffnen.%2</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1091"/>
+        <location filename="wikionboard.cpp" line="1104"/>
         <source>Choose eBook in zim format to open</source>
         <translation>E-Book auswählen</translation>
     </message>
@@ -301,27 +301,27 @@ Furthermore, note that current Symbian phones do not support files whichare larg
         <translation type="obsolete">Internet-Browser öffnen um e-Books von %1 herunterzuladen?</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1120"/>
+        <location filename="wikionboard.cpp" line="1133"/>
         <source>Goto homepage</source>
         <translation>Zur WikiOnBoard Website</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1122"/>
+        <location filename="wikionboard.cpp" line="1135"/>
         <source>Open a webbrowser to show WikiOnBoard&apos;s homepage.</source>
         <translation>Internet-Browser öffnen und WikiOnBoard-Website anzeigen?</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1156"/>
+        <location filename="wikionboard.cpp" line="1169"/>
         <source>Not available</source>
         <translation>Nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1176"/>
+        <location filename="wikionboard.cpp" line="1189"/>
         <source>About Current Zimfile</source>
         <translation>Über e-Book</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1179"/>
+        <location filename="wikionboard.cpp" line="1192"/>
         <source>No zim file is currently opened</source>
         <translation>Kein e-Book geöffnet</translation>
     </message>
@@ -352,7 +352,7 @@ Relation: %7
 </translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1239"/>
+        <location filename="wikionboard.cpp" line="1252"/>
         <source>application is self-signed</source>
         <comment>only displayed if application is self-signed</comment>
         <translation>Anwendung ist selbst-signiert</translation>

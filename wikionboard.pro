@@ -1,13 +1,13 @@
 #Set to 1 or 0. Changes UID used, and SwEvent Capability requested only if not selfsigned.
-IS_SELFSIGNED = 1
-#IS_SELFSIGNED = 0
+#IS_SELFSIGNED = 1
+IS_SELFSIGNED = 0
 DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
 #Set to 1 or 0. Set to 1 to enable split screen keyboard support (Symbian^3)
 # Note that feature should not be used for released version (see https://github.com/cip/WikiOnBoard/issues/51 )
 ENABLE_SPLITSCREENKEYBOARD = 0
 DEFINES += "__ENABLE_SPLITSCREENKEYBOARD__=$$ENABLE_SPLITSCREENKEYBOARD"
 
-VERSION = 0.0.56
+VERSION = 0.0.57
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 
@@ -27,9 +27,9 @@ RESOURCES +=
 include(../kineticscroller/qtscroller.pri)
 
 TRANSLATIONS = wikionboard_en.ts \
-               wikionboard_de.ts
-# Not yet available               wikionboard_es.ts \
-#               wikionboard_it.ts \
+               wikionboard_de.ts \
+               wikionboard_es.ts \
+               wikionboard_it.ts
 
 # TODO This is a workaround, final fix should rename zimlib to libzim for symbian as well.
 # Note that unix includes symbian and therefore cannot be used.
