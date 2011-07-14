@@ -829,15 +829,22 @@ void WikiOnBoard::articleListSelectPreviousEntry()
 		{
 		if (ui.articleListWidget->currentRow() == 0)
 			{
-
-			QListWidgetItem *item = ui.articleListWidget->currentItem();
-			if (item->data(ArticleIndexRole).toInt() > 0)
-				{
-				populateArticleList(item->data(ArticleTitleRole).toString(), 1,
+                            if (hasTouchScreen) {
+                                //To basically same thing if scrolled.
+                                qDebug() << "up key while first entry selected. Add items.";
+                                  addItemsToArticleList(true);
+                            } else {
+                                //Old behavior. (TODO: May make sense to change to similar scheme as
+                                // used with touchscreen devices)
+                               QListWidgetItem *item = ui.articleListWidget->currentItem();
+                                if (item->data(ArticleIndexRole).toInt() > 0)
+                                    {
+                                    populateArticleList(item->data(ArticleTitleRole).toString(), 1,
 						true);
-				ui.articleListWidget->setCurrentRow(
+                                    ui.articleListWidget->setCurrentRow(
 						ui.articleListWidget->count() - 1);
-				}
+                                    }
+                            }
 			}
 		else
 			{
@@ -857,11 +864,17 @@ void WikiOnBoard::articleListSelectNextEntry()
 		if (ui.articleListWidget->currentRow() == ui.articleListWidget->count()
 				- 1)
 			{
-			//TODO check outof bounds
-			QListWidgetItem *item = ui.articleListWidget->currentItem();
-			populateArticleList(item->data(ArticleTitleRole).toString(), 1,
+                         if (hasTouchScreen) {
+                            //To basically same thing if scrolled.
+                            qDebug() << "down key while last entry selected. Add items.";
+                            addItemsToArticleList(false);
+                         } else {
+                            //TODO check outof bounds
+                            QListWidgetItem *item = ui.articleListWidget->currentItem();
+                            populateArticleList(item->data(ArticleTitleRole).toString(), 1,
 					false);
-			ui.articleListWidget->setCurrentRow(0);
+                            ui.articleListWidget->setCurrentRow(0);
+                         }
 			}
 		else
 			{
@@ -1421,12 +1434,12 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 						Qt::Key_Right, Qt::NoModifier, QString(), false, 1);
 				QApplication::sendEvent(ui.articleName, remappedKeyEvent);
 				break;
-			case Qt::Key_Select:
-				//This appearantly is the select key of the mobile phone. (it is not return or select)
+                        case Qt::Key_Select:
+                                //This appearantly is the select key of the mobile phone. (it is not return or select)
 				//Don't just remap key for better control
 				openArticleAction->trigger();
 				break;
-			case Qt::Key_Enter:
+                        case Qt::Key_Enter:
 				//For emulator and windows/linux
 				openArticleAction->trigger();
 				break;
