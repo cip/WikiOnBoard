@@ -7,7 +7,7 @@ DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
 ENABLE_SPLITSCREENKEYBOARD = 0
 DEFINES += "__ENABLE_SPLITSCREENKEYBOARD__=$$ENABLE_SPLITSCREENKEYBOARD"
 
-VERSION = 0.0.54
+VERSION = 0.0.55
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 
@@ -76,6 +76,12 @@ symbian: {
     LIBS += -lfepbase
 
     ICON = wikionboard.svg
+    #Instead of using default sis header definition define our own.
+    # Difference: Default package name= $$TARGET, and so includes the UID on symbian.
+    #   Package name is displayed in installer, and in program manager.
+    # => Define package name to be WikiOnBoard (without UID)
+    version_string_pkg = $$replace(VERSION,"\.",",")
+
     contains(IS_SELFSIGNED,0): {	
  		#Nokia assigned UID 
 	 	TARGET.UID3 = 0x20045592
@@ -83,18 +89,28 @@ symbian: {
    		# on QDesktopServices::openUrl call
     	#Note that capability not available for self-signed apps. 
  	 	TARGET.CAPABILITY+= SwEvent
- 	 	# Use correct UID for wrapper (wikionboard_installer.sis) package.
- 	 	DEPLOYMENT.installer_header = 0x2002CCCF 	 	 
- 		message(Configuring for nokia signed app. UID3 = $$TARGET.UID3 $$CAPABILITY)
+                # WikionBoard instead of WikiOnBoard_<UID> sis package name. (See above)
+                pkgname.pkg_prerules = "$${LITERAL_HASH}{\"WikiOnBoard\"},($$TARGET.UID3),$$version_string_pkg"
+                # Use correct UID for wrapper (wikionboard_installer.sis) package.
+                DEPLOYMENT.installer_header += "$${LITERAL_HASH}{\"WikiOnBoard Installer\"},(0x2002CCCF),$$version_string_pkg"
+                message(Configuring for nokia signed app. UID3 = $$TARGET.UID3 $$CAPABILITY)
  	} else {
  		#UID for self-signing
-		symbian:TARGET.UID3 = 0xA89FA6F6
+                symbian:TARGET.UID3 = 0xA89FA6F6
+                # WikionBoard Unsigned instead of WikiOnBoard_<UID> sis package name. (See above)
+                pkgname.pkg_prerules = "$${LITERAL_HASH}{\"WikiOnBoard Unsigned\"},($$TARGET.UID3),$$version_string_pkg"
+                # Use correct UID for wrapper (wikionboard_installer.sis) package, and use package name WikiOnboard Installer Unsigned.
+                DEPLOYMENT.installer_header += "$${LITERAL_HASH}{\"WikiOnBoard Installer Unsigned\"},(0xA000D7CE),$$version_string_pkg"
+
 		message(Configuring for self-signed app. UID3 = $$TARGET.UID3 $$CAPABILITY)
 	}	
+        DEPLOYMENT += pkgname
  	#Include Vendorinfo in sis. (Note umlaut does not work in makesis)
  	vendorinfo = "%{\"Christian Puehringer\"}" ":\"Christian Puehringer\""
- 	my_deployment.pkg_prerules = vendorinfo
- 	DEPLOYMENT += my_deployment
+        my_deployment.pkg_prerules = vendorinfo
+
+        DEPLOYMENT += my_deployment
+        message($$DEPLOYMENT)
  	#Deploy files for translation (qm extension) to application's private directory    
     translationfiles.sources = *.qm
     DEPLOYMENT +=translationfiles
