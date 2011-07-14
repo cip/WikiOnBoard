@@ -157,7 +157,7 @@ Fehlermeldung: &quot;%2&quot;</translation>
         <translation>Vielen Dank, dass du WikiOnBoard verwendest.&lt;p&gt;
 Wähle &quot;%1&quot; um herauszufinden wie du die Wikipedia oder andere eBooks auf dein Mobiltelefon laden kannst.&lt;p&gt;
 Um ein eBook zu öffnen, das du bereits auf dein Handy kopiert hast, wähle &quot;%2&quot; im &quot;%4&quot;-Menü.&lt;p&gt;
-Anmerkung: &quot;%1&quot; öffnet die Webseite &quot;%3&quot; im Webbrowser. Da die eBooks sehr groß sein können, it es in jedem Fall
+Anmerkung: &quot;%1&quot; öffnet die Webseite &quot;%3&quot; im Webbrowser. Da die eBooks sehr groß sein können, ist es in jedem Fall
 empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem Mobiltelefon.
 </translation>
     </message>

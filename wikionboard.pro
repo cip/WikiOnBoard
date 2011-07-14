@@ -7,7 +7,7 @@ DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
 ENABLE_SPLITSCREENKEYBOARD = 0
 DEFINES += "__ENABLE_SPLITSCREENKEYBOARD__=$$ENABLE_SPLITSCREENKEYBOARD"
 
-VERSION = 0.0.53
+VERSION = 0.0.54
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 
@@ -19,6 +19,10 @@ HEADERS += wikionboard.h
 SOURCES += main.cpp \
     wikionboard.cpp
 FORMS += wikionboard.ui
+#Wikionboard should not depend on webkit.
+#Attention: Ensure that kinetic scroller has been built with this option as well.
+CONFIG +=no-webkit
+
 RESOURCES += 
 include(../kineticscroller/qtscroller.pri)
 
@@ -92,7 +96,7 @@ symbian: {
  	my_deployment.pkg_prerules = vendorinfo
  	DEPLOYMENT += my_deployment
  	#Deploy files for translation (qm extension) to application's private directory    
-    translationfiles.sources = *.qm    
+    translationfiles.sources = *.qm
     DEPLOYMENT +=translationfiles
 }
 
