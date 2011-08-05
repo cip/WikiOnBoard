@@ -20,6 +20,7 @@
 #include "wikionboard.h"
 #include <QKeyEvent>
 #include <QDebug>
+#include <QFile>
 #include <QProgressBar>
 #include <QScrollBar>
 #include <QMessageBox>
@@ -466,10 +467,12 @@ bool WikiOnBoard::openZimFile(QString zimFileName)
 		QRegExp rx(QLatin1String("(.*\\.zim)\\D\\D"));
 	    rx.setCaseSensitivity(Qt::CaseInsensitive);
 	    zimFileName.replace(rx,QLatin1String("\\1"));
-	    //TODO: Default is latin1 encoding. Correct? (at least zim files with
-	    // special characters do not open correctly, but can this be fixed by other encoding?)
-                zimfilename = zimFileName.toStdString();
-                zim::File* oldZimFile = zimFile;
+            //converts fileName to the local 8-bit encoding determined by the user's locale
+            // On symbian it is probably encoded to UTF-8. As zimlib does not use qt open
+            // file mechanism, opening files with non latin1 characters may not work on all platforms.
+            qDebug() << "encoding filename using QFile::encodeName";
+            zimfilename =  std::string(QFile::encodeName(zimFileName));
+            zim::File* oldZimFile = zimFile;
                 zimFile = new zim::File(zimfilename);
                 //If opensuccesful, delete pointer to previously openend zim file.
                 // If open fails keep previously opened zim file open.
@@ -1193,11 +1196,12 @@ void WikiOnBoard::aboutCurrentZimFile()
 	} else {
 	
 	QByteArray uuidBA =QByteArray(zimFile->getFileheader().getUuid().data, zimFile->getFileheader().getUuid().size());
-	informativeText = QString(tr(""
+        QString zimfilename = QFile::decodeName(zimFile->getFilename().c_str());
+        informativeText = QString(tr(""
 			 "Current Zim File: %1\n"
                          "Articles : %2, Images: %3, Categories: %4\n",
                                      "Add new line after text")).arg(
-					 QString::fromStdString(zimFile->getFilename()),
+                                         zimfilename,
 					 QString::number(zimFile->getNamespaceCount('A')), //Including redirects
 					 QString::number(zimFile->getNamespaceCount('I')),
 					 QString::number(zimFile->getNamespaceCount('U'))
@@ -1288,16 +1292,31 @@ void WikiOnBoard::switchToArticlePage()
         {
 
         if (zimFile!=NULL) {
-            positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::PositiveSoftKey);
-            positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::NoSoftKey);
-            backArticleHistoryAction->setSoftKeyRole(QAction::NegativeSoftKey);
-            emptyAction->setSoftKeyRole(QAction::NoSoftKey);
-        } else {
+            #ifdef Q_OS_SYMBIAN
+                positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::PositiveSoftKey);
+                positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::NoSoftKey);
+                backArticleHistoryAction->setSoftKeyRole(QAction::NegativeSoftKey);
+                emptyAction->setSoftKeyRole(QAction::NoSoftKey);
+            #else
+                menuBar()->clear();
+                menuBar()->addMenu(menuArticlePage);
+            #endif
+
+        } else {            
             qDebug() << " switchToArticlePage with no zim file opened. (Basically happens for Welcome page) Display menu without goto index.  And don't display back. ";
-            positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::PositiveSoftKey);
-            emptyAction->setSoftKeyRole(QAction::NegativeSoftKey);
-            positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::NoSoftKey);
-            backArticleHistoryAction->setSoftKeyRole(QAction::NoSoftKey);
+            #ifdef Q_OS_SYMBIAN
+                positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::PositiveSoftKey);
+                emptyAction->setSoftKeyRole(QAction::NegativeSoftKey);
+                positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::NoSoftKey);
+                backArticleHistoryAction->setSoftKeyRole(QAction::NoSoftKey);
+            #else
+                menuBar()->clear();
+                menuBar()->addMenu(menuArticlePageNoFileOpen);
+                qDebug() << "add openZimFileDialogAction to toolbar";
+                ui.toolBar->addAction(openZimFileDialogAction);
+
+#endif
+
         }
         positiveSoftKeyActionMenuIndexPage->setSoftKeyRole(QAction::NoSoftKey);
 
@@ -1318,15 +1337,18 @@ void WikiOnBoard::switchToWelcomePage()
 
 void WikiOnBoard::switchToIndexPage()
 	{
+#ifdef Q_OS_SYMBIAN
+    positiveSoftKeyActionMenuIndexPage->setSoftKeyRole(QAction::PositiveSoftKey);
+    positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::NoSoftKey);
+    positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::NoSoftKey);
 
-        positiveSoftKeyActionMenuIndexPage->setSoftKeyRole(QAction::PositiveSoftKey);
-        positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::NoSoftKey);
-        positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::NoSoftKey);
-
-	backArticleHistoryAction->setSoftKeyRole(QAction::NoSoftKey);
-        emptyAction->setSoftKeyRole(QAction::NoSoftKey);
-	clearSearchAction->setSoftKeyRole(QAction::NegativeSoftKey);
-
+    backArticleHistoryAction->setSoftKeyRole(QAction::NoSoftKey);
+    emptyAction->setSoftKeyRole(QAction::NoSoftKey);
+    clearSearchAction->setSoftKeyRole(QAction::NegativeSoftKey);
+#else
+        menuBar()->clear();
+        menuBar()->addMenu(menuIndexPage);
+#endif
 	ui.stackedWidget->setCurrentWidget(ui.indexPage);
 	ui.articleName->setFocus();
 	populateArticleList();

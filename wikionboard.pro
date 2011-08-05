@@ -7,11 +7,9 @@ DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
 ENABLE_SPLITSCREENKEYBOARD = 0
 DEFINES += "__ENABLE_SPLITSCREENKEYBOARD__=$$ENABLE_SPLITSCREENKEYBOARD"
 
-VERSION = 1.0.0
+VERSION = 1.0.5
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
-
-
 
 QT += core \
     gui
@@ -23,7 +21,7 @@ FORMS += wikionboard.ui
 #Attention: Ensure that kinetic scroller has been built with this option as well.
 CONFIG +=no-webkit
 
-RESOURCES += 
+RESOURCES +=
 include(../kineticscroller/qtscroller.pri)
 
 TRANSLATIONS = wikionboard_en.ts \
@@ -36,8 +34,8 @@ TRANSLATIONS = wikionboard_en.ts \
 linux-g++: {
     LIBS += -l:libzim.so
     LIBS += -l:liblzma.so
-}
-else { 
+}    
+symbian: {
     # TODO find out why this is not working on my linux. (actually it should)
     LIBS += -lzimlib
     LIBS += -lliblzma
@@ -47,6 +45,11 @@ else {
  #   LIBS += -L../xz
   #  LIBS += -l:libliblzma.lib.a
 }
+else {
+    LIBS *= -L../zimlib -lzimlib
+    LIBS *= -L../xz -lliblzma
+    }
+
 win32::INCLUDEPATH += e:\cygwin\usr\local\include
 symbian: { 
     SOURCES += WikiOnBoard_reg.rss
@@ -114,6 +117,9 @@ symbian: {
  	#Deploy files for translation (qm extension) to application's private directory    
     translationfiles.sources = *.qm
     DEPLOYMENT +=translationfiles
+} else {
+    #Deploy files for translation (qm extension) to application's private directory
+    #TODO
 }
 
 symbian: {
@@ -150,7 +156,45 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/copyright \
     qtc_packaging/debian_harmattan/control \
     qtc_packaging/debian_harmattan/compat \
-    qtc_packaging/debian_harmattan/changelog
+    qtc_packaging/debian_harmattan/changelog \
+    android/AndroidManifest.xml \
+    android/res/drawable-hdpi/icon.png \
+    android/res/drawable-ldpi/icon.png \
+    android/res/drawable-mdpi/icon.png \
+    android/res/values/libs.xml \
+    android/res/values/strings.xml \
+    android/src/eu/licentia/necessitas/industrius/QtActivity.java \
+    android/src/eu/licentia/necessitas/industrius/QtApplication.java \
+    android/src/eu/licentia/necessitas/industrius/QtLayout.java \
+    android/src/eu/licentia/necessitas/industrius/QtSurface.java \
+    android/src/eu/licentia/necessitas/ministro/IMinistro.aidl \
+    android/src/eu/licentia/necessitas/ministro/IMinistroCallback.aidl \
+    android/src/eu/licentia/necessitas/mobile/QtAndroidContacts.java \
+    android/src/eu/licentia/necessitas/mobile/QtCamera.java \
+    android/src/eu/licentia/necessitas/mobile/QtFeedback.java \
+    android/src/eu/licentia/necessitas/mobile/QtLocation.java \
+    android/src/eu/licentia/necessitas/mobile/QtMediaPlayer.java \
+    android/src/eu/licentia/necessitas/mobile/QtSensors.java \
+    android/src/eu/licentia/necessitas/mobile/QtSystemInfo.java \
+    android/AndroidManifest.xml \
+    android/res/drawable-hdpi/icon.png \
+    android/res/drawable-ldpi/icon.png \
+    android/res/drawable-mdpi/icon.png \
+    android/res/values/libs.xml \
+    android/res/values/strings.xml \
+    android/src/eu/licentia/necessitas/industrius/QtActivity.java \
+    android/src/eu/licentia/necessitas/industrius/QtApplication.java \
+    android/src/eu/licentia/necessitas/industrius/QtLayout.java \
+    android/src/eu/licentia/necessitas/industrius/QtSurface.java \
+    android/src/eu/licentia/necessitas/ministro/IMinistro.aidl \
+    android/src/eu/licentia/necessitas/ministro/IMinistroCallback.aidl \
+    android/src/eu/licentia/necessitas/mobile/QtAndroidContacts.java \
+    android/src/eu/licentia/necessitas/mobile/QtCamera.java \
+    android/src/eu/licentia/necessitas/mobile/QtFeedback.java \
+    android/src/eu/licentia/necessitas/mobile/QtLocation.java \
+    android/src/eu/licentia/necessitas/mobile/QtMediaPlayer.java \
+    android/src/eu/licentia/necessitas/mobile/QtSensors.java \
+    android/src/eu/licentia/necessitas/mobile/QtSystemInfo.java
 
 unix:!symbian {
     maemo5 {
@@ -170,3 +214,5 @@ unix:!symbian {
     }
     INSTALLS += desktopfile
 }
+message(QT Variable: $$QT)
+message(Libs Variable: $$LIBS)
