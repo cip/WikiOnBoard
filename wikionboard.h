@@ -57,7 +57,7 @@ class WikiOnBoard : public QMainWindow
 public:
 	WikiOnBoard(void* bgc, QWidget *parent = 0);
         ~WikiOnBoard();                        
-        QImage getImageByUrl(QString imageUrl);
+        QPixmap getImageByUrl(QString imageUrl);
 
 protected:
     void keyPressEvent(QKeyEvent *event);    

@@ -27,7 +27,7 @@
 #include <QStringBuilder>
 #include <QTextCodec>
 #include <QDesktopWidget>
-#include <QImage>
+#include <QPixmap>
 //"Official" kinetic scrolling. (Backport from Qt 4.8) 
 //	See http://qt.gitorious.org/qt-labs/kineticscroller/commits/solution and
 //		http://bugreports.qt.nokia.com/browse/QTBUG-9054?focusedCommentId=130700&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#action_130700
@@ -619,9 +619,9 @@ QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 
 //Note: expects encoded URL (as used in articles). Therefore don't use
 // this for decoded URL (as in zim file index)
-QImage WikiOnBoard::getImageByUrl(QString imageUrl)
+QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
         {
-        QImage image;
+        QPixmap image;
         zim::Blob blob;
         try
                 {
@@ -644,7 +644,9 @@ QImage WikiOnBoard::getImageByUrl(QString imageUrl)
                         blob = it->getData();
                         }
                 qDebug() << " Image (URL: "<< imageUrl << ", Size: "<<blob.size()<<") loaded from zim file";
-                image = QImage::fromData(QByteArray::fromRawData(blob.data(),blob.size()));
+                if (!(image.loadFromData(QByteArray::fromRawData(blob.data(),blob.size()))))   {
+                    qDebug() << "loadFromData failed for image";
+                }
                 qDebug() << "Image site:" << image.size();
                 }
         catch (const std::exception& e)
@@ -1901,8 +1903,12 @@ ArticleViewer::ArticleViewer(QWidget* parent, WikiOnBoard* wikiOnBoard) : QTextB
                qDebug() << "loadResource.: type is ImageResource and showImages =1 => load image from zim file. " << name.toString()<<"\nurl.path():"<<name.path() << "\nurl.encodedPath():"<< encodedPath;
                return wikiOnBoard->getImageByUrl(encodedPath);
            } else {
-               qDebug() << "loadResource: type is ImageResource but showImages=0. Return empty variant.";
-               return QVariant(); //TODO consider return of empty image instead. (may be faster as QTextBrowser tries loading images from some default locations)
+              qDebug() << "loadResource: type is ImageResource but showImages=0. Returns 1x1 pixel image. ";
+              //Returning one pixel image leads to much faster scrolling than returning empty variant or not handling it at all.
+              // (Fix for issue 57).
+              QPixmap emptyImage = QPixmap(1,1);
+              emptyImage.fill();
+              return emptyImage;
            }
        }
        return QVariant();
