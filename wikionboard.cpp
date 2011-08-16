@@ -217,15 +217,6 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	int zoomInit = settings.value(QLatin1String("zoomLevel"), -1).toInt();
         fullScreen = settings.value(QLatin1String("fullScreen"), false).toBool();
 	settings.endGroup();
-        QTextDocument* defaultStyleSheetDocument = new QTextDocument(articleViewer);
-        //Override link color. At least on symbian per default textbrowser uses phone color scheme which is
-        // typically not very ergonomical. (e.g. white text on green background with N97 standard scheme).
-        // Text and background color is changed in stylesheet property of textBrowser. Link color (white
-        // on N97...) is changed here.
-        // Only do this one, and not on every article load as this
-        // appearantly affects zoom level.
-        defaultStyleSheetDocument->setDefaultStyleSheet(QLatin1String("a:link{color: blue}"));
-        articleViewer->setDocument(defaultStyleSheetDocument);
         zoomLevel = 0;
 	zoom(zoomInit);
         if (connect(articleViewer,SIGNAL(sourceChanged(QUrl)),this, SLOT(on_articleViewer_sourceChanged(QUrl)))) {
@@ -1881,8 +1872,25 @@ ArticleViewer::ArticleViewer(QWidget* parent, WikiOnBoard* wikiOnBoard) : QTextB
  {
     QSettings settings;
     settings.beginGroup(QLatin1String("UISettings"));
-    showImages = settings.value(QLatin1String("showImages"), true).toInt();
+    showImages = settings.value(QLatin1String("showImages"), true).toBool();
     settings.endGroup();
+    //QTextBrowser settings
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    setOpenLinks(false);
+    //TODO: Check whether text should be selectable. (For copy, may however infere with scrolling)
+    setTextInteractionFlags(Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse);
+    // Textbrowser style.
+    setStyleSheet(QLatin1String("QTextBrowser {background-color: white;color: black; border:0px; margin: 0px}"));
+    QTextDocument* defaultStyleSheetDocument = new QTextDocument(this);
+    //Override link color. At least on symbian per default textbrowser uses phone color scheme which is
+    // typically not very ergonomical. (e.g. white text on green background with N97 standard scheme).
+    // Text and background color is changed in stylesheet property of textBrowser. Link color (white
+    // on N97...) is changed here.
+    // Only do this one, and not on every article load as this
+    // appearantly affects zoom level.
+    defaultStyleSheetDocument->setDefaultStyleSheet(QLatin1String("a:link{color: blue}"));
+    setDocument(defaultStyleSheetDocument);
 
  }
  QVariant ArticleViewer::loadResource ( int type, const QUrl & name ) {
