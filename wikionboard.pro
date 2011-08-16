@@ -7,7 +7,7 @@ DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
 ENABLE_SPLITSCREENKEYBOARD = 0
 DEFINES += "__ENABLE_SPLITSCREENKEYBOARD__=$$ENABLE_SPLITSCREENKEYBOARD"
 
-VERSION = 1.0.5
+VERSION = 1.0.12
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 
@@ -29,12 +29,16 @@ TRANSLATIONS = wikionboard_en.ts \
                wikionboard_es.ts \
                wikionboard_it.ts
 
+CONFIG *= link_prl
+
+
 # TODO This is a workaround, final fix should rename zimlib to libzim for symbian as well.
 # Note that unix includes symbian and therefore cannot be used.
 linux-g++: {
     LIBS += -l:libzim.so
     LIBS += -l:liblzma.so
 }    
+
 symbian: {
     # TODO find out why this is not working on my linux. (actually it should)
     LIBS += -lzimlib
@@ -45,12 +49,12 @@ symbian: {
  #   LIBS += -L../xz
   #  LIBS += -l:libliblzma.lib.a
 }
-else {
+else {    
     LIBS *= -L../zimlib -lzimlib
     LIBS *= -L../xz -lliblzma
-    }
+}
 
-win32::INCLUDEPATH += e:\cygwin\usr\local\include
+
 symbian: { 
     SOURCES += WikiOnBoard_reg.rss
     INCLUDEPATH += \epoc32\include
@@ -58,7 +62,7 @@ symbian: {
 
 DEFINES += QT_NO_CAST_FROM_ASCII \
            QT_NO_CAST_TO_ASCII
-
+#message(QMAKESPEC: $$QMAKESPEC)
 message(QT_VERSION: $$QT_VERSION)
 symbian: { 
     message(S60_VERSION: $$S60_VERSION)
@@ -141,7 +145,9 @@ symbian: {
 
 
 #Maemo
-INCLUDEPATH += ../zimlib/include
+#INCLUDEPATH += ../zimlib/include
+#TODO trial for mingw build
+INCLUDEPATH += ../zimlib/include ../xz
 
 OTHER_FILES += \
     debian/changelog \
