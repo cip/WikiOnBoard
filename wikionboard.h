@@ -21,7 +21,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QDesktopServices>
-
+#include <QtGui/QTextBrowser>
 #include "ui_wikionboard.h"
 
 #include <zim/zim.h>
@@ -31,6 +31,16 @@ enum ArticleListItemDataRole {
 	ArticleUrlRole=Qt::UserRole,
 	ArticleIndexRole,
 	ArticleTitleRole
+};
+
+class ArticleViewer : public QTextBrowser
+{
+    Q_OBJECT
+public:
+    ArticleViewer(QWidget* parent = 0);
+  //  ~ArticleViewer() {//TODO};
+    QVariant loadResource ( int type, const QUrl & name );
+
 };
 
 class WikiOnBoard : public QMainWindow
@@ -47,6 +57,7 @@ protected:
     void resizeEvent ( QResizeEvent * event );  
 private:     
     Ui::WikiOnBoard ui;
+    ArticleViewer* articleViewer;
     void* m_bgc;
     QAction* positiveSoftKeyActionMenuIndexPage;
     QAction* positiveSoftKeyActionMenuArticlePage;
@@ -114,10 +125,10 @@ private slots:
     //void on_textBrowser_anchorClicked(QUrl url);  
      void backArticleHistoryOrIndexPage();
           
-     void on_textBrowser_anchorClicked(QUrl url);
-     void on_textBrowser_sourceChanged(QUrl url);  
+     void on_articleViewer_anchorClicked(QUrl url);
+     void on_articleViewer_sourceChanged(QUrl url);
      
-    	 
+
      
      void openZimFileDialog();
      void gotoHomepage();
@@ -141,7 +152,7 @@ class ArticleListFilter : public QObject {
 	Q_OBJECT
 public:
 	ArticleListFilter() {};
-	
+
 protected:
 	
     bool eventFilter(QObject *o, QEvent *e);

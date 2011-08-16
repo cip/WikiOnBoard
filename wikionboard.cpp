@@ -206,7 +206,9 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	settings.endGroup();
 
 	ui.setupUi(this);
-	setStatusBar(0); //Remove status bar to increase useable screen size.
+        articleViewer = new ArticleViewer(ui.articlePage);        
+        ui.gridLayout_3->addWidget(articleViewer);
+        setStatusBar(0); //Remove status bar to increase useable screen size.
 	//TODO still not perfect, quite some distance between
 	//  widgeht and menu.
 
@@ -222,13 +224,23 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	// Only do this one, and not on every article load as this
 	// appearantly affects zoom level. 
 	defaultStyleSheetDocument->setDefaultStyleSheet(QLatin1String("a:link{color: blue}"));	
-	ui.textBrowser->setDocument(defaultStyleSheetDocument);		
+        articleViewer->setDocument(defaultStyleSheetDocument);
 	zoomLevel = 0;
 	zoom(zoomInit);
+        if (connect(articleViewer,SIGNAL(sourceChanged(QUrl)),this, SLOT(on_articleViewer_sourceChanged(QUrl)))) {
+            qDebug() << "Connected sourceChanged";
+        } else {
+            qWarning()<<"Could not connect sourceChanged";
+        }
+        if (connect(articleViewer,SIGNAL(anchorClicked(QUrl)),this, SLOT(on_articleViewer_anchorClicked(QUrl)))) {
+            qDebug() << "Connected anchorClicked";
+        } else {
+            qWarning()<<"Could not connect anchorClicked";
+        }
         connect(QApplication::desktop(), SIGNAL(workAreaResized(int)), this, SLOT(workAreaResized(int)));
         //  LeftMouseButtonGesture used, as use of TouchGesture together
 	// with mouse click events (like link clicked) problematic.
-	QtScroller::grabGesture(ui.textBrowser->viewport(), QtScroller::LeftMouseButtonGesture);
+        QtScroller::grabGesture(articleViewer->viewport(), QtScroller::LeftMouseButtonGesture);
 					
 	// ScrollPerPixel required for kinetic scrolling
 	ui.articleListWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);	    
@@ -236,14 +248,14 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	ArticleListFilter *articleListFilter = new ArticleListFilter();
 	ui.articleListWidget->viewport()->installEventFilter(articleListFilter);
         connect(articleListFilter,SIGNAL(approachingEndOfList(bool)),this, SLOT(addItemsToArticleList(bool)));
-	QtScrollerProperties properties = QtScroller::scroller(ui.textBrowser->viewport())->scrollerProperties();
+        QtScrollerProperties properties = QtScroller::scroller(articleViewer->viewport())->scrollerProperties();
 	//properties.setScrollMetric(QtScrollerProperties::DragStartDistance,
 	 //	                                QVariant(1.0/1000)); 
 	//properties.setScrollMetric(QtScrollerProperties::DragVelocitySmoothingFactor,
 		// 	 	                                QVariant(0.9)); 
 		
 //	properties.setScrollMetric(QtScrollerProperties::AcceleratingFlickMaximumTime,
-	// 	 	 	                                QVariant(0.0));
+        // 	 	 	                                QVariant(0.0));
 	//Avoid scrolling right/left for up/down gestures. Higher value
 	// would be better regarding this, but then finger scrolling is
 	// is not working very well. 
@@ -257,7 +269,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	//properties.setScrollMetric(QtScrollerProperties::MousePressEventDelay,
 	  //               QVariant(0.2));	
 			 
-	QtScroller::scroller(ui.textBrowser->viewport())->setScrollerProperties(properties);
+        QtScroller::scroller(articleViewer->viewport())->setScrollerProperties(properties);
 	
 #ifdef Q_OS_SYMBIAN
 	//Enable Softkeys in fullscreen mode. 
@@ -902,7 +914,7 @@ void WikiOnBoard::articleListOpenArticle()
 		QString urlEncoded = QString::fromUtf8(url.toEncoded().data(),url.toEncoded().length());
 		qDebug() << "articleListOpenArticle: url (decoded): " <<urlDecoded<<"\nurl (encoded):"<<urlEncoded ;
 			
-		ui.textBrowser->setSource(url);
+                articleViewer->setSource(url);
 		switchToArticlePage();
 		}
 	}
@@ -921,7 +933,7 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
         QString zimDownloadUrlHtml = QString(tr("<a href=\"%1\">%2</a>", "DON'T translate this").arg(zimDownloadUrl,getEBookLinkCaption));
 
         QString informativeText = QString(tr("[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Menu option %2 in option menu %4 opens zimfile on mobile", "Text is interpreted as HTML. Html for body and link (%1) automatically added. Other Html tags can be used if desired")).arg(zimDownloadUrlHtml,openZimFileDialogAction->text(),zimDownloadUrl, positiveSoftKeyActionMenuArticlePage->text());
-        ui.textBrowser->setHtml(informativeText);
+        articleViewer->setHtml(informativeText);
 
     } else if (zimFile!=NULL) {
 
@@ -943,13 +955,23 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
         //qDebug() << "Reading article " <<path <<" from zim file took" << timer.elapsed() << " milliseconds";
         //timer.start();
 
-        ui.textBrowser->setHtml(articleText);
+        articleText = QLatin1String("<html><head></head><body>"
+                                    "<p>img copied from zim file</p>"
+                                    "<img alt=\"\" src=\"/I/FrederickJamesFurnivall.jpg\" width=\"195\" height=\"274\" class=\"thumbimage\" />"
+                                    "<p>img without class</p>"
+                                    "<img alt=\"\" src=\"/I/FrederickJamesFurnivall.jpg\" width=\"195\" height=\"274\"/>"
+                                    "<p>img from internet</p>"
+                                    "<img alt=\"\" src=\"http://www.google.com/images/nav_logo83.png\" width=\"195\" height=\"274\"/>"
+                                    "</body>"
+                                    "</html>");
+
+        articleViewer->setHtml(articleText);
         //qDebug() << "Loading article into textview (setHtml()) took" << timer.restart() << " milliseconds";
 	if (url.hasFragment())
         {
             //Either a link within current file (if path was empty), or to   newly opened file
             QString fragment = url.fragment();
-            ui.textBrowser->scrollToAnchor(fragment);
+            articleViewer->scrollToAnchor(fragment);
             //Now text visible, but cursor not moved.
             //=> Move cursor to current visisble location.
             // TODO: no better way to achieve this. Furthermore, actually
@@ -958,11 +980,11 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
         }
 	else
         {
-            QTextCursor cursor = ui.textBrowser->textCursor();
+            QTextCursor cursor = articleViewer->textCursor();
 
             //Move cursor to start of file
             cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-            ui.textBrowser->setTextCursor(cursor);
+            articleViewer->setTextCursor(cursor);
             if (hasTouchScreen == false)
             {
                 //FIXME: This is a really ugly hack for the nextprevious link problem
@@ -971,10 +993,10 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
                 // On touchscreen devices workaround is not performed.
                 QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
                                                             Qt::Key_Up, Qt::NoModifier, QString(), false, 1);
-                QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
+                QApplication::sendEvent(articleViewer, remappedKeyEvent);
                 remappedKeyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
                                                  Qt::NoModifier, QString(), false, 1);
-                QApplication::sendEvent(ui.textBrowser, remappedKeyEvent);
+                QApplication::sendEvent(articleViewer, remappedKeyEvent);
 
             }
         }
@@ -1037,7 +1059,7 @@ bool WikiOnBoard::openExternalLink(QUrl url)
 	QDesktopServices::openUrl(url);
 	}
 
-void WikiOnBoard::on_textBrowser_anchorClicked(QUrl url)
+void WikiOnBoard::on_articleViewer_anchorClicked(QUrl url)
 	{
 	qDebug() << "on_textBrowser_anchorClicked: Url: " << url.toString();
         qDebug() << " Check  url.scheme(). " <<url.scheme();
@@ -1050,11 +1072,11 @@ void WikiOnBoard::on_textBrowser_anchorClicked(QUrl url)
 	else
                 {
                         qDebug() << "Url is not an external website => search in zim file";
-			ui.textBrowser->setSource(url);
+                        articleViewer->setSource(url);
 		}
 	}
 
-void WikiOnBoard::on_textBrowser_sourceChanged(QUrl url)
+void WikiOnBoard::on_articleViewer_sourceChanged(QUrl url)
 	{
 	showWaitCursor();
 	openArticleByUrl(url);
@@ -1064,9 +1086,9 @@ void WikiOnBoard::on_textBrowser_sourceChanged(QUrl url)
 
 void WikiOnBoard::backArticleHistoryOrIndexPage()
 	{
-	if (ui.textBrowser->isBackwardAvailable())
+        if (articleViewer->isBackwardAvailable())
 		{
-		ui.textBrowser->backward();
+                articleViewer->backward();
 		}
 	else
 		{
@@ -1116,7 +1138,7 @@ void WikiOnBoard::openZimFileDialog()
         settings.beginGroup(QLatin1String("ZimFile"));
         settings.setValue(QLatin1String("lastZimFile"), file);
         settings.endGroup();
-        ui.textBrowser->clearHistory();
+        articleViewer->clearHistory();
         switchToIndexPage(); //In case currently viewing an article.
         populateArticleList();
     } else {
@@ -1324,13 +1346,13 @@ void WikiOnBoard::switchToArticlePage()
 	
 	ui.stackedWidget->setCurrentWidget(ui.articlePage);
 
-	ui.textBrowser->setFocus();
+        articleViewer->setFocus();
 	}
 
 
 void WikiOnBoard::switchToWelcomePage()
 {
-    ui.textBrowser->setSource(welcomeUrl);
+    articleViewer->setSource(welcomeUrl);
     switchToArticlePage();
 }
 
@@ -1361,10 +1383,10 @@ void WikiOnBoard::searchArticle()
 
 void WikiOnBoard::moveTextBrowserTextCursorToVisibleArea()
 	{
-	int position = ui.textBrowser->cursorForPosition(QPoint(0, 0)).position();
-	QTextCursor cursor = ui.textBrowser->textCursor();
+        int position = articleViewer->cursorForPosition(QPoint(0, 0)).position();
+        QTextCursor cursor = articleViewer->textCursor();
 	cursor.setPosition(position, QTextCursor::MoveAnchor);
-	ui.textBrowser->setTextCursor(cursor);
+        articleViewer->setTextCursor(cursor);
 	}
 
 void WikiOnBoard::keyPressEvent(QKeyEvent* event)
@@ -1401,21 +1423,21 @@ void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 			// See http://bugreports.qt.nokia.com/browse/QTBUG-4415
 			case Qt::Key_VolumeDown:
 			case Qt::Key_2: //Scroll one page up (-one line as else one line may never be visible entirely)
-				ui.textBrowser->verticalScrollBar()->triggerAction(
+                                articleViewer->verticalScrollBar()->triggerAction(
 						QAbstractSlider::SliderPageStepSub);
-				if (ui.textBrowser->verticalScrollBar()->value()!=ui.textBrowser->verticalScrollBar()->minimum()) {
+                                if (articleViewer->verticalScrollBar()->value()!=articleViewer->verticalScrollBar()->minimum()) {
 					//Only scroll down again a little, if not at beginning of article
-					ui.textBrowser->verticalScrollBar()->triggerAction(
+                                        articleViewer->verticalScrollBar()->triggerAction(
 										QAbstractSlider::SliderSingleStepAdd);								
 				}
 				break;
 			case Qt::Key_VolumeUp:							
 			case Qt::Key_8: //Scroll one page down (-one line as else one line may never be visible entirely)
-				ui.textBrowser->verticalScrollBar()->triggerAction(
+                                articleViewer->verticalScrollBar()->triggerAction(
 						QAbstractSlider::SliderPageStepAdd);
-				if (ui.textBrowser->verticalScrollBar()->value()!=ui.textBrowser->verticalScrollBar()->maximum()) {
+                                if (articleViewer->verticalScrollBar()->value()!=articleViewer->verticalScrollBar()->maximum()) {
 					//Only scroll back again a little, if not at end of article
-					ui.textBrowser->verticalScrollBar()->triggerAction(
+                                        articleViewer->verticalScrollBar()->triggerAction(
 						QAbstractSlider::SliderSingleStepSub);
 				}
 				break;
@@ -1579,11 +1601,11 @@ void WikiOnBoard::zoom(int zoomDelta)
 		}
 	if (zoomDelta < 0)
 		{
-		ui.textBrowser->zoomOut(abs(zoomDelta));
+                articleViewer->zoomOut(abs(zoomDelta));
 		}
 	else
 		{
-		ui.textBrowser->zoomIn(zoomDelta);
+                articleViewer->zoomIn(zoomDelta);
 		}
 	zoomLevel += zoomDelta;
 	QSettings settings;
@@ -1819,3 +1841,11 @@ void WikiOnBoard::enableSplitScreen()
     #endif
 #endif
 }
+ ArticleViewer::ArticleViewer(QWidget* parent) : QTextBrowser(parent)
+ {
+
+ }
+ QVariant ArticleViewer::loadResource ( int type, const QUrl & name ) {
+       qDebug() << "in loadResource. type: "<<type << "\nname: "<< name;
+       return QVariant();
+ }
