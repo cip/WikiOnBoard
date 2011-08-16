@@ -27,6 +27,7 @@
 #include <QStringBuilder>
 #include <QTextCodec>
 #include <QDesktopWidget>
+#include <QImage>
 //"Official" kinetic scrolling. (Backport from Qt 4.8) 
 //	See http://qt.gitorious.org/qt-labs/kineticscroller/commits/solution and
 //		http://bugreports.qt.nokia.com/browse/QTBUG-9054?focusedCommentId=130700&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#action_130700
@@ -206,7 +207,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	settings.endGroup();
 
 	ui.setupUi(this);
-        articleViewer = new ArticleViewer(ui.articlePage);        
+        articleViewer = new ArticleViewer(ui.articlePage,this);
         ui.gridLayout_3->addWidget(articleViewer);
         setStatusBar(0); //Remove status bar to increase useable screen size.
 	//TODO still not perfect, quite some distance between
@@ -216,16 +217,16 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	int zoomInit = settings.value(QLatin1String("zoomLevel"), -1).toInt();
         fullScreen = settings.value(QLatin1String("fullScreen"), false).toBool();
 	settings.endGroup();
-	QTextDocument* defaultStyleSheetDocument = new QTextDocument(this);
-	//Override link color. At least on symbian per default textbrowser uses phone color scheme which is
-	// typically not very ergonomical. (e.g. white text on green background with N97 standard scheme). 
-	// Text and background color is changed in stylesheet property of textBrowser. Link color (white
-	// on N97...) is changed here. 
-	// Only do this one, and not on every article load as this
-	// appearantly affects zoom level. 
-	defaultStyleSheetDocument->setDefaultStyleSheet(QLatin1String("a:link{color: blue}"));	
+        QTextDocument* defaultStyleSheetDocument = new QTextDocument(articleViewer);
+        //Override link color. At least on symbian per default textbrowser uses phone color scheme which is
+        // typically not very ergonomical. (e.g. white text on green background with N97 standard scheme).
+        // Text and background color is changed in stylesheet property of textBrowser. Link color (white
+        // on N97...) is changed here.
+        // Only do this one, and not on every article load as this
+        // appearantly affects zoom level.
+        defaultStyleSheetDocument->setDefaultStyleSheet(QLatin1String("a:link{color: blue}"));
         articleViewer->setDocument(defaultStyleSheetDocument);
-	zoomLevel = 0;
+        zoomLevel = 0;
 	zoom(zoomInit);
         if (connect(articleViewer,SIGNAL(sourceChanged(QUrl)),this, SLOT(on_articleViewer_sourceChanged(QUrl)))) {
             qDebug() << "Connected sourceChanged";
@@ -379,6 +380,11 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 			SLOT(toggleFullScreen()));
 	this->addAction(toggleFullScreenAction);
 
+        toggleImageDisplayAction = new QAction(tr("Toggle Image Display"), this); //TODO shortcut
+        connect(toggleImageDisplayAction, SIGNAL(triggered()), articleViewer,
+                        SLOT(toggleImageDisplay()));
+        this->addAction(toggleImageDisplayAction);
+
 	exitAction = new QAction(tr("Exit"), this);
 	connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
 	this->addAction(exitAction);
@@ -396,7 +402,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         optionsMenuArticlePage->addAction(zoomInAction);
         optionsMenuArticlePage->addAction(zoomOutAction);
         optionsMenuArticlePage->addAction(toggleFullScreenAction);
-
+        optionsMenuArticlePage->addAction(toggleImageDisplayAction);
         QMenu* helpMenu = new QMenu(tr("Help", "Help menu"),this);
         helpMenu->addAction(showWelcomePageAction);
         helpMenu->addAction(gotoHomepageAction);
@@ -526,23 +532,24 @@ QString WikiOnBoard::getArticleTextByIdx(QString articleIdx)
 	}
 
 //Article URL must be percent encoded.
-zim::File::const_iterator WikiOnBoard::getArticleByUrl(QString articleUrl) {
+// nameSpace should either be 'A' for Articles or 'I' for images.
+zim::File::const_iterator WikiOnBoard::getArticleByUrl(QString articleUrl,QChar nameSpace) {
 	QString strippedArticleUrl;
 	//Supported article urls are:
 	// A/Url  (Expected by zimlib find(Url) )
 	// /A/Url  (Appearanlty used by
 	// Url  (Without namespace /A/.), assume it is article. (Either relative or other namespace)
-	if (articleUrl.startsWith(QLatin1String("/A/"))) {			
+        if (articleUrl.startsWith(QLatin1String("/")+nameSpace+QLatin1String("/"))) {
 		strippedArticleUrl=articleUrl.remove(0, 3); //Remove /A/
-		qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with /A/./A/ refers to article name space."; 
+                qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with /"<< nameSpace << "/./"<< nameSpace << "/ refers to article name space.";
 		
-	} else if (articleUrl.startsWith(QLatin1String("A/"))) {
+        } else if (articleUrl.startsWith(nameSpace+QLatin1String("/"))) {
 		//TODO remove this when correct behavior clarified.
 		strippedArticleUrl=articleUrl.remove(0, 2); //Remove /A
-		qWarning() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with A/. Assume A/ refers to article name space. ";
+                qWarning() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with "<< nameSpace << "/. Assume "<<nameSpace<<"/ refers to article name space. ";
 	} else {
 		strippedArticleUrl=articleUrl; 
-		qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" does not start with A/ or /A/. Assume it is a relative URL to A/";			
+                qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" does not start with "<< nameSpace.toLatin1() <<"/ or /"<< nameSpace << "/. Assume it is a relative URL to "<< nameSpace << "/";
 	}			
 		
 	std::string articleUrlStdStr = std::string(strippedArticleUrl.toUtf8());
@@ -554,7 +561,7 @@ zim::File::const_iterator WikiOnBoard::getArticleByUrl(QString articleUrl) {
 			articleUrlDecodedStdStr);
 	
 
-        std::pair<bool, zim::File::const_iterator> r = zimFile->findx('A', articleUrlDecodedStdStr);
+        std::pair<bool, zim::File::const_iterator> r = zimFile->findx(nameSpace.toLatin1(), articleUrlDecodedStdStr);
         if (!r.first) {
             qWarning() << " article not found. URL encoded: "<< strippedArticleUrl << " decoded: "  << fromUTF8EncodedStdString(
                               articleUrlDecodedStdStr) << "\n";
@@ -581,6 +588,7 @@ QString WikiOnBoard::getArticleTitleByUrl(QString articleUrl) {
 	if (it == zimFile->end()) return QString(tr("Error: article not found. (URL: %1 )").arg(articleUrl));			
 	return fromUTF8EncodedStdString(it->getTitle());
 }
+
 
 //Note: expects encoded URL (as used in articles). Therefore don't use
 // this for decoded URL (as in zim file index)
@@ -617,6 +625,45 @@ QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 
 	return articleText;
 	}
+
+//Note: expects encoded URL (as used in articles). Therefore don't use
+// this for decoded URL (as in zim file index)
+QImage WikiOnBoard::getImageByUrl(QString imageUrl)
+        {
+        QImage image;
+        zim::Blob blob;
+        try
+                {
+                 zim::File::const_iterator it = getArticleByUrl(imageUrl,QLatin1Char('I'));
+                //TODO: Actually not really clean, because if URL not found just closest match displayed.
+                if (it == zimFile->end())
+                        throw std::runtime_error("image not found");
+                if (it->isRedirect())
+                        {
+                        //Redirect stores decoded URLs. (as in index)
+                        // TODO: really necessary for images?
+                        std::string imageUrlDecodedStdStr = it->getRedirectArticle().getUrl();
+                        qDebug() << "Is redirect to url " << fromUTF8EncodedStdString(imageUrlDecodedStdStr);
+                        zim::File::const_iterator it1 = zimFile->find('I',
+                                        imageUrlDecodedStdStr);
+                        blob = it1->getData();
+                        }
+                else
+                        {
+                        blob = it->getData();
+                        }
+                qDebug() << " Image (URL: "<< imageUrl << ", Size: "<<blob.size()<<") loaded from zim file";
+                image = QImage::fromData(QByteArray::fromRawData(blob.data(),blob.size()));
+                qDebug() << "Image site:" << image.size();
+                }
+        catch (const std::exception& e)
+                {
+                return image;
+                }
+
+        return image;
+        }
+
 
 QString WikiOnBoard::getArticleTextByTitle(QString articleTitle)
 	{
@@ -954,17 +1001,6 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
         QString articleText = getArticleTextByUrl(encodedPath);
         //qDebug() << "Reading article " <<path <<" from zim file took" << timer.elapsed() << " milliseconds";
         //timer.start();
-
-        articleText = QLatin1String("<html><head></head><body>"
-                                    "<p>img copied from zim file</p>"
-                                    "<img alt=\"\" src=\"/I/FrederickJamesFurnivall.jpg\" width=\"195\" height=\"274\" class=\"thumbimage\" />"
-                                    "<p>img without class</p>"
-                                    "<img alt=\"\" src=\"/I/FrederickJamesFurnivall.jpg\" width=\"195\" height=\"274\"/>"
-                                    "<p>img from internet</p>"
-                                    "<img alt=\"\" src=\"http://www.google.com/images/nav_logo83.png\" width=\"195\" height=\"274\"/>"
-                                    "</body>"
-                                    "</html>");
-
         articleViewer->setHtml(articleText);
         //qDebug() << "Loading article into textview (setHtml()) took" << timer.restart() << " milliseconds";
 	if (url.hasFragment())
@@ -1841,11 +1877,38 @@ void WikiOnBoard::enableSplitScreen()
     #endif
 #endif
 }
- ArticleViewer::ArticleViewer(QWidget* parent) : QTextBrowser(parent)
+ArticleViewer::ArticleViewer(QWidget* parent, WikiOnBoard* wikiOnBoard) : QTextBrowser(parent),wikiOnBoard(wikiOnBoard)
  {
+    QSettings settings;
+    settings.beginGroup(QLatin1String("UISettings"));
+    showImages = settings.value(QLatin1String("showImages"), true).toInt();
+    settings.endGroup();
 
  }
  QVariant ArticleViewer::loadResource ( int type, const QUrl & name ) {
-       qDebug() << "in loadResource. type: "<<type << "\nname: "<< name;
+       if (type==QTextDocument::ImageResource) {
+           if (showImages) {
+               QString encodedPath = QString::fromUtf8(name.encodedPath().data(),name.encodedPath().length());
+
+               qDebug() << "loadResource.: type is ImageResource and showImages =1 => load image from zim file. " << name.toString()<<"\nurl.path():"<<name.path() << "\nurl.encodedPath():"<< encodedPath;
+               return wikiOnBoard->getImageByUrl(encodedPath);
+           } else {
+               qDebug() << "loadResource: type is ImageResource but showImages=0. Return empty variant.";
+               return QVariant(); //TODO consider return of empty image instead. (may be faster as QTextBrowser tries loading images from some default locations)
+           }
+       }
        return QVariant();
+ }
+
+ void ArticleViewer::toggleImageDisplay() {
+
+     showImages = !showImages;
+     QSettings settings;
+     settings.beginGroup(QLatin1String("UISettings"));
+     if ((!settings.contains(QLatin1String("showImages"))) || (settings.value(QLatin1String("showImages"),
+                     true).toBool() != showImages))
+             {
+             settings.setValue(QLatin1String("showImages"), showImages);
+             }
+     settings.endGroup();
  }

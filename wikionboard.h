@@ -33,13 +33,20 @@ enum ArticleListItemDataRole {
 	ArticleTitleRole
 };
 
+
+class WikiOnBoard;
 class ArticleViewer : public QTextBrowser
 {
     Q_OBJECT
 public:
-    ArticleViewer(QWidget* parent = 0);
+    ArticleViewer(QWidget* parent = 0, WikiOnBoard* wikiOnBoard = 0); //TODO: move zim functionality from wikionboard to article viewer
   //  ~ArticleViewer() {//TODO};
     QVariant loadResource ( int type, const QUrl & name );
+private:
+    WikiOnBoard* wikiOnBoard;
+    bool showImages;
+public slots:
+    void toggleImageDisplay();
 
 };
 
@@ -49,8 +56,8 @@ class WikiOnBoard : public QMainWindow
 
 public:
 	WikiOnBoard(void* bgc, QWidget *parent = 0);
-        ~WikiOnBoard();
-
+        ~WikiOnBoard();                        
+        QImage getImageByUrl(QString imageUrl);
 
 protected:
     void keyPressEvent(QKeyEvent *event);    
@@ -75,6 +82,8 @@ private:
     QAction* backArticleHistoryAction;
     QAction* emptyAction;
     QAction* toggleFullScreenAction;
+    QAction* toggleImageDisplayAction;
+
     QAction* exitAction;
     QAction* openZimFileDialogAction;
     QAction* showWelcomePageAction;
@@ -92,7 +101,7 @@ private:
     QString fromUTF8EncodedStdString(std::string s) {
     	return QString::fromUtf8(s.data(), int(s.size())); 
     }
-    zim::File::const_iterator getArticleByUrl(QString articleUrl);
+    zim::File::const_iterator getArticleByUrl(QString articleUrl,QChar nameSpace='A');
     QString getArticleTitleByUrl(QString articleUrl);           
     QString getArticleTextByUrl(QString articleUrl);   
     QString getArticleTextByIdx(QString articleIdx);         
