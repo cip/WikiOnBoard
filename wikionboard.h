@@ -101,10 +101,9 @@ private:
     QString fromUTF8EncodedStdString(std::string s) {
     	return QString::fromUtf8(s.data(), int(s.size())); 
     }
-    zim::File::const_iterator getArticleByUrl(QString articleUrl,QChar nameSpace='A');
+    zim::File::const_iterator getArticleByUrl(QString articleUrl,QChar nameSpace='A', bool closestMatchIfNotFound=true);
     QString getArticleTitleByUrl(QString articleUrl);           
     QString getArticleTextByUrl(QString articleUrl);   
-    QString getArticleTextByIdx(QString articleIdx);         
     QString getArticleTextByTitle(QString articleTitle);
     std::pair<bool, QString> getMetaData(QString key);
     QString getMetaDataString(QString key);

@@ -503,33 +503,9 @@ bool WikiOnBoard::openZimFile(QString zimFileName)
                 }
 	}
 
-QString WikiOnBoard::getArticleTextByIdx(QString articleIdx)
-	{
-	QString articleText = QLatin1String("ERROR");
-	zim::Blob blob;
-	try
-		{
-		bool ok;
-		int idx = articleIdx.toInt(&ok, 10);
-		zim::Article article = zimFile->getArticle(idx);
-		if (article.isRedirect())
-			{
-			article = article.getRedirectArticle();
-			}
-		blob = article.getData();
-		articleText = QString::fromUtf8(blob.data(), blob.size());
-		}
-	catch (const std::exception& e)
-		{
-		return QString::fromStdString(e.what());
-		}
-
-	return articleText;
-	}
-
 //Article URL must be percent encoded.
 // nameSpace should either be 'A' for Articles or 'I' for images.
-zim::File::const_iterator WikiOnBoard::getArticleByUrl(QString articleUrl,QChar nameSpace) {
+zim::File::const_iterator WikiOnBoard::getArticleByUrl(QString articleUrl,QChar nameSpace, bool closestMatchIfNotFound) {
 	QString strippedArticleUrl;
 	//Supported article urls are:
 	// A/Url  (Expected by zimlib find(Url) )
@@ -573,7 +549,11 @@ zim::File::const_iterator WikiOnBoard::getArticleByUrl(QString articleUrl,QChar 
 
             r = zimFile->findx('A', articleUrlDecodedStdStr);
             if (!r.first) {
-                qWarning() << "Neither exists. Return closest match. (With + not replaced by spaces)";
+                if (!closestMatchIfNotFound) {
+                    qWarning() << "Neither exists. closestMatchIfNotFound=false. Return zimFile->end()";
+                    return zimFile->end();
+                }
+                qWarning() << "Neither exists. closestMatchIfNotFound=true => Return closest match. (With + not replaced by spaces)";
             }
         }
         return r.second;
@@ -630,8 +610,8 @@ QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
         zim::Blob blob;
         try
                 {
-                 zim::File::const_iterator it = getArticleByUrl(imageUrl,QLatin1Char('I'));
-                //TODO: Actually not really clean, because if URL not found just closest match displayed.
+                //For images don't load closest match if url not found.
+                zim::File::const_iterator it = getArticleByUrl(imageUrl,QLatin1Char('I'),false);
                 if (it == zimFile->end())
                         throw std::runtime_error("image not found");
                 if (it->isRedirect())
@@ -650,13 +630,18 @@ QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
                         }
                 qDebug() << " Image (URL: "<< imageUrl << ", Size: "<<blob.size()<<") loaded from zim file";
                 if (!(image.loadFromData(QByteArray::fromRawData(blob.data(),blob.size()))))   {
-                    qDebug() << "loadFromData failed for image";
+                    qWarning() << "loadFromData failed for image. Return 1x1 pixel image instead";
+                    image = QPixmap(1,1);
+                    image.fill();
                 }
-                qDebug() << "Image site:" << image.size();
+                qDebug() << "Image size:" << image.size();
                 }
         catch (const std::exception& e)
                 {
-                return image;
+                    qDebug() << "Error in load image. Return 1x1 pixel image instead";
+                    image = QPixmap(1,1);
+                    image.fill();
+                    return image;
                 }
 
         return image;
