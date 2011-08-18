@@ -26,8 +26,10 @@
 #include <QMessageBox>
 #include <QStringBuilder>
 #include <QTextCodec>
+#include <QTextBlock>
 #include <QDesktopWidget>
 #include <QPixmap>
+#include <QSize>
 //"Official" kinetic scrolling. (Backport from Qt 4.8) 
 //	See http://qt.gitorious.org/qt-labs/kineticscroller/commits/solution and
 //		http://bugreports.qt.nokia.com/browse/QTBUG-9054?focusedCommentId=130700&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#action_130700
@@ -43,7 +45,7 @@
     #define EAknEditorFlagEnablePartialScreen 0x200000
 #endif
 
-
+#include <QTime>
 //#include <QElapsedTimer>
 //TODO: not necessary for symbian, why necessary on linux? (and anyway exception should be replaced
 //  by something else
@@ -605,47 +607,102 @@ QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 //Note: expects encoded URL (as used in articles). Therefore don't use
 // this for decoded URL (as in zim file index)
 QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
-        {
-        QPixmap image;
-        zim::Blob blob;
-        try
-                {
-                //For images don't load closest match if url not found.
-                zim::File::const_iterator it = getArticleByUrl(imageUrl,QLatin1Char('I'),false);
-                if (it == zimFile->end())
-                        throw std::runtime_error("image not found");
-                if (it->isRedirect())
-                        {
-                        //Redirect stores decoded URLs. (as in index)
-                        // TODO: really necessary for images?
-                        std::string imageUrlDecodedStdStr = it->getRedirectArticle().getUrl();
-                        qDebug() << "Is redirect to url " << fromUTF8EncodedStdString(imageUrlDecodedStdStr);
-                        zim::File::const_iterator it1 = zimFile->find('I',
-                                        imageUrlDecodedStdStr);
-                        blob = it1->getData();
-                        }
-                else
-                        {
-                        blob = it->getData();
-                        }
-                qDebug() << " Image (URL: "<< imageUrl << ", Size: "<<blob.size()<<") loaded from zim file";
-                if (!(image.loadFromData(QByteArray::fromRawData(blob.data(),blob.size()))))   {
-                    qWarning() << "loadFromData failed for image. Return 1x1 pixel image instead";
-                    image = QPixmap(1,1);
-                    image.fill();
-                }
-                qDebug() << "Image size:" << image.size();
-                }
-        catch (const std::exception& e)
-                {
-                    qDebug() << "Error in load image. Return 1x1 pixel image instead";
-                    image = QPixmap(1,1);
-                    image.fill();
-                    return image;
-                }
+{
+    QTime timer;
+    QTime subTimer;
 
-        return image;
+    QPixmap image;
+    zim::Blob blob;
+    timer.start();
+    try
+    {
+        //For images don't load closest match if url not found.
+        subTimer.start();
+        zim::File::const_iterator it = getArticleByUrl(imageUrl,QLatin1Char('I'),false);
+        if (it == zimFile->end())
+            throw std::runtime_error("image not found");
+        if (it->isRedirect())
+        {
+            //Redirect stores decoded URLs. (as in index)
+            // TODO: really necessary for images?
+            std::string imageUrlDecodedStdStr = it->getRedirectArticle().getUrl();
+            qDebug() << "Is redirect to url " << fromUTF8EncodedStdString(imageUrlDecodedStdStr);
+            zim::File::const_iterator it1 = zimFile->find('I',
+                                                          imageUrlDecodedStdStr);
+            blob = it1->getData();
         }
+        else
+        {
+            blob = it->getData();
+        }
+        qDebug() << " Image (URL: "<< imageUrl << ", Size: "<<blob.size()<<") loaded from zim file";
+        qDebug() << "Loading image data" << imageUrl << " from zim file took" << subTimer.restart() << " milliseconds";
+        if (!(image.loadFromData(QByteArray::fromRawData(blob.data(),blob.size()))))   {
+            qWarning() << "loadFromData failed for image. Return 1x1 pixel image instead";
+            image = QPixmap(1,1);
+            image.fill();
+        }
+        qDebug() << " Creating QImage from image data took" << subTimer.restart() << " milliseconds";
+
+        qDebug() << "Image size:" << image.size();
+        //int maxLengthArticleViewer= (articleViewer->size().height()>articleViewer->size().width()?articleViewer->size().height():articleViewer->size().width());
+        //FIXME: Probably slow. Probably url not correct
+        QSize newSize;
+        for (QTextBlock it = articleViewer->document()->begin(); it != articleViewer->document()->end(); it = it.next()) {
+            //          qDebug() << it.text();
+            QTextBlock::iterator fragit;
+            for (fragit = it.begin(); !(fragit.atEnd()); ++fragit) {
+                QTextFragment currentFragment = fragit.fragment();
+                if (currentFragment.isValid()) {
+                    QTextCharFormat charFormat= currentFragment.charFormat();
+                    if (charFormat.isImageFormat()) {
+                        //qDebug() << "char format image name" <<charFormat.toImageFormat().name()<< "size: "<<charFormat.toImageFormat().width()<<" x "<< charFormat.toImageFormat().height();
+                        if (charFormat.toImageFormat().name()==imageUrl) {
+                            //TODO: Is this comparision really reliable?
+                            QSize tmpSize = QSize(charFormat.toImageFormat().width(),charFormat.toImageFormat().height());
+                            if (!newSize.isValid()) {
+                                newSize =tmpSize;
+                            } else {
+                                qDebug() << "Same image referenced multiple times. Current image size "<< tmpSize << " maximum size up to now "<<newSize;
+                                newSize = newSize.expandedTo(tmpSize);
+                            }
+                            qDebug() << " size of to be loaded image: "<<newSize;
+                        }
+
+                    }
+                }
+            }
+        }
+        qDebug() << " Searching image size took " << subTimer.restart() << " milliseconds";
+
+        qDebug() << "Original size of image: "<<image.size();
+        if (newSize.isValid()) {
+            //Resize to save memory.
+            if ((newSize.height()==0)||(newSize.width()==0)) {
+                image = QPixmap(1,1);
+                image.fill();
+                qDebug() << "Size defined in HTML was 0. ("<<newSize << ". Return 1x1 pixel size instead to avoid repeated reload attempts";
+            } else {
+                image = image.scaled(newSize);
+                qDebug() << "Resize image to size defined in HTML\nsize of scaled image: "<<image.size();
+            }
+        } else {
+            qWarning() << "image size not found. Don't resize image";
+        }
+        qDebug() << " Resizing image took " << subTimer.elapsed() << " milliseconds";
+
+    }
+    catch (const std::exception& e)
+    {
+        qDebug() << "Error in load image. Return 1x1 pixel image instead";
+        image = QPixmap(1,1);
+        image.fill();
+        return image;
+    }
+    qDebug() << "Loading image " << imageUrl <<" took" << timer.elapsed() << " milliseconds";
+
+    return image;
+}
 
 
 QString WikiOnBoard::getArticleTextByTitle(QString articleTitle)
@@ -979,13 +1036,12 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 	qDebug() << "Set index search field to title of article: "<< articleTitle;   	
 	ui.articleName->setText(articleTitle);
 	
-        //QElapsedTimer timer;
-        //timer.start();
+        QTime timer;
+        timer.start();
         QString articleText = getArticleTextByUrl(encodedPath);
-        //qDebug() << "Reading article " <<path <<" from zim file took" << timer.elapsed() << " milliseconds";
-        //timer.start();
+        qDebug() << "Reading article " <<path <<" from zim file took" << timer.restart() << " milliseconds";
         articleViewer->setHtml(articleText);
-        //qDebug() << "Loading article into textview (setHtml()) took" << timer.restart() << " milliseconds";
+        qDebug() << "Loading article into textview (setHtml()) took" << timer.restart() << " milliseconds";
 	if (url.hasFragment())
         {
             //Either a link within current file (if path was empty), or to   newly opened file
@@ -1020,7 +1076,7 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
             }
         }
 	/// ui.stackedWidget->setCurrentWidget(ui.articlePage);
-        //qDebug() << "Loading article into textview (gotoAnchor/moveposition) took" << timer.restart() << " milliseconds";
+        qDebug() << "Loading article into textview (gotoAnchor/moveposition) took" << timer.restart() << " milliseconds";
     } else {
         qWarning() << "openArticleByUrl called with non welcome page url while no zim file open. Should not happen";
     }
@@ -1883,10 +1939,10 @@ ArticleViewer::ArticleViewer(QWidget* parent, WikiOnBoard* wikiOnBoard) : QTextB
  }
  QVariant ArticleViewer::loadResource ( int type, const QUrl & name ) {
        if (type==QTextDocument::ImageResource) {
-           if (showImages) {
+           if (showImages) {               
                QString encodedPath = QString::fromUtf8(name.encodedPath().data(),name.encodedPath().length());
 
-               qDebug() << "loadResource.: type is ImageResource and showImages =1 => load image from zim file. " << name.toString()<<"\nurl.path():"<<name.path() << "\nurl.encodedPath():"<< encodedPath;
+               qDebug() << "loadResource.: type is ImageResource and showImages =1 => load image from zim file. " << name.toString()<<"\nurl.path():"<<name.path() << "\nurl.encodedPath():"<< encodedPath;               
                return wikiOnBoard->getImageByUrl(encodedPath);
            } else {
               qDebug() << "loadResource: type is ImageResource but showImages=0. Returns 1x1 pixel image. ";
