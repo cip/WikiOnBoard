@@ -1911,4 +1911,5 @@ ArticleViewer::ArticleViewer(QWidget* parent, WikiOnBoard* wikiOnBoard) : QTextB
              settings.setValue(QLatin1String("showImages"), showImages);
              }
      settings.endGroup();
+     reload();
  }
