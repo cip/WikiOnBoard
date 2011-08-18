@@ -46,7 +46,7 @@ private:
     WikiOnBoard* wikiOnBoard;
     bool showImages;
 public slots:
-    void toggleImageDisplay();
+    void toggleImageDisplay(bool checked);
 
 };
 

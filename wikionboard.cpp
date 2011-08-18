@@ -371,10 +371,15 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 			SLOT(toggleFullScreen()));
 	this->addAction(toggleFullScreenAction);
 
-        toggleImageDisplayAction = new QAction(tr("Toggle Image Display"), this); //TODO shortcut
-        connect(toggleImageDisplayAction, SIGNAL(triggered()), articleViewer,
-                        SLOT(toggleImageDisplay()));
+        toggleImageDisplayAction = new QAction(tr("Show Images"), this);
+        toggleImageDisplayAction->setCheckable(true);
+        connect(toggleImageDisplayAction, SIGNAL(toggled(bool)), articleViewer,
+                        SLOT(toggleImageDisplay(bool)));
         this->addAction(toggleImageDisplayAction);
+        settings.beginGroup(QLatin1String("UISettings"));
+        toggleImageDisplayAction->setChecked(settings.value(QLatin1String("showImages"), true).toBool());
+        settings.endGroup();
+
 
 	exitAction = new QAction(tr("Exit"), this);
 	connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
@@ -388,7 +393,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         //Sub menus
         QMenu* optionsMenuIndexPage = new QMenu(tr("Options", "Option menu"),this);
         optionsMenuIndexPage->addAction(toggleFullScreenAction);
-
+        optionsMenuIndexPage->addAction(toggleImageDisplayAction);
         QMenu* optionsMenuArticlePage = new QMenu(tr("Options", "Option menu"),this);
         optionsMenuArticlePage->addAction(zoomInAction);
         optionsMenuArticlePage->addAction(zoomOutAction);
@@ -1872,10 +1877,6 @@ void WikiOnBoard::enableSplitScreen()
 }
 ArticleViewer::ArticleViewer(QWidget* parent, WikiOnBoard* wikiOnBoard) : QTextBrowser(parent),wikiOnBoard(wikiOnBoard)
  {
-    QSettings settings;
-    settings.beginGroup(QLatin1String("UISettings"));
-    showImages = settings.value(QLatin1String("showImages"), true).toBool();
-    settings.endGroup();
     //QTextBrowser settings
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -1914,9 +1915,9 @@ ArticleViewer::ArticleViewer(QWidget* parent, WikiOnBoard* wikiOnBoard) : QTextB
        return QVariant();
  }
 
- void ArticleViewer::toggleImageDisplay() {
+ void ArticleViewer::toggleImageDisplay(bool checked) {
 
-     showImages = !showImages;
+     showImages = checked;
      QSettings settings;
      settings.beginGroup(QLatin1String("UISettings"));
      if ((!settings.contains(QLatin1String("showImages"))) || (settings.value(QLatin1String("showImages"),
