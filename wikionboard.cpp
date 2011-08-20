@@ -1001,9 +1001,12 @@ void WikiOnBoard::articleListOpenArticle()
 		QString urlEncoded = QString::fromUtf8(url.toEncoded().data(),url.toEncoded().length());
 		qDebug() << "articleListOpenArticle: url (decoded): " <<urlDecoded<<"\nurl (encoded):"<<urlEncoded ;
 			
+                //Clear article and swich to article page before loading new article
+                // => Feedback to user click was accepted.
+                articleViewer->clear();
+                switchToArticlePage();
                 articleViewer->setSource(url);
-		switchToArticlePage();
-		}
+                }
 	}
 
 void WikiOnBoard::openArticleByUrl(QUrl url)
@@ -1427,8 +1430,9 @@ void WikiOnBoard::switchToArticlePage()
 
 void WikiOnBoard::switchToWelcomePage()
 {
-    articleViewer->setSource(welcomeUrl);
+    articleViewer->clear();
     switchToArticlePage();
+    articleViewer->setSource(welcomeUrl);
 }
 
 
