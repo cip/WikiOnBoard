@@ -604,6 +604,39 @@ QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
 	return articleText;
 	}
 
+
+QSize WikiOnBoard::getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl) {
+    //int maxLengthArticleViewer= (articleViewer->size().height()>articleViewer->size().width()?articleViewer->size().height():articleViewer->size().width());
+    //FIXME: Probably slow. Probably url not correct
+    QSize size;
+    for (QTextBlock it = articleViewer->document()->begin(); it != articleViewer->document()->end(); it = it.next()) {
+        //          qDebug() << it.text();
+        QTextBlock::iterator fragit;
+        for (fragit = it.begin(); !(fragit.atEnd()); ++fragit) {
+            QTextFragment currentFragment = fragit.fragment();
+            if (currentFragment.isValid()) {
+                QTextCharFormat charFormat= currentFragment.charFormat();
+                if (charFormat.isImageFormat()) {
+                    //qDebug() << "char format image name" <<charFormat.toImageFormat().name()<< "size: "<<charFormat.toImageFormat().width()<<" x "<< charFormat.toImageFormat().height();
+                    if (charFormat.toImageFormat().name()==imageUrl) {
+                        //TODO: Is this comparision really reliable?
+                        QSize tmpSize = QSize(charFormat.toImageFormat().width(),charFormat.toImageFormat().height());
+                        if (!size.isValid()) {
+                            size =tmpSize;
+                        } else {
+                            qDebug() << "Same image referenced multiple times. Current image size "<< tmpSize << " maximum size up to now "<<size;
+                            size = size.expandedTo(tmpSize);
+                        }
+                        qDebug() << " size of to be loaded image: "<<size;
+                    }
+
+                }
+            }
+        }
+    }
+    return size;
+}
+
 //Note: expects encoded URL (as used in articles). Therefore don't use
 // this for decoded URL (as in zim file index)
 QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
@@ -645,34 +678,7 @@ QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
         qDebug() << " Creating QImage from image data took" << subTimer.restart() << " milliseconds";
 
         qDebug() << "Image size:" << image.size();
-        //int maxLengthArticleViewer= (articleViewer->size().height()>articleViewer->size().width()?articleViewer->size().height():articleViewer->size().width());
-        //FIXME: Probably slow. Probably url not correct
-        QSize newSize;
-        for (QTextBlock it = articleViewer->document()->begin(); it != articleViewer->document()->end(); it = it.next()) {
-            //          qDebug() << it.text();
-            QTextBlock::iterator fragit;
-            for (fragit = it.begin(); !(fragit.atEnd()); ++fragit) {
-                QTextFragment currentFragment = fragit.fragment();
-                if (currentFragment.isValid()) {
-                    QTextCharFormat charFormat= currentFragment.charFormat();
-                    if (charFormat.isImageFormat()) {
-                        //qDebug() << "char format image name" <<charFormat.toImageFormat().name()<< "size: "<<charFormat.toImageFormat().width()<<" x "<< charFormat.toImageFormat().height();
-                        if (charFormat.toImageFormat().name()==imageUrl) {
-                            //TODO: Is this comparision really reliable?
-                            QSize tmpSize = QSize(charFormat.toImageFormat().width(),charFormat.toImageFormat().height());
-                            if (!newSize.isValid()) {
-                                newSize =tmpSize;
-                            } else {
-                                qDebug() << "Same image referenced multiple times. Current image size "<< tmpSize << " maximum size up to now "<<newSize;
-                                newSize = newSize.expandedTo(tmpSize);
-                            }
-                            qDebug() << " size of to be loaded image: "<<newSize;
-                        }
-
-                    }
-                }
-            }
-        }
+        QSize newSize = getMaximumDisplaySizeInCurrentArticleForImage(imageUrl);
         qDebug() << " Searching image size took " << subTimer.restart() << " milliseconds";
 
         qDebug() << "Original size of image: "<<image.size();

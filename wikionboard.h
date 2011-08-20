@@ -58,6 +58,7 @@ public:
 	WikiOnBoard(void* bgc, QWidget *parent = 0);
         ~WikiOnBoard();                        
         QPixmap getImageByUrl(QString imageUrl);
+        QSize getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl);
 
 protected:
     void keyPressEvent(QKeyEvent *event);    
