@@ -28,6 +28,8 @@
 #include <QTextCodec>
 #include <QTextBlock>
 #include <QDesktopWidget>
+#include <QBuffer>
+#include <QImageReader>
 #include <QPixmap>
 #include <QSize>
 //"Official" kinetic scrolling. (Backport from Qt 4.8) 
@@ -668,35 +670,6 @@ QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
         {
             blob = it->getData();
         }
-        qDebug() << " Image (URL: "<< imageUrl << ", Size: "<<blob.size()<<") loaded from zim file";
-        qDebug() << "Loading image data" << imageUrl << " from zim file took" << subTimer.restart() << " milliseconds";
-        if (!(image.loadFromData(QByteArray::fromRawData(blob.data(),blob.size()))))   {
-            qWarning() << "loadFromData failed for image. Return 1x1 pixel image instead";
-            image = QPixmap(1,1);
-            image.fill();
-        }
-        qDebug() << " Creating QImage from image data took" << subTimer.restart() << " milliseconds";
-
-        qDebug() << "Image size:" << image.size();
-        QSize newSize = getMaximumDisplaySizeInCurrentArticleForImage(imageUrl);
-        qDebug() << " Searching image size took " << subTimer.restart() << " milliseconds";
-
-        qDebug() << "Original size of image: "<<image.size();
-        if (newSize.isValid()) {
-            //Resize to save memory.
-            if ((newSize.height()==0)||(newSize.width()==0)) {
-                image = QPixmap(1,1);
-                image.fill();
-                qDebug() << "Size defined in HTML was 0. ("<<newSize << ". Return 1x1 pixel size instead to avoid repeated reload attempts";
-            } else {
-                image = image.scaled(newSize);
-                qDebug() << "Resize image to size defined in HTML\nsize of scaled image: "<<image.size();
-            }
-        } else {
-            qWarning() << "image size not found. Don't resize image";
-        }
-        qDebug() << " Resizing image took " << subTimer.elapsed() << " milliseconds";
-
     }
     catch (const std::exception& e)
     {
@@ -705,6 +678,59 @@ QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
         image.fill();
         return image;
     }
+    qDebug() << " Image (URL: "<< imageUrl << ", Size: "<<blob.size()<<") loaded from zim file";
+    qDebug() << "Image size:" << image.size();
+
+    qDebug() << "Loading image data" << imageUrl << " from zim file took" << subTimer.restart() << " milliseconds";
+    QSize newSize = getMaximumDisplaySizeInCurrentArticleForImage(imageUrl);
+    qDebug() << " Searching image size took " << subTimer.restart() << " milliseconds";
+    QBuffer *imageBuffer = new QBuffer();
+    imageBuffer->setData(blob.data(),blob.size());
+    QImageReader *imageReader = new QImageReader(imageBuffer);
+    qDebug() << "Original size of image: "<<imageReader->size();
+    qDebug() << "Image format: "<<imageReader->format();
+    qDebug() << " supports scaling: " << imageReader->supportsOption(QImageIOHandler::ScaledSize);
+    if (newSize.isValid()) {
+        //Resize to save memory.
+        if ((newSize.height()==0)||(newSize.width()==0)) {
+            image = QPixmap(1,1);
+            image.fill();
+            qDebug() << "Size defined in HTML was 0. ("<<newSize << ". Return 1x1 pixel size instead to avoid repeated reload attempts";
+        } else { //TODO reconsider whether worth low quality. problem in graz.zim, some image not loaded
+            if (imageReader->supportsOption(QImageIOHandler::ScaledSize)) {
+                //For formats which support scaled reading (e.g. jpg), use it (as faster)
+                qDebug() << " ScaledSize supported. Read with scaling";
+                imageReader->setScaledSize(newSize);
+                image = QPixmap::fromImageReader(imageReader);
+            }
+            else {
+                // If format does not support scaling (e.g. png) read and scale separately.
+                // benefit is that faster (lower quality) scaling can be used, while setScaledSize
+                // would use high quality (=slower) scaling
+               qDebug() << " ScaledSize not supported. Read, and scale afterwards.";
+               QTime subSubTimer;
+               subSubTimer.start();
+               image = QPixmap::fromImageReader(imageReader);
+               qDebug() << "\tQPixmap::fromImageReader (without scaling) took: " << subSubTimer.restart();
+               image=image.scaled(newSize,Qt::IgnoreAspectRatio,Qt::FastTransformation);
+               qDebug() << "\tscaling took: " << subSubTimer.restart();
+            }
+            qDebug() << "Resize image to size defined in HTML\nsize of scaled image: "<<image.size();
+        }
+    } else {
+        image = QPixmap::fromImageReader(imageReader);
+        qWarning() << "image size not found. Don't resize image";
+    }
+    if ((image.isNull()))   {
+
+        qWarning() << "loadFromData failed for image. Return 1x1 pixel image instead. QImageReader Error Message: "<< imageBuffer->errorString();
+        image = QPixmap(1,1);
+        image.fill();
+    }
+    delete imageReader;
+    delete imageBuffer;
+
+    qDebug() << " Creating Pixmap (including resize) from image data took" << subTimer.restart() << " milliseconds";
     qDebug() << "Loading image " << imageUrl <<" took" << timer.elapsed() << " milliseconds";
 
     return image;
