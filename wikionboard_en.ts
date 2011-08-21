@@ -9,24 +9,29 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.ui" line="102"/>
+        <location filename="wikionboard.ui" line="67"/>
         <source>Load Article (Progress bar </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.ui" line="125"/>
-        <location filename="wikionboard.ui" line="130"/>
-        <location filename="wikionboard.ui" line="135"/>
+        <location filename="wikionboard.ui" line="89"/>
+        <source>toolBar</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="wikionboard.ui" line="101"/>
+        <location filename="wikionboard.ui" line="106"/>
+        <location filename="wikionboard.ui" line="111"/>
         <source>Open eBook</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.ui" line="140"/>
+        <location filename="wikionboard.ui" line="116"/>
         <source>Search</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="281"/>
+        <location filename="wikionboard.cpp" line="290"/>
         <source>Open Zimfile</source>
         <translation>Open an eBook</translation>
     </message>
@@ -35,93 +40,98 @@
         <translation type="obsolete">Get eBooks</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="288"/>
+        <location filename="wikionboard.cpp" line="297"/>
         <source>Goto Homepage</source>
         <translation>Visit our website</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="291"/>
+        <location filename="wikionboard.cpp" line="300"/>
         <source>About current Zimfile</source>
         <translation>About eBook</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="294"/>
-        <location filename="wikionboard.cpp" line="1257"/>
+        <location filename="wikionboard.cpp" line="303"/>
+        <location filename="wikionboard.cpp" line="1391"/>
         <source>About</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="297"/>
+        <location filename="wikionboard.cpp" line="306"/>
         <source>About Qt</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="304"/>
+        <location filename="wikionboard.cpp" line="313"/>
         <source>Search Article</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="326"/>
+        <location filename="wikionboard.cpp" line="335"/>
         <source>Clear</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="334"/>
+        <location filename="wikionboard.cpp" line="343"/>
         <source>Open Article</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="348"/>
+        <location filename="wikionboard.cpp" line="357"/>
         <source>Switch to index page</source>
         <translation>Go to Index</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="356"/>
+        <location filename="wikionboard.cpp" line="365"/>
         <source>Back</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="363"/>
+        <location filename="wikionboard.cpp" line="372"/>
         <source>Toggle Fullscreen</source>
         <translation>Toggle full screen</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="369"/>
+        <location filename="wikionboard.cpp" line="378"/>
+        <source>Show Images</source>
+        <translation>Show images</translation>
+    </message>
+    <message>
+        <location filename="wikionboard.cpp" line="388"/>
         <source>Exit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="373"/>
+        <location filename="wikionboard.cpp" line="392"/>
         <source>Zoom in</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="374"/>
+        <location filename="wikionboard.cpp" line="393"/>
         <source>Zoom out</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="419"/>
+        <location filename="wikionboard.cpp" line="438"/>
         <source>TRANLATOR Indexpage Menu Name</source>
         <translation>Options</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="423"/>
+        <location filename="wikionboard.cpp" line="442"/>
         <source>TRANLATOR Articlepage Menu Name</source>
         <translation>Options</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="427"/>
+        <location filename="wikionboard.cpp" line="446"/>
         <source>TRANLATOR Articlepage (no zimfile open) Menu Name</source>
         <translation>Options</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="482"/>
+        <location filename="wikionboard.cpp" line="503"/>
         <source>Error on opening zim file</source>
         <translation>Error: Can not open eBook</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="483"/>
+        <location filename="wikionboard.cpp" line="504"/>
         <source>Error on opening zim file %1.
 Error message:%2
 </source>
@@ -129,24 +139,24 @@ Error message:%2
 Error message: &quot;%2&quot;</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="566"/>
+        <location filename="wikionboard.cpp" line="568"/>
         <source>Error: article not found. (URL: %1 )</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="917"/>
+        <location filename="wikionboard.cpp" line="1052"/>
         <source>Download zimfile</source>
         <comment>link</comment>
         <translation>Get eBooks</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="918"/>
+        <location filename="wikionboard.cpp" line="1053"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;</source>
         <comment>DON&apos;T translate this</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="920"/>
+        <location filename="wikionboard.cpp" line="1055"/>
         <source>[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Menu option %2 in option menu %4 opens zimfile on mobile</source>
         <comment>Text is interpreted as HTML. Html for body and link (%1) automatically added. Other Html tags can be used if desired</comment>
         <translation>Thank you for using WikiOnBoard.&lt;p&gt;
@@ -156,12 +166,12 @@ Note: &quot;%1&quot; opens the  webpage &quot;%3&quot; in the internet browser. 
 recommended to download the eBooks with your PC and not directly with your mobile.</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="989"/>
+        <location filename="wikionboard.cpp" line="1122"/>
         <source>Open link in browser</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1006"/>
+        <location filename="wikionboard.cpp" line="1139"/>
         <source>[TRANSLATOR] Explain that link %1 clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
 %2</source>
         <translation>The link &quot;%1&quot; is not part of this eBook. Press OK to open the link in the internet browser.
@@ -197,12 +207,12 @@ Note: This opens the  webpage &quot;%1&quot; in the internet browser. Alternativ
 recommended to download the eBooks with your PC and not directly with your mobile.</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1131"/>
+        <location filename="wikionboard.cpp" line="1264"/>
         <source>http://wiki.github.com/cip/WikiOnBoard</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1258"/>
+        <location filename="wikionboard.cpp" line="1392"/>
         <source>WikiOnBoard %1
 Author: %2
 Uses zimlib (openzim.org) and liblzma.
@@ -220,7 +230,7 @@ Build date: %3
 </translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1196"/>
+        <location filename="wikionboard.cpp" line="1330"/>
         <source>Current Zim File: %1
 Articles : %2, Images: %3, Categories: %4
 </source>
@@ -230,7 +240,7 @@ Articles : %2, Images: %3, Categories: %4
 </translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1206"/>
+        <location filename="wikionboard.cpp" line="1340"/>
         <source>Title: %1
 Creator: %2
 Date: %3
@@ -243,13 +253,13 @@ Relation: %7
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1223"/>
+        <location filename="wikionboard.cpp" line="1357"/>
         <source>UUID: %1
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1252"/>
+        <location filename="wikionboard.cpp" line="1386"/>
         <source>application is self-signed</source>
         <comment>only displayed if application is self-signed</comment>
         <translation>Application is self-signed</translation>
@@ -260,7 +270,7 @@ Relation: %7
         <translation type="obsolete">The link %1 you&apos;ve clicked is not part of this eBook. Choose ok to open the link in the internet browser.</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="990"/>
+        <location filename="wikionboard.cpp" line="1123"/>
         <source>[TRANLATOR]Explain that may not work if browser running.</source>
         <comment>only displayed if self_signed or QT&lt;4.7.0</comment>
         <translation>Attention: In your configuration opening an article may only work if the internet browser is not already running. 
@@ -272,17 +282,17 @@ If the link does not open after pressing the OK button, try to close the interne
 </translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1104"/>
+        <location filename="wikionboard.cpp" line="1237"/>
         <source>Choose eBook in zim format to open</source>
         <translation>Select eBook</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1105"/>
+        <location filename="wikionboard.cpp" line="1238"/>
         <source>eBooks (*.zim *.zimaa)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="916"/>
+        <location filename="wikionboard.cpp" line="1051"/>
         <source>https://github.com/cip/WikiOnBoard/wiki/Get-eBooks</source>
         <comment>Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE</comment>
         <translation></translation>
@@ -300,27 +310,27 @@ Note that eBooks may be very large and thus it can be expensive to download one 
 Furthermore, note that current Symbian phones do not support files whichare larger than 2 GB. You cannot download such files directly on the phone,but you have to download on a PC and follow the instructions onto split them.</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1133"/>
+        <location filename="wikionboard.cpp" line="1266"/>
         <source>Goto homepage</source>
         <translation>Visit our website</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1135"/>
+        <location filename="wikionboard.cpp" line="1268"/>
         <source>Open a webbrowser to show WikiOnBoard&apos;s homepage.</source>
         <translation>Open a web browser to show WikiOnBoard&apos;s website?</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1169"/>
+        <location filename="wikionboard.cpp" line="1302"/>
         <source>Not available</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1189"/>
+        <location filename="wikionboard.cpp" line="1322"/>
         <source>About Current Zimfile</source>
         <translation>About eBook</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1192"/>
+        <location filename="wikionboard.cpp" line="1325"/>
         <source>No zim file is currently opened</source>
         <translation>No eBook is currently opened</translation>
     </message>
@@ -333,24 +343,24 @@ Articles : %2, Images: %3, Categories: %4
 </translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="1266"/>
+        <location filename="wikionboard.cpp" line="1400"/>
         <source>Christian Puehringer</source>
         <translation>Christian Pühringer</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="379"/>
-        <location filename="wikionboard.cpp" line="382"/>
+        <location filename="wikionboard.cpp" line="398"/>
+        <location filename="wikionboard.cpp" line="401"/>
         <source>Options</source>
         <comment>Option menu</comment>
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="285"/>
+        <location filename="wikionboard.cpp" line="294"/>
         <source>show Welcomepage</source>
         <translation>Help</translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="387"/>
+        <location filename="wikionboard.cpp" line="406"/>
         <source>Help</source>
         <comment>Help menu</comment>
         <translation></translation>
