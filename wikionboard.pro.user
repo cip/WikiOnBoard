@@ -271,7 +271,7 @@
      <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">ProjectExplorer.BuildSteps.Deploy</value>
     </valuemap>
     <value key="ProjectExplorer.BuildConfiguration.BuildStepListCount" type="int">1</value>
-    <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Deployment auf Symbian-Gerät</value>
+    <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Deployment von wikionboard auf Symbian-Gerät</value>
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">DevCertSigned</value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.S60DeployConfiguration</value>
     <value key="Qt4ProjectManager.S60DeployConfiguration.CommunicationChannel" type="int">0</value>
@@ -281,7 +281,83 @@
     <value key="Qt4ProjectManager.S60DeployConfiguration.SerialPortName" type="QString">COM13</value>
     <value key="Qt4ProjectManager.S60DeployConfiguration.SilentInstall" type="bool">true</value>
    </valuemap>
-   <value key="ProjectExplorer.Target.DeployConfigurationCount" type="int">1</value>
+   <valuemap key="ProjectExplorer.Target.DeployConfiguration.1" type="QVariantMap">
+    <valuemap key="ProjectExplorer.BuildConfiguration.BuildStepList.0" type="QVariantMap">
+     <valuemap key="ProjectExplorer.BuildStepList.Step.0" type="QVariantMap">
+      <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">SIS-Paketdatei erzeugen</value>
+      <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
+      <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.S60SignBuildStep</value>
+      <value key="Qt4ProjectManager.S60CreatePackageStep.Certificate" type="QString">C:/Symbian/Carbide/workspace/wikionboard/rdacerts/RDA_certificate.der</value>
+      <value key="Qt4ProjectManager.S60CreatePackageStep.Keyfile" type="QString">C:/Symbian/Carbide/workspace/wikionboard/rdacerts/RDA_private-key.pem</value>
+      <value key="Qt4ProjectManager.S60CreatePackageStep.SignMode" type="int">1</value>
+      <value key="Qt4ProjectManager.S60CreatorPackageStep.SmartInstaller" type="bool">false</value>
+      <value key="Qt4ProjectManager.S60CreatorPackageStep.SuppressPatchWarningDialog" type="bool">false</value>
+     </valuemap>
+     <valuemap key="ProjectExplorer.BuildStepList.Step.1" type="QVariantMap">
+      <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">SIS-Paketdatei erzeugen</value>
+      <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
+      <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.S60SignBuildStep</value>
+      <value key="Qt4ProjectManager.S60CreatePackageStep.Certificate" type="QString">C:/Symbian/Carbide/workspace/wikionboard/rdacerts/RDA_certificate.der</value>
+      <value key="Qt4ProjectManager.S60CreatePackageStep.Keyfile" type="QString">C:/Symbian/Carbide/workspace/wikionboard/rdacerts/RDA_private-key.pem</value>
+      <value key="Qt4ProjectManager.S60CreatePackageStep.SignMode" type="int">1</value>
+      <value key="Qt4ProjectManager.S60CreatorPackageStep.SmartInstaller" type="bool">true</value>
+      <value key="Qt4ProjectManager.S60CreatorPackageStep.SuppressPatchWarningDialog" type="bool">false</value>
+     </valuemap>
+     <value key="ProjectExplorer.BuildStepList.StepsCount" type="int">2</value>
+     <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Deployment</value>
+     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
+     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">ProjectExplorer.BuildSteps.Deploy</value>
+    </valuemap>
+    <value key="ProjectExplorer.BuildConfiguration.BuildStepListCount" type="int">1</value>
+    <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Deployment von wikionboard auf Symbian-Gerät</value>
+    <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">RDACert</value>
+    <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.S60DeployConfiguration</value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.CommunicationChannel" type="int">0</value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.DeviceAddress" type="QString"></value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.DevicePort" type="QString">65029</value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.InstallationDriveLetter" type="QChar">C</value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.SerialPortName" type="QString">COM13</value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.SilentInstall" type="bool">true</value>
+   </valuemap>
+   <valuemap key="ProjectExplorer.Target.DeployConfiguration.2" type="QVariantMap">
+    <valuemap key="ProjectExplorer.BuildConfiguration.BuildStepList.0" type="QVariantMap">
+     <valuemap key="ProjectExplorer.BuildStepList.Step.0" type="QVariantMap">
+      <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">SIS-Paketdatei erzeugen</value>
+      <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
+      <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.S60SignBuildStep</value>
+      <value key="Qt4ProjectManager.S60CreatePackageStep.Certificate" type="QString"></value>
+      <value key="Qt4ProjectManager.S60CreatePackageStep.Keyfile" type="QString"></value>
+      <value key="Qt4ProjectManager.S60CreatePackageStep.SignMode" type="int">0</value>
+      <value key="Qt4ProjectManager.S60CreatorPackageStep.SmartInstaller" type="bool">false</value>
+      <value key="Qt4ProjectManager.S60CreatorPackageStep.SuppressPatchWarningDialog" type="bool">false</value>
+     </valuemap>
+     <valuemap key="ProjectExplorer.BuildStepList.Step.1" type="QVariantMap">
+      <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">SIS-Paketdatei erzeugen</value>
+      <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
+      <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.S60SignBuildStep</value>
+      <value key="Qt4ProjectManager.S60CreatePackageStep.Certificate" type="QString"></value>
+      <value key="Qt4ProjectManager.S60CreatePackageStep.Keyfile" type="QString"></value>
+      <value key="Qt4ProjectManager.S60CreatePackageStep.SignMode" type="int">0</value>
+      <value key="Qt4ProjectManager.S60CreatorPackageStep.SmartInstaller" type="bool">true</value>
+      <value key="Qt4ProjectManager.S60CreatorPackageStep.SuppressPatchWarningDialog" type="bool">false</value>
+     </valuemap>
+     <value key="ProjectExplorer.BuildStepList.StepsCount" type="int">2</value>
+     <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Deployment</value>
+     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
+     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">ProjectExplorer.BuildSteps.Deploy</value>
+    </valuemap>
+    <value key="ProjectExplorer.BuildConfiguration.BuildStepListCount" type="int">1</value>
+    <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">Deployment von wikionboard auf Symbian-Gerät</value>
+    <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Self-Signed</value>
+    <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.S60DeployConfiguration</value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.CommunicationChannel" type="int">0</value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.DeviceAddress" type="QString"></value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.DevicePort" type="QString">65029</value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.InstallationDriveLetter" type="QChar">C</value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.SerialPortName" type="QString">COM13</value>
+    <value key="Qt4ProjectManager.S60DeployConfiguration.SilentInstall" type="bool">true</value>
+   </valuemap>
+   <value key="ProjectExplorer.Target.DeployConfigurationCount" type="int">3</value>
    <valuemap key="ProjectExplorer.Target.RunConfiguration.0" type="QVariantMap">
     <value key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName" type="QString">wikionboard auf Symbian-Gerät</value>
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString"></value>
