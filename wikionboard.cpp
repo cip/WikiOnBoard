@@ -277,6 +277,8 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	Qt::WindowFlags flags = windowFlags();
 	flags |= Qt::WindowSoftkeysVisibleHint;
 	setWindowFlags(flags);
+        //Hide toolbar to increase useable screen space (toolbar may be used for meego).
+        ui.toolBar->hide();
 #endif
 	if (fullScreen)
 		{
