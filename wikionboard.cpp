@@ -679,8 +679,6 @@ QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
         return image;
     }
     qDebug() << " Image (URL: "<< imageUrl << ", Size: "<<blob.size()<<") loaded from zim file";
-    qDebug() << "Image size:" << image.size();
-
     qDebug() << "Loading image data" << imageUrl << " from zim file took" << subTimer.restart() << " milliseconds";
     QSize newSize = getMaximumDisplaySizeInCurrentArticleForImage(imageUrl);
     qDebug() << " Searching image size took " << subTimer.restart() << " milliseconds";
@@ -696,9 +694,9 @@ QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
             image = QPixmap(1,1);
             image.fill();
             qDebug() << "Size defined in HTML was 0. ("<<newSize << ". Return 1x1 pixel size instead to avoid repeated reload attempts";
-        } else { //TODO reconsider whether worth low quality. problem in graz.zim, some image not loaded
+        } else {
             if (imageReader->supportsOption(QImageIOHandler::ScaledSize)) {
-                //For formats which support scaled reading (e.g. jpg), use it (as faster)
+                //For formats which support scaled reading (e.g. jpg), use it (as significantly faster than separate reading and scaling)
                 qDebug() << " ScaledSize supported. Read with scaling";
                 imageReader->setScaledSize(newSize);
                 image = QPixmap::fromImageReader(imageReader);
@@ -706,7 +704,9 @@ QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
             else {
                 // If format does not support scaling (e.g. png) read and scale separately.
                 // benefit is that faster (lower quality) scaling can be used, while setScaledSize
-                // would use high quality (=slower) scaling
+                // would use high quality (=slower) scaling.
+                // Note: If in future loading is implemented in separate thread,  would probably
+                // make sense to use imagereader (high quality) only.
                qDebug() << " ScaledSize not supported. Read, and scale afterwards.";
                QTime subSubTimer;
                subSubTimer.start();
@@ -715,7 +715,7 @@ QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
                image=image.scaled(newSize,Qt::IgnoreAspectRatio,Qt::FastTransformation);
                qDebug() << "\tscaling took: " << subSubTimer.restart();
             }
-            qDebug() << "Resize image to size defined in HTML\nsize of scaled image: "<<image.size();
+            qDebug() << "Image resized to size defined in HTML\nsize of scaled image: "<<image.size();
         }
     } else {
         image = QPixmap::fromImageReader(imageReader);
@@ -729,10 +729,8 @@ QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
     }
     delete imageReader;
     delete imageBuffer;
-
     qDebug() << " Creating Pixmap (including resize) from image data took" << subTimer.restart() << " milliseconds";
     qDebug() << "Loading image " << imageUrl <<" took" << timer.elapsed() << " milliseconds";
-
     return image;
 }
 
