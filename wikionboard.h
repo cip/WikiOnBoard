@@ -26,7 +26,7 @@
 
 #include <zim/zim.h>
 #include <zim/fileiterator.h>
-
+#include "zimfilewrapper.h"
 enum ArticleListItemDataRole {
 	ArticleUrlRole=Qt::UserRole,
 	ArticleIndexRole,
@@ -39,11 +39,11 @@ class ArticleViewer : public QTextBrowser
 {
     Q_OBJECT
 public:
-    ArticleViewer(QWidget* parent = 0, WikiOnBoard* wikiOnBoard = 0); //TODO: move zim functionality from wikionboard to article viewer
+    ArticleViewer(QWidget* parent = 0, ZimFileWrapper* zimFileWrapper = 0);
   //  ~ArticleViewer() {//TODO};
     QVariant loadResource ( int type, const QUrl & name );
 private:
-    WikiOnBoard* wikiOnBoard;
+    ZimFileWrapper* zimFileWrapper;
     bool showImages;
 public slots:
     void toggleImageDisplay(bool checked);
@@ -55,15 +55,16 @@ class WikiOnBoard : public QMainWindow
     Q_OBJECT
 
 public:
-	WikiOnBoard(void* bgc, QWidget *parent = 0);
-        ~WikiOnBoard();                        
-        QPixmap getImageByUrl(QString imageUrl);
+        WikiOnBoard(void* bgc, QWidget *parent = 0);
+        ~WikiOnBoard();
         QSize getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl);
 
 protected:
     void keyPressEvent(QKeyEvent *event);    
     void resizeEvent ( QResizeEvent * event );  
+    bool openZimFile(QString zimfilename);
 private:     
+    ZimFileWrapper* zimFileWrapper;
     Ui::WikiOnBoard ui;
     ArticleViewer* articleViewer;
     void* m_bgc;
@@ -94,7 +95,6 @@ private:
     QAction* aboutAction;
     QAction* aboutQtAction;    
 
-    zim::File* zimFile;
     int zoomLevel;
     bool hasTouchScreen;
     bool fullScreen;
@@ -102,14 +102,7 @@ private:
     QString fromUTF8EncodedStdString(std::string s) {
     	return QString::fromUtf8(s.data(), int(s.size())); 
     }
-    zim::File::const_iterator getArticleByUrl(QString articleUrl,QChar nameSpace='A', bool closestMatchIfNotFound=true);
-    QString getArticleTitleByUrl(QString articleUrl);           
-    QString getArticleTextByUrl(QString articleUrl);   
-    QString getArticleTextByTitle(QString articleTitle);
-    std::pair<bool, QString> getMetaData(QString key);
-    QString getMetaDataString(QString key);
-    QString byteArray2HexQString(const QByteArray & byteArray);
-    QUrl currentlyViewedUrl;    
+    QUrl currentlyViewedUrl;
     void openArticleByUrl(QUrl url);
     QString articleListItemToString(QListWidgetItem *);
 
@@ -120,11 +113,11 @@ private:
     void articleListSelectNextEntry();
         
     
-    bool openZimFile(QString zimFileName);
     void moveTextBrowserTextCursorToVisibleArea();
     void showWaitCursor();
     void hideWaitCursor();
     bool openExternalLink(QUrl url);
+    QString byteArray2HexQString(const QByteArray &byteArray);
 private slots:
 	 void switchToArticlePage();
 	 void switchToIndexPage();

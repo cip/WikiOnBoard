@@ -28,8 +28,6 @@
 #include <QTextCodec>
 #include <QTextBlock>
 #include <QDesktopWidget>
-#include <QBuffer>
-#include <QImageReader>
 #include <QPixmap>
 #include <QSize>
 //"Official" kinetic scrolling. (Backport from Qt 4.8) 
@@ -173,7 +171,8 @@
 WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
     QMainWindow(parent), m_bgc(bgc), welcomeUrl(QUrl(QLatin1String("wikionboard://welcome")))
 
-	{			
+        {
+        zimFileWrapper = new ZimFileWrapper(this);
 	//For now assume that: S60 rd 3dition devices have no touch screen, all other devices have touch screen.
 	// TODO Consider changing to QSystemDeviceInfo when Qt Mobility available for all supported devices
 	hasTouchScreen = true;
@@ -199,10 +198,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         qDebug() << "WikiOnBoard::WikiOnBoard. Version: " << QString::fromLocal8Bit(__APPVERSIONSTRING__) << " QT Version: "<<qVersion();
 	qDebug() << " hasTouchScreen: "<<hasTouchScreen;
 	
-	zimFile = NULL; //zimFile unitialized until,
-	//file loaded (either stored filename from last run,
-	// or user loads file). To allow test for == NULL, explicitlz
-	// set to null. (at least in symbian emulator else 0xCCCCCCCC
+
 
 	QSettings settings;
 	settings.beginGroup(QLatin1String("ZimFile"));
@@ -211,7 +207,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	settings.endGroup();
 
 	ui.setupUi(this);
-        articleViewer = new ArticleViewer(ui.articlePage,this);
+        articleViewer = new ArticleViewer(ui.articlePage,zimFileWrapper);
         ui.gridLayout_3->addWidget(articleViewer);
         setStatusBar(0); //Remove status bar to increase useable screen size.
 	//TODO still not perfect, quite some distance between
@@ -472,142 +468,19 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 
 WikiOnBoard::~WikiOnBoard()
 	{
-            delete zimFile;
+
 	}
 
-bool WikiOnBoard::openZimFile(QString zimFileName)
-	{
-        std::string zimfilename;
-        try
-		{
-                //If zim file is split extension of first file is zimaa
-                // zim::File however expects zim as extension, if it does
-                // not find it, it tries zima
-                // => Change extension in filename from zima to zim
-		QRegExp rx(QLatin1String("(.*\\.zim)\\D\\D"));
-	    rx.setCaseSensitivity(Qt::CaseInsensitive);
-	    zimFileName.replace(rx,QLatin1String("\\1"));
-            //converts fileName to the local 8-bit encoding determined by the user's locale
-            // On symbian it is probably encoded to UTF-8. As zimlib does not use qt open
-            // file mechanism, opening files with non latin1 characters may not work on all platforms.
-            qDebug() << "encoding filename using QFile::encodeName";
-            zimfilename =  std::string(QFile::encodeName(zimFileName));
-            zim::File* oldZimFile = zimFile;
-                zimFile = new zim::File(zimfilename);
-                //If opensuccesful, delete pointer to previously openend zim file.
-                // If open fails keep previously opened zim file open.
-                delete oldZimFile;
-                return true;
-                }
-	catch (const std::exception& e)
-		{
-			QMessageBox::StandardButton reply;
-                     reply = QMessageBox::critical(this, tr("Error on opening zim file"),
-                                                            QString(tr("Error on opening zim file %1.\nError message:%2\n").arg(fromUTF8EncodedStdString(zimfilename),QString::fromStdString(e.what()))),
-		                                     QMessageBox::Ok);		 
-                     return false;
-                }
-	}
-
-//Article URL must be percent encoded.
-// nameSpace should either be 'A' for Articles or 'I' for images.
-zim::File::const_iterator WikiOnBoard::getArticleByUrl(QString articleUrl,QChar nameSpace, bool closestMatchIfNotFound) {
-	QString strippedArticleUrl;
-	//Supported article urls are:
-	// A/Url  (Expected by zimlib find(Url) )
-	// /A/Url  (Appearanlty used by
-	// Url  (Without namespace /A/.), assume it is article. (Either relative or other namespace)
-        if (articleUrl.startsWith(QLatin1String("/")+nameSpace+QLatin1String("/"))) {
-		strippedArticleUrl=articleUrl.remove(0, 3); //Remove /A/
-                qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with /"<< nameSpace << "/./"<< nameSpace << "/ refers to article name space.";
-		
-        } else if (articleUrl.startsWith(nameSpace+QLatin1String("/"))) {
-		//TODO remove this when correct behavior clarified.
-		strippedArticleUrl=articleUrl.remove(0, 2); //Remove /A
-                qWarning() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with "<< nameSpace << "/. Assume "<<nameSpace<<"/ refers to article name space. ";
-	} else {
-		strippedArticleUrl=articleUrl; 
-                qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" does not start with "<< nameSpace.toLatin1() <<"/ or /"<< nameSpace << "/. Assume it is a relative URL to "<< nameSpace << "/";
-	}			
-		
-	std::string articleUrlStdStr = std::string(strippedArticleUrl.toUtf8());
-	std::string articleUrlDecodedStdStr = zim::urldecode(articleUrlStdStr);
-	qDebug() << "Open article by URL.\n QString: " << articleUrl
-			<< "QString article namespace stripped:" << strippedArticleUrl
-			<< "\n std:string: " << fromUTF8EncodedStdString(articleUrlStdStr)
-			<< "\n decoded: " << fromUTF8EncodedStdString(
-			articleUrlDecodedStdStr);
-	
-
-        std::pair<bool, zim::File::const_iterator> r = zimFile->findx(nameSpace.toLatin1(), articleUrlDecodedStdStr);
-        if (!r.first) {
-            qWarning() << " article not found. URL encoded: "<< strippedArticleUrl << " decoded: "  << fromUTF8EncodedStdString(
-                              articleUrlDecodedStdStr) << "\n";
-            strippedArticleUrl.replace(QLatin1String("+"),QLatin1String("%2B"));
-            articleUrlStdStr = std::string(strippedArticleUrl.toUtf8());
-            articleUrlDecodedStdStr = zim::urldecode(articleUrlStdStr);
-            qWarning() << " Try whether article for url without replacing + with spaces exists";
-            qDebug() << "Original URL: " << articleUrl
-                            << "Stripped URL, + replaced by %2B " << strippedArticleUrl
-                            << "\n std:string: " << fromUTF8EncodedStdString(articleUrlStdStr)
-                            << "\n decoded: " << fromUTF8EncodedStdString(
-                            articleUrlDecodedStdStr);
-
-            r = zimFile->findx('A', articleUrlDecodedStdStr);
-            if (!r.first) {
-                if (!closestMatchIfNotFound) {
-                    qWarning() << "Neither exists. closestMatchIfNotFound=false. Return zimFile->end()";
-                    return zimFile->end();
-                }
-                qWarning() << "Neither exists. closestMatchIfNotFound=true => Return closest match. (With + not replaced by spaces)";
-            }
-        }
-        return r.second;
- }
-
-QString WikiOnBoard::getArticleTitleByUrl(QString articleUrl) {
-	zim::File::const_iterator it = getArticleByUrl(articleUrl);
-	if (it == zimFile->end()) return QString(tr("Error: article not found. (URL: %1 )").arg(articleUrl));			
-	return fromUTF8EncodedStdString(it->getTitle());
+bool WikiOnBoard::openZimFile(QString zimfilename) {
+    QMessageBox::StandardButton reply;
+    bool ok = zimFileWrapper->openZimFile(zimfilename);
+    if (!ok) {
+        reply = QMessageBox::critical(this, tr("Error on opening zim file"),
+                                      QString(tr("Error on opening zim file %1.\nError message:%2\n").arg(zimfilename,zimFileWrapper->errorString())),
+                                      QMessageBox::Ok);
+    }
+    return ok;
 }
-
-
-//Note: expects encoded URL (as used in articles). Therefore don't use
-// this for decoded URL (as in zim file index)
-QString WikiOnBoard::getArticleTextByUrl(QString articleUrl)
-	{
-	QString articleText = QLatin1String("ERROR");
-	zim::Blob blob;
-	try
-		{
-		zim::File::const_iterator it = getArticleByUrl(articleUrl);
-		//TODO: Actually not really clean, because if URL not found just closest match displayed.
-		if (it == zimFile->end())			
-			throw std::runtime_error("article not found");
-		if (it->isRedirect())
-			{
-			//Redirect stores decoded URLs. (as in index) 
-			std::string articleUrlDecodedStdStr = it->getRedirectArticle().getUrl();
-			qDebug() << "Is redirect to url " << fromUTF8EncodedStdString(articleUrlDecodedStdStr);
-			zim::File::const_iterator it1 = zimFile->find('A',
-					articleUrlDecodedStdStr);
-			blob = it1->getData();
-			}
-		else
-			{
-			blob = it->getData();
-			}
-                qDebug() << " Article (URL: "<< articleUrl << ", Size: "<<blob.size()<<") loaded from zim file";
-                articleText = QString::fromUtf8(blob.data(), blob.size());
-		}
-	catch (const std::exception& e)
-		{
-		return QString::fromStdString(e.what());
-		}
-
-	return articleText;
-	}
-
 
 QSize WikiOnBoard::getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl) {
     //int maxLengthArticleViewer= (articleViewer->size().height()>articleViewer->size().width()?articleViewer->size().height():articleViewer->size().width());
@@ -641,134 +514,6 @@ QSize WikiOnBoard::getMaximumDisplaySizeInCurrentArticleForImage(QString imageUr
     return size;
 }
 
-//Note: expects encoded URL (as used in articles). Therefore don't use
-// this for decoded URL (as in zim file index)
-QPixmap WikiOnBoard::getImageByUrl(QString imageUrl)
-{
-    QTime timer;
-    QTime subTimer;
-
-    QPixmap image;
-    zim::Blob blob;
-    timer.start();
-    try
-    {
-        //For images don't load closest match if url not found.
-        subTimer.start();
-        zim::File::const_iterator it = getArticleByUrl(imageUrl,QLatin1Char('I'),false);
-        if (it == zimFile->end())
-            throw std::runtime_error("image not found");
-        if (it->isRedirect())
-        {
-            //Redirect stores decoded URLs. (as in index)
-            // TODO: really necessary for images?
-            std::string imageUrlDecodedStdStr = it->getRedirectArticle().getUrl();
-            qDebug() << "Is redirect to url " << fromUTF8EncodedStdString(imageUrlDecodedStdStr);
-            zim::File::const_iterator it1 = zimFile->find('I',
-                                                          imageUrlDecodedStdStr);
-            blob = it1->getData();
-        }
-        else
-        {
-            blob = it->getData();
-        }
-    }
-    catch (const std::exception& e)
-    {
-        qDebug() << "Error in load image. Return 1x1 pixel image instead";
-        image = QPixmap(1,1);
-        image.fill();
-        return image;
-    }
-    qDebug() << " Image (URL: "<< imageUrl << ", Size: "<<blob.size()<<") loaded from zim file";
-    qDebug() << "Loading image data" << imageUrl << " from zim file took" << subTimer.restart() << " milliseconds";
-    QSize newSize = getMaximumDisplaySizeInCurrentArticleForImage(imageUrl);
-    qDebug() << " Searching image size took " << subTimer.restart() << " milliseconds";
-    QBuffer *imageBuffer = new QBuffer();
-    imageBuffer->setData(blob.data(),blob.size());
-    QImageReader *imageReader = new QImageReader(imageBuffer);
-    qDebug() << "Original size of image: "<<imageReader->size();
-    qDebug() << "Image format: "<<imageReader->format();
-    qDebug() << " supports scaling: " << imageReader->supportsOption(QImageIOHandler::ScaledSize);
-    if (newSize.isValid()) {
-        //Resize to save memory.
-        if ((newSize.height()==0)||(newSize.width()==0)) {
-            image = QPixmap(1,1);
-            image.fill();
-            qDebug() << "Size defined in HTML was 0. ("<<newSize << ". Return 1x1 pixel size instead to avoid repeated reload attempts";
-        } else {
-            if (imageReader->supportsOption(QImageIOHandler::ScaledSize)) {
-                //For formats which support scaled reading (e.g. jpg), use it (as significantly faster than separate reading and scaling)
-                qDebug() << " ScaledSize supported. Read with scaling";
-                imageReader->setScaledSize(newSize);
-                image = QPixmap::fromImageReader(imageReader);
-            }
-            else {
-                // If format does not support scaling (e.g. png) read and scale separately.
-                // benefit is that faster (lower quality) scaling can be used, while setScaledSize
-                // would use high quality (=slower) scaling.
-                // Note: If in future loading is implemented in separate thread,  would probably
-                // make sense to use imagereader (high quality) only.
-               qDebug() << " ScaledSize not supported. Read, and scale afterwards.";
-               QTime subSubTimer;
-               subSubTimer.start();
-               image = QPixmap::fromImageReader(imageReader);
-               qDebug() << "\tQPixmap::fromImageReader (without scaling) took: " << subSubTimer.restart();
-               image=image.scaled(newSize,Qt::IgnoreAspectRatio,Qt::FastTransformation);
-               qDebug() << "\tscaling took: " << subSubTimer.restart();
-            }
-            qDebug() << "Image resized to size defined in HTML\nsize of scaled image: "<<image.size();
-        }
-    } else {
-        image = QPixmap::fromImageReader(imageReader);
-        qWarning() << "image size not found. Don't resize image";
-    }
-    if ((image.isNull()))   {
-
-        qWarning() << "loadFromData failed for image. Return 1x1 pixel image instead. QImageReader Error Message: "<< imageBuffer->errorString();
-        image = QPixmap(1,1);
-        image.fill();
-    }
-    delete imageReader;
-    delete imageBuffer;
-    qDebug() << " Creating Pixmap (including resize) from image data took" << subTimer.restart() << " milliseconds";
-    qDebug() << "Loading image " << imageUrl <<" took" << timer.elapsed() << " milliseconds";
-    return image;
-}
-
-
-QString WikiOnBoard::getArticleTextByTitle(QString articleTitle)
-	{
-	QString articleText = QLatin1String("ERROR");
-	zim::Blob blob;
-	try
-		{
-		std::string articleNameStdStr = std::string(articleTitle.toUtf8());
-
-		zim::File::const_iterator it = zimFile->findByTitle('A',
-				articleNameStdStr);
-		if (it == zimFile->end())
-			throw std::runtime_error("article not found");
-		if (it->isRedirect())
-			{
-			articleNameStdStr = it->getRedirectArticle().getTitle();
-			zim::File::const_iterator it1 = zimFile->find('A',
-					articleNameStdStr);
-			blob = it1->getData();
-			}
-		else
-			{
-			blob = it->getData();
-			}
-		articleText = QString::fromUtf8(blob.data(), blob.size());
-		}
-	catch (const std::exception& e)
-		{
-		return QString::fromStdString(e.what());
-		}
-
-	return articleText;
-	}
 
 //For debug output
 QString WikiOnBoard::articleListItemToString(QListWidgetItem* item) {
@@ -786,7 +531,7 @@ QString WikiOnBoard::articleListItemToString(QListWidgetItem* item) {
 
 std::pair <bool, QListWidgetItem*> WikiOnBoard::getArticleListItem(zim::File::const_iterator it) {
     QListWidgetItem* articleItem = new QListWidgetItem();
-    if (it==zimFile->end()) {
+    if (it==zimFileWrapper->end()) {
         qDebug() << "getArticleListItem iterator points is end of article list. ";
         return std::pair<bool, QListWidgetItem*> (false, articleItem);
     }
@@ -808,7 +553,7 @@ std::pair <bool, QListWidgetItem*> WikiOnBoard::getArticleListItem(zim::File::co
     return std::pair<bool, QListWidgetItem*> (true, articleItem);
 }
 
-void WikiOnBoard::populateArticleList() {	
+void WikiOnBoard::populateArticleList() {
 	populateArticleList(ui.articleName->text(), 0, false);
 }
 
@@ -818,25 +563,22 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 	qDebug() << "in populateArticleList. articleName:  " << articleName
 			<< ". ignoreFirstN: " << ignoreFirstN << ". direction_up:"
 			<< direction_up << ".noDelete: " << noDelete; 
-	if (zimFile != NULL)
+        if (zimFileWrapper->isValid())
 		{
 		try
 			{ 
-			//Zim index is UTF8 encoded. Therefore use utf8 functions to access
-			// it.
-			std::string articleNameStdStr = std::string(articleName.toUtf8());
-			//Find article, if not an exact match,  Iterator may point to end, or to 
+                        //Find article, if not an exact match,  Iterator may point to end, or to
 			// element of other namespace. (like image (I) or metadata (M))		
-			zim::File::const_iterator it = zimFile->findByTitle('A',
-					articleNameStdStr);
-                        if (((it==zimFile->end()) || (it->getNamespace() != 'A') )) {
+                        zim::File::const_iterator it = zimFileWrapper->findByTitle(QLatin1Char('A'),
+                                        articleName);
+                        if (((it==zimFileWrapper->end()) || (it->getNamespace() != 'A') )) {
                             qDebug() << " No valid article >= \"" << articleName << "\" found. Try using previous entry in zim file instead";
-                            if (it==zimFile->begin()) {
+                            if (it==zimFileWrapper->begin()) {
                                     qDebug() << " zim file contains no entries. Add nothing to list";
                                     return;
                             }
                             --it;
-                            if ((it==zimFile->end()) || (it->getNamespace() != 'A') ) {
+                            if ((it==zimFileWrapper->end()) || (it->getNamespace() != 'A') ) {
                                 qWarning() << " Previous entry is neither a valid article. Bug?. Add nothing to list";
                                 return;
                             }
@@ -869,14 +611,14 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
 							delete lastItem;
 						}
 						}
-					//Note: zimFile->begin() actually does not necessarily point 
-					// to same article as it if the are equal. (Because it is in title
-					// order while zimFile->begin() uses url order. However, it is fine to detect
-					// that it is entry 0, because only the index is compared.
-					// there is also beginByTitle(), but end() has the same behavior,
-					// and there is not title order equivalent, therefore for both 
-					// the url order is used. 
-					if (it == zimFile->begin())
+                                        //Note: zimFile->begin() actually does not necessarily point
+                                        // to same article as it if the are equal. (Because it is in title
+                                        // order while zimFile->begin() uses url order. However, it is fine to detect
+                                        // that it is entry 0, because only the index is compared.
+                                        // there is also beginByTitle(), but end() has the same behavior,
+                                        // and there is not title order equivalent, therefore for both
+                                        // the url order is used.
+                                        if (it == zimFileWrapper->begin())
 						break;
 					--it;
 					}
@@ -887,7 +629,7 @@ void WikiOnBoard::populateArticleList(QString articleName, int ignoreFirstN,
                                                 ui.articleListWidget->addItem(articleItemPair.second);
 						insertedItemsCount++;
 						}
-					if (it == zimFile->end())
+                                        if (it == zimFileWrapper->end())
 										break;							
 					++it;
 					}
@@ -1057,7 +799,7 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
         QString informativeText = QString(tr("[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Menu option %2 in option menu %4 opens zimfile on mobile", "Text is interpreted as HTML. Html for body and link (%1) automatically added. Other Html tags can be used if desired")).arg(zimDownloadUrlHtml,openZimFileDialogAction->text(),zimDownloadUrl, positiveSoftKeyActionMenuArticlePage->text());
         articleViewer->setHtml(informativeText);
 
-    } else if (zimFile!=NULL) {
+    } else if (zimFileWrapper->isValid()) {
 
         //Only read article, if not same as currently
 	//viewed article (thus don´t reload for article internal links)
@@ -1067,13 +809,13 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 	//	to history then)
 	//if (!path.isEmpty() && (currentlyViewedUrl.path()!=url.path())) {	
 	
-	QString articleTitle = getArticleTitleByUrl(encodedPath);
+        QString articleTitle = zimFileWrapper->getArticleTitleByUrl(encodedPath);
 	qDebug() << "Set index search field to title of article: "<< articleTitle;   	
 	ui.articleName->setText(articleTitle);
 	
         QTime timer;
         timer.start();
-        QString articleText = getArticleTextByUrl(encodedPath);
+        QString articleText = zimFileWrapper->getArticleTextByUrl(encodedPath);
         qDebug() << "Reading article " <<path <<" from zim file took" << timer.restart() << " milliseconds";
         articleViewer->setHtml(articleText);
         qDebug() << "Loading article into textview (setHtml()) took" << timer.restart() << " milliseconds";
@@ -1209,7 +951,7 @@ void WikiOnBoard::backArticleHistoryOrIndexPage()
 void WikiOnBoard::openZimFileDialog()
 {
     QString path;
-    if (zimFile == NULL)
+    if (!zimFileWrapper->isValid())
     {
 #if defined(Q_OS_SYMBIAN)
         //Hard code path to memory card/mass memory.  Tried QDir::homePath(); and QDesktopServices::DataLocation,
@@ -1224,7 +966,7 @@ void WikiOnBoard::openZimFileDialog()
     else
     {
         //TODO: Default is latin1 encoding. Correct?
-        path = QString::fromStdString(zimFile->getFilename());
+        path = zimFileWrapper->getFilename();
     }
 #if defined(Q_OS_SYMBIAN)
     QApplication::setNavigationMode(Qt::NavigationModeCursorAuto);
@@ -1253,7 +995,7 @@ void WikiOnBoard::openZimFileDialog()
         populateArticleList();
     } else {
         //Either no file selected or open failed.
-        if (zimFile==NULL) {
+        if (!zimFileWrapper->isValid()) {
             qDebug() << "Open failed or cancelled and not file was open before => Show welcome page";
             switchToWelcomePage();
         }
@@ -1282,27 +1024,6 @@ void WikiOnBoard::gotoHomepage()
 		}
 	}
 
-std::pair<bool, QString> WikiOnBoard::getMetaData(QString key) {
-	std::string keyStdStr = std::string(key.toUtf8());				
-	if (zimFile!=NULL) {
-		std::pair<bool, zim::File::const_iterator> r = zimFile->findxByTitle('M', keyStdStr);
-		if (r.first) {
-			zim::Blob blob;					
-			zim::Article a =*r.second;
-			blob = a.getData();			
-			return std::pair<bool, QString>(true,  QString::fromUtf8(blob.data(), blob.size()));
-		} else {			
-			return std::pair<bool, QString>(false, QLatin1String(""));
-		}			
-	} else {
-		return std::pair<bool, QString>(false, QLatin1String(""));
-	}
-}
-
-QString WikiOnBoard::getMetaDataString(QString key) {
-	std::pair<bool, QString> metaData = getMetaData(key);  
-	return metaData.first ? metaData.second : QString(tr("Not available"));
-}
 
 QString WikiOnBoard::byteArray2HexQString(const QByteArray & byteArray)
 {
@@ -1323,20 +1044,20 @@ void WikiOnBoard::aboutCurrentZimFile()
 		
 	msgBox.setText(tr("About Current Zimfile"));
 	QString informativeText;
-	if (zimFile==NULL) {
+        if (!zimFileWrapper->isValid()) {
 		informativeText = QString(tr("No zim file is currently opened"));	
 	} else {
 	
-	QByteArray uuidBA =QByteArray(zimFile->getFileheader().getUuid().data, zimFile->getFileheader().getUuid().size());
-        QString zimfilename = QFile::decodeName(zimFile->getFilename().c_str());
+        QByteArray uuidBA =zimFileWrapper->getUUID();
+        QString zimfilename = zimFileWrapper->getFilename();
         informativeText = QString(tr(""
 			 "Current Zim File: %1\n"
                          "Articles : %2, Images: %3, Categories: %4\n",
                                      "Add new line after text")).arg(
                                          zimfilename,
-					 QString::number(zimFile->getNamespaceCount('A')), //Including redirects
-					 QString::number(zimFile->getNamespaceCount('I')),
-					 QString::number(zimFile->getNamespaceCount('U'))
+                                         QString::number(zimFileWrapper->getNamespaceCount(QLatin1Char('A'))), //Including redirects
+                                         QString::number(zimFileWrapper->getNamespaceCount(QLatin1Char('I'))),
+                                         QString::number(zimFileWrapper->getNamespaceCount(QLatin1Char('U')))
 			 );
 	informativeText.append(
 			 QString(tr(""
@@ -1347,13 +1068,13 @@ void WikiOnBoard::aboutCurrentZimFile()
 			 "Description: %5\n"					 			 
 			 "Language: %6\n" 
                                     "Relation: %7\n", "Add newline after Text")).arg(
-					 getMetaDataString(QLatin1String("Title")),
-					 getMetaDataString(QLatin1String("Creator")),
-					 getMetaDataString(QLatin1String("Date")),
-					 getMetaDataString(QLatin1String("Source")),
-					 getMetaDataString(QLatin1String("Description")),
-					 getMetaDataString(QLatin1String("Language")),
-					 getMetaDataString(QLatin1String("Relation"))
+                                         zimFileWrapper->getMetaDataString(QLatin1String("Title")),
+                                         zimFileWrapper->getMetaDataString(QLatin1String("Creator")),
+                                         zimFileWrapper->getMetaDataString(QLatin1String("Date")),
+                                         zimFileWrapper->getMetaDataString(QLatin1String("Source")),
+                                         zimFileWrapper->getMetaDataString(QLatin1String("Description")),
+                                         zimFileWrapper->getMetaDataString(QLatin1String("Language")),
+                                         zimFileWrapper->getMetaDataString(QLatin1String("Relation"))
 			  )			  
 	);	
 	informativeText.append(QString(tr(""
@@ -1423,7 +1144,7 @@ void WikiOnBoard::about()
 void WikiOnBoard::switchToArticlePage()
         {
 
-        if (zimFile!=NULL) {
+        if (zimFileWrapper->isValid()) {
             #ifdef Q_OS_SYMBIAN
                 positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::PositiveSoftKey);
                 positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::NoSoftKey);
@@ -1739,7 +1460,7 @@ void WikiOnBoard::zoomIn()
 	zoom(1);
 	}
 
-void WikiOnBoard::showWaitCursor() 
+void WikiOnBoard::showWaitCursor()
 	{
         //If mouse cursor in edge of screen (which is the case for non-touch
         // smartphones often, move it to the middle of main widget)
@@ -1772,7 +1493,7 @@ void WikiOnBoard::hideWaitCursor()
 int WikiOnBoard::addItemsToArticleList(bool up, int addCount, int maxCount)
 	{
     qDebug() << "WikiOnBoard::addItemsToArticleList (up:"<<up<<" addCount: "<<addCount <<" maxCount: "<<maxCount;
-    if (zimFile != NULL)
+    if (zimFileWrapper->isValid())
 		{
 		try
 			{
@@ -1792,21 +1513,17 @@ int WikiOnBoard::addItemsToArticleList(bool up, int addCount, int maxCount)
                                                                 firstArticleInCurrentList->data(
 										ArticleTitleRole).toString();
 
-                                //Zim index is UTF8 encoded. Therefore use utf8 functions to access
-                                // it.
-                                std::string articleTitleStdStr = std::string(
-						titleFirstArticleInCurrentList.toUtf8());
                                 qDebug() << " First article in current list is: "<< articleListItemToString(firstArticleInCurrentList);
 
                                 std::pair<bool, zim::File::const_iterator> r =
-                                                zimFile->findxByTitle('A', articleTitleStdStr);
+                                                zimFileWrapper->findxByTitle(QLatin1Char('A'), titleFirstArticleInCurrentList);
 				if (!r.first)
 					{
 					qWarning()
 							<< " No exact match found. (Only possible if bug in wikionboard)";
 					}
 				zim::File::const_iterator it = r.second;
-				if (it == zimFile->beginByTitle())
+                                if (it == zimFileWrapper->beginByTitle())
 					{
 					qDebug()
 							<< " Current entry is first entry in index => Do nothing";
@@ -1833,7 +1550,7 @@ int WikiOnBoard::addItemsToArticleList(bool up, int addCount, int maxCount)
 						delete lastItem;
 					}
 					//order is different					
-					if (it == zimFile->beginByTitle())
+                                        if (it == zimFileWrapper->beginByTitle())
 						{
                                                 qDebug()
                                                                 << "Beginning of title index reached. Stop adding titles. Last added title :"<< articleListItemToString(articleItemPair.second);
@@ -1862,22 +1579,18 @@ int WikiOnBoard::addItemsToArticleList(bool up, int addCount, int maxCount)
                                                 lastArticleInCurrentList->data(
 								ArticleTitleRole).toString();
 
-				//Zim index is UTF8 encoded. Therefore use utf8 functions to access
-				// it.
-				std::string articleTitleStdStr = std::string(
-						titleLastArticleInCurrentList.toUtf8());
                                 qDebug() << " Last article in current list is: " << articleListItemToString(ui.articleListWidget->item(
                                                                                                                 ui.articleListWidget->count() - 1));
 
 				std::pair<bool, zim::File::const_iterator> r =
-						zimFile->findxByTitle('A', articleTitleStdStr);
+                                                zimFileWrapper->findxByTitle(QLatin1Char('A'), titleLastArticleInCurrentList);
 				if (!r.first)
 					{
 					qWarning()
 							<< " No exact match found. (Only possible if bug in wikionboard)";
 					}
 				zim::File::const_iterator it = r.second;
-				if (it == zimFile->end())
+                                if (it == zimFileWrapper->end())
 					{
 					qDebug()
 							<< " Current entry is last entry in index => Do nothing";
@@ -1900,7 +1613,7 @@ int WikiOnBoard::addItemsToArticleList(bool up, int addCount, int maxCount)
 						delete firstItem;
 					}
 					insertedItemsCount++;
-					if (it == zimFile->end())
+                                        if (it == zimFileWrapper->end())
 						{
 						qDebug()
                                                                 << "End of title index reached. Stop adding titles. Last added title: "<< articleListItemToString(articleItemPair.second);
@@ -1952,7 +1665,7 @@ void WikiOnBoard::enableSplitScreen()
     #endif
 #endif
 }
-ArticleViewer::ArticleViewer(QWidget* parent, WikiOnBoard* wikiOnBoard) : QTextBrowser(parent),wikiOnBoard(wikiOnBoard)
+ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper) : QTextBrowser(parent),zimFileWrapper(zimFileWrapper)
  {
     //QTextBrowser settings
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -1979,7 +1692,7 @@ ArticleViewer::ArticleViewer(QWidget* parent, WikiOnBoard* wikiOnBoard) : QTextB
                QString encodedPath = QString::fromUtf8(name.encodedPath().data(),name.encodedPath().length());
 
                qDebug() << "loadResource.: type is ImageResource and showImages =1 => load image from zim file. " << name.toString()<<"\nurl.path():"<<name.path() << "\nurl.encodedPath():"<< encodedPath;               
-               return wikiOnBoard->getImageByUrl(encodedPath);
+               return zimFileWrapper->getImageByUrl(encodedPath);
            } else {
               qDebug() << "loadResource: type is ImageResource but showImages=0. Returns 1x1 pixel image. ";
               //Returning one pixel image leads to much faster scrolling than returning empty variant or not handling it at all.

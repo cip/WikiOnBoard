@@ -138,6 +138,6 @@ int main(int argc, char *argv[])
 	//a.setNavigationMode(Qt::NavigationModeNone);
 #endif
 
-	WikiOnBoard w(bgc);
+        WikiOnBoard w(bgc);
 	return a.exec();
 	}
