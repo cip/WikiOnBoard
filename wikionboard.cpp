@@ -170,8 +170,8 @@
 
     
 
-WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
-    QMainWindow(parent), m_bgc(bgc), welcomeUrl(QUrl(QLatin1String("wikionboard://welcome")))
+WikiOnBoard::WikiOnBoard(QWidget *parent) :
+    QMainWindow(parent), welcomeUrl(QUrl(QLatin1String("wikionboard://welcome")))
 
 	{			
 	//For now assume that: S60 rd 3dition devices have no touch screen, all other devices have touch screen.
@@ -236,15 +236,15 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         connect(QApplication::desktop(), SIGNAL(workAreaResized(int)), this, SLOT(workAreaResized(int)));
         //  LeftMouseButtonGesture used, as use of TouchGesture together
 	// with mouse click events (like link clicked) problematic.
-        QtScroller::grabGesture(articleViewer->viewport(), QtScroller::LeftMouseButtonGesture);
+        //TODO QtScroller::grabGesture(articleViewer->viewport(), QtScroller::LeftMouseButtonGesture);
 					
 	// ScrollPerPixel required for kinetic scrolling
 	ui.articleListWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);	    
-	QtScroller::grabGesture(ui.articleListWidget->viewport(), QtScroller::LeftMouseButtonGesture);
+        //TODO QtScroller::grabGesture(ui.articleListWidget->viewport(), QtScroller::LeftMouseButtonGesture);
 	ArticleListFilter *articleListFilter = new ArticleListFilter();
 	ui.articleListWidget->viewport()->installEventFilter(articleListFilter);
         connect(articleListFilter,SIGNAL(approachingEndOfList(bool)),this, SLOT(addItemsToArticleList(bool)));
-        QtScrollerProperties properties = QtScroller::scroller(articleViewer->viewport())->scrollerProperties();
+        //TODO QtScrollerProperties properties = QtScroller::scroller(articleViewer->viewport())->scrollerProperties();
 	//properties.setScrollMetric(QtScrollerProperties::DragStartDistance,
 	 //	                                QVariant(1.0/1000)); 
 	//properties.setScrollMetric(QtScrollerProperties::DragVelocitySmoothingFactor,
@@ -265,7 +265,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	//properties.setScrollMetric(QtScrollerProperties::MousePressEventDelay,
 	  //               QVariant(0.2));	
 			 
-        QtScroller::scroller(articleViewer->viewport())->setScrollerProperties(properties);
+        //TODO QtScroller::scroller(articleViewer->viewport())->setScrollerProperties(properties);
 	
 #ifdef Q_OS_SYMBIAN
 	//Enable Softkeys in fullscreen mode. 
@@ -1041,7 +1041,7 @@ void WikiOnBoard::articleListOpenArticle()
                 }
 	}
 
-void WikiOnBoard::openArticleByUrl(QUrl url)
+void ArticleVi::openArticleByUrl(QUrl url)
 {
     QString path = url.path();
     QString encodedPath = QString::fromUtf8(url.encodedPath().data(),url.encodedPath().length());
@@ -1060,24 +1060,24 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
     } else if (zimFile!=NULL) {
 
         //Only read article, if not same as currently
-	//viewed article (thus don´t reload for article internal links)
-	//TODO: this does not work as appearantly before calling changedSource
-	// content is deleted. Therefore for now just reload in any case url.
-	// Optimize (by handling in anchorClicked, but check what happens
-	//	to history then)
-	//if (!path.isEmpty() && (currentlyViewedUrl.path()!=url.path())) {	
-	
-	QString articleTitle = getArticleTitleByUrl(encodedPath);
-	qDebug() << "Set index search field to title of article: "<< articleTitle;   	
-	ui.articleName->setText(articleTitle);
-	
+        //viewed article (thus don´t reload for article internal links)
+        //TODO: this does not work as appearantly before calling changedSource
+        // content is deleted. Therefore for now just reload in any case url.
+        // Optimize (by handling in anchorClicked, but check what happens
+        //	to history then)
+        //if (!path.isEmpty() && (currentlyViewedUrl.path()!=url.path())) {
+
+        QString articleTitle = getArticleTitleByUrl(encodedPath);
+        qDebug() << "Set index search field to title of article: "<< articleTitle;
+        ui.articleName->setText(articleTitle);
+
         QTime timer;
         timer.start();
         QString articleText = getArticleTextByUrl(encodedPath);
         qDebug() << "Reading article " <<path <<" from zim file took" << timer.restart() << " milliseconds";
         articleViewer->setHtml(articleText);
         qDebug() << "Loading article into textview (setHtml()) took" << timer.restart() << " milliseconds";
-	if (url.hasFragment())
+        if (url.hasFragment())
         {
             //Either a link within current file (if path was empty), or to   newly opened file
             QString fragment = url.fragment();
@@ -1088,7 +1088,7 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
             //	cursor reason for problem or something else?)
             moveTextBrowserTextCursorToVisibleArea();
         }
-	else
+        else
         {
             QTextCursor cursor = articleViewer->textCursor();
 
@@ -1110,7 +1110,7 @@ void WikiOnBoard::openArticleByUrl(QUrl url)
 
             }
         }
-	/// ui.stackedWidget->setCurrentWidget(ui.articlePage);
+        /// ui.stackedWidget->setCurrentWidget(ui.articlePage);
         qDebug() << "Loading article into textview (gotoAnchor/moveposition) took" << timer.restart() << " milliseconds";
     } else {
         qWarning() << "openArticleByUrl called with non welcome page url while no zim file open. Should not happen";
@@ -1675,16 +1675,6 @@ void WikiOnBoard::toggleFullScreen()
 		{
                 fullScreen = true;
 		showFullScreen();
-
-		//Workaround for softkeys in fullscreen mode.see main.cpp for details
-#if defined(Q_OS_SYMBIAN)
-		CEikButtonGroupContainer* bgc = (CEikButtonGroupContainer*) m_bgc;
-		if (bgc)
-			{
-			bgc->MakeVisible(ETrue);
-			bgc->DrawNow();
-			}
-#endif
 		}
 	QSettings settings;
 	settings.beginGroup(QLatin1String("UISettings"));

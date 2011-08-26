@@ -20,12 +20,17 @@
 #include <QtGui/QMainWindow>
 #include <QFileDialog>
 #include <QSettings>
+#include <QPushButton>
 #include <QDesktopServices>
 #include <QtGui/QTextBrowser>
 #include "ui_wikionboard.h"
 
 #include <zim/zim.h>
 #include <zim/fileiterator.h>
+
+#include <QtDeclarative/QDeclarativeExtensionPlugin>
+#include <QtDeclarative/qdeclarative.h>
+#include <QtGui/QGraphicsProxyWidget>
 
 enum ArticleListItemDataRole {
 	ArticleUrlRole=Qt::UserRole,
@@ -55,18 +60,17 @@ class WikiOnBoard : public QMainWindow
     Q_OBJECT
 
 public:
-	WikiOnBoard(void* bgc, QWidget *parent = 0);
+        WikiOnBoard(QWidget *parent = 0);
         ~WikiOnBoard();                        
         QPixmap getImageByUrl(QString imageUrl);
         QSize getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl);
+        ArticleViewer* articleViewer;
 
 protected:
     void keyPressEvent(QKeyEvent *event);    
     void resizeEvent ( QResizeEvent * event );  
 private:     
     Ui::WikiOnBoard ui;
-    ArticleViewer* articleViewer;
-    void* m_bgc;
     QAction* positiveSoftKeyActionMenuIndexPage;
     QAction* positiveSoftKeyActionMenuArticlePage;
     QAction* positiveSoftKeyActionMenuArticlePageNoFileOpen;
@@ -169,5 +173,65 @@ signals:
 	bool approachingEndOfList(bool up);
 };
 
+
+class ArticleViewerQML : public QGraphicsProxyWidget
+{
+    Q_OBJECT
+  //  Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
+
+public:
+    ArticleViewerQML(QGraphicsItem* parent = 0)
+        : QGraphicsProxyWidget(parent)
+    {
+
+        //widget = new WikiOnBoard(); //TODO parent?
+       // widget = new QPushButton(QLatin1String("MyPushButton"));
+        //wikionboard = new WikiOnBoard();
+        //widget = wikionboard->articleViewer;
+        widget = new ArticleViewer(0,0);
+        widget->setAttribute(Qt::WA_NoSystemBackground);
+        setWidget(widget);
+
+        QObject::connect(widget, SIGNAL(clicked(bool)), this, SIGNAL(clicked(bool)));
+    }
+
+    /*QString text() const
+    {
+        return widget->text();
+    }
+
+    void setText(const QString& text)
+    {
+        if (text != widget->text()) {
+            widget->setText(text);
+            emit textChanged();
+        }
+    }*/
+/*
+Q_SIGNALS:
+    void clicked(bool);
+    void textChanged();
+*/
+private:
+   // WikiOnBoard *wikionboard;
+   // QPushButton *widget;
+    ArticleViewer *widget;
+
+};
+
+/*
+class QWidgetsPlugin : public QDeclarativeExtensionPlugin
+ {
+     Q_OBJECT
+ public:
+     void registerTypes(const char *uri)
+     {
+         qmlRegisterType<ArticleViewer>(uri, 1, 0, "ArticleViewer");
+     }
+ };
+
+ #include "qwidgets.moc"
+
+ Q_EXPORT_PLUGIN2(qmlqwidgetsplugin, QWidgetsPlugin);*/
 
 #endif // WIKIONBOARD_H

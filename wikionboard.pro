@@ -7,7 +7,7 @@ DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
 ENABLE_SPLITSCREENKEYBOARD = 0
 DEFINES += "__ENABLE_SPLITSCREENKEYBOARD__=$$ENABLE_SPLITSCREENKEYBOARD"
 
-VERSION = 1.1.1
+VERSION = 1.1.2
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 
@@ -51,7 +51,7 @@ symbian: {
 }
 else {    
     LIBS *= -L../zimlib -lzimlib
-    LIBS *= -L../xz -lliblzma
+    LIBS *= -L../xz -lliblzma    
 }
 
 
@@ -222,3 +222,18 @@ unix:!symbian {
 }
 message(QT Variable: $$QT)
 message(Libs Variable: $$LIBS)
+
+# QML (Symbian components) related
+# Add more folders to ship with the application, here
+folder_01.source = qml/symbian
+folder_01.target = qml
+DEPLOYMENTFOLDERS = folder_01
+
+# Additional import path used to resolve QML modules in Creator's code model
+QML_IMPORT_PATH =
+CONFIG += qt-components
+# Please do not modify the following two lines. Required for deployment.
+include(qmlapplicationviewer/qmlapplicationviewer.pri)
+qtcAddDeployment()
+
+

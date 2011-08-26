@@ -1,0 +1,21 @@
+import QtQuick 1.0
+import com.nokia.symbian 1.0
+
+//import Qt.labs.components.native 1.0
+import "UIConstants.js" as UI
+
+Page {
+    Rectangle {
+        id: background
+
+        anchors.fill: parent
+        color: UI.FLICKRPAGE_BG_COLOR
+
+        Image {
+            //source: "images/stripes.png"
+            fillMode: Image.Tile
+            anchors.fill: parent
+            opacity: UI.FLICKRPAGE_BG_OPACITY
+        }
+    }
+}
