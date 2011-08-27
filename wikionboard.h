@@ -21,34 +21,18 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QDesktopServices>
-#include <QtGui/QTextBrowser>
 #include "ui_wikionboard.h"
 
 #include <zim/zim.h>
 #include <zim/fileiterator.h>
 #include "zimfilewrapper.h"
+#include "articleviewer.h"
 enum ArticleListItemDataRole {
 	ArticleUrlRole=Qt::UserRole,
 	ArticleIndexRole,
 	ArticleTitleRole
 };
 
-
-class WikiOnBoard;
-class ArticleViewer : public QTextBrowser
-{
-    Q_OBJECT
-public:
-    ArticleViewer(QWidget* parent = 0, ZimFileWrapper* zimFileWrapper = 0);
-  //  ~ArticleViewer() {//TODO};
-    QVariant loadResource ( int type, const QUrl & name );
-private:
-    ZimFileWrapper* zimFileWrapper;
-    bool showImages;
-public slots:
-    void toggleImageDisplay(bool checked);
-
-};
 
 class WikiOnBoard : public QMainWindow
 {
