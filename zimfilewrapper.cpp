@@ -202,7 +202,7 @@ QPixmap ZimFileWrapper::getImageByUrl(QString imageUrl)
     }
     qDebug() << " Image (URL: "<< imageUrl << ", Size: "<<blob.size()<<") loaded from zim file";
     qDebug() << "Loading image data" << imageUrl << " from zim file took" << subTimer.restart() << " milliseconds";
-    QSize newSize = getMaximumDisplaySizeInCurrentArticleForImage(imageUrl); //FIXME not available yet.
+    QSize newSize = QSize(); //getMaximumDisplaySizeInCurrentArticleForImage(imageUrl); //FIXME not available yet.
     qDebug() << " Searching image size took " << subTimer.restart() << " milliseconds";
     QBuffer *imageBuffer = new QBuffer();
     imageBuffer->setData(blob.data(),blob.size());

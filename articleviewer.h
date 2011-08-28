@@ -29,9 +29,15 @@ public:
 private:
     ZimFileWrapper* zimFileWrapper;
     bool showImages;
+    int zoomLevel;
 public slots:
     void toggleImageDisplay(bool checked);
+    void zoom(int zoomDelta);
+    void zoomOutOneStep();
+    void zoomInOneStep();
 
 };
+
+
 
 #endif // ARTICLEVIEWER_H

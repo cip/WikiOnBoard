@@ -58,10 +58,11 @@ public:
     std::pair<bool, zim::File::const_iterator> findxByTitle(QChar nameSpace, QString articleTitle);
     zim::File::const_iterator begin();
     zim::File::const_iterator beginByTitle();
-protected:
     QString fromUTF8EncodedStdString(std::string s) {
         return QString::fromUtf8(s.data(), int(s.size()));
     }
+
+protected:
 
 signals:
 

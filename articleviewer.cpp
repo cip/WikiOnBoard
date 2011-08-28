@@ -20,6 +20,7 @@
 
 ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper) : QTextBrowser(parent),zimFileWrapper(zimFileWrapper)
  {
+    showImages=false;
     //QTextBrowser settings
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -38,7 +39,14 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper) : 
     defaultStyleSheetDocument->setDefaultStyleSheet(QLatin1String("a:link{color: blue}"));
     setDocument(defaultStyleSheetDocument);
 
+    QSettings settings;
+    settings.beginGroup(QLatin1String("UISettings"));
+    int zoomInit = settings.value(QLatin1String("zoomLevel"), -1).toInt();
+    settings.endGroup();
+    zoomLevel = 0;
+    zoom(zoomInit);
  }
+
  QVariant ArticleViewer::loadResource ( int type, const QUrl & name ) {
        if (type==QTextDocument::ImageResource) {
            if (showImages) {
@@ -71,3 +79,47 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper) : 
      settings.endGroup();
      reload();
  }
+
+
+ void ArticleViewer::zoom(int zoomDelta)
+         {
+         //Limit zoom to allow fixing  an incorrect inifile entry
+         // manually by just zooming in or out manually.
+         // (In particular as zoom does not saturate, but
+         // just do nothing when zoomDelta is out of range.)
+         if (zoomDelta > 5)
+                 zoomDelta = 5;
+         if (zoomDelta < -5)
+                 zoomDelta = -5;
+         if (abs(zoomLevel + zoomDelta) > 5)
+                 {
+                 return;
+                 }
+         if (zoomDelta < 0)
+                 {
+                 zoomOut(abs(zoomDelta));
+                 }
+         else
+                 {
+                 zoomIn(zoomDelta);
+                 }
+         zoomLevel += zoomDelta;
+         QSettings settings;
+         settings.beginGroup(QLatin1String("UISettings"));
+         if ((!settings.contains(QLatin1String("zoomLevel")))
+                         || (settings.value(QLatin1String("zoomLevel")).toInt() != zoomLevel))
+                 {
+                 settings.setValue(QLatin1String("zoomLevel"), zoomLevel);
+                 }
+         settings.endGroup();
+         }
+
+ void ArticleViewer::zoomOutOneStep()
+         {
+         zoom(-1);
+         }
+
+ void ArticleViewer::zoomInOneStep()
+         {
+         zoom(1);
+         }

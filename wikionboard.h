@@ -27,17 +27,12 @@
 #include <zim/fileiterator.h>
 #include "zimfilewrapper.h"
 #include "articleviewer.h"
-enum ArticleListItemDataRole {
-	ArticleUrlRole=Qt::UserRole,
-	ArticleIndexRole,
-	ArticleTitleRole
-};
+#include "indexlist.h"
 
 
 class WikiOnBoard : public QMainWindow
 {
     Q_OBJECT
-
 public:
         WikiOnBoard(void* bgc, QWidget *parent = 0);
         ~WikiOnBoard();
@@ -45,12 +40,12 @@ public:
 
 protected:
     void keyPressEvent(QKeyEvent *event);    
-    void resizeEvent ( QResizeEvent * event );  
     bool openZimFile(QString zimfilename);
 private:     
     ZimFileWrapper* zimFileWrapper;
     Ui::WikiOnBoard ui;
     ArticleViewer* articleViewer;
+    IndexList* indexList;
     void* m_bgc;
     QAction* positiveSoftKeyActionMenuIndexPage;
     QAction* positiveSoftKeyActionMenuArticlePage;
@@ -79,7 +74,6 @@ private:
     QAction* aboutAction;
     QAction* aboutQtAction;    
 
-    int zoomLevel;
     bool hasTouchScreen;
     bool fullScreen;
     const QUrl welcomeUrl;
@@ -91,11 +85,7 @@ private:
     QString articleListItemToString(QListWidgetItem *);
 
     std::pair <bool, QListWidgetItem*> getArticleListItem(zim::File::const_iterator it);
-    void populateArticleList(); 
-    void populateArticleList(QString articleName, int ignoreFirstN, bool direction_up, bool noDelete=false);
-    void articleListSelectPreviousEntry();
-    void articleListSelectNextEntry();
-        
+
     
     void moveTextBrowserTextCursorToVisibleArea();
     void showWaitCursor();
@@ -121,30 +111,13 @@ private slots:
      void aboutCurrentZimFile();
      void about();
      
-     void articleListOpenArticle(); 	  
-     void articleListOpenArticle(QListWidgetItem * item ); 	  
-          
+     void articleListOpenArticle();
+     void articleListOpenArticle(QListWidgetItem * item );
+
      //void on_articleListWidget_itemClicked ( QListWidgetItem * item ); 	  
      void toggleFullScreen();
-     void zoom(int zoomDelta);
-     void zoomOut();
-     void zoomIn();
-     int addItemsToArticleList(bool up, int addCount=100, int maxCount=120);
      void enableSplitScreen(); //Enable Split-screen virtual keyboard for symbian.
      void workAreaResized(int screen);
 };
-
-class ArticleListFilter : public QObject {
-	Q_OBJECT
-public:
-	ArticleListFilter() {};
-
-protected:
-	
-    bool eventFilter(QObject *o, QEvent *e);
-signals: 
-	bool approachingEndOfList(bool up);
-};
-
 
 #endif // WIKIONBOARD_H
