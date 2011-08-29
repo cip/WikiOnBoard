@@ -24,10 +24,11 @@
 #include <QApplication>
 
 ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bool hasTouchScreen)
-    : QTextBrowser(parent),zimFileWrapper(zimFileWrapper),hasTouchScreen(hasTouchScreen)
+    : QTextBrowser(parent),zimFileWrapper(zimFileWrapper),hasTouchScreen(hasTouchScreen), welcomeUrl(QUrl(QLatin1String("wikionboard://welcome")))
  {
     showImages=false;
     articleTitle = QString();
+    welcomePage = QString();
     //QTextBrowser settings
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -186,6 +187,10 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
          setTextCursor(cursor);
          }
 
+ void ArticleViewer::setWelcomePage(QString welcomePage) {
+     this->welcomePage = welcomePage;
+ }
+
  void ArticleViewer::openArticleByUrl(QUrl url)
  {
      QString path = url.path();
@@ -193,16 +198,11 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
 
      qDebug() << "openArticleByUrl: " <<url.toString()<<"\nurl.path():"<<path << "\nurl.encodedPath():"<< encodedPath;
 
-     /*FIXME if (url==welcomeUrl) {
+     if (url==welcomeUrl) {
         qDebug()  << "Url is welcome URL. Set article text to welcome text";
-         QString zimDownloadUrl = QString(tr("https://github.com/cip/WikiOnBoard/wiki/Get-eBooks","Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE"));
-         QString getEBookLinkCaption = QString(tr("Download zimfile", "link"));
-         QString zimDownloadUrlHtml = QString(tr("<a href=\"%1\">%2</a>", "DON'T translate this").arg(zimDownloadUrl,getEBookLinkCaption));
+         setHtml(welcomePage);
 
-         QString informativeText = QString(tr("[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Menu option %2 in option menu %4 opens zimfile on mobile", "Text is interpreted as HTML. Html for body and link (%1) automatically added. Other Html tags can be used if desired")).arg(zimDownloadUrlHtml,openZimFileDialogAction->text(),zimDownloadUrl, positiveSoftKeyActionMenuArticlePage->text());
-         setHtml(informativeText);
-
-     } else */ if (zimFileWrapper->isValid()) {
+     } else if (zimFileWrapper->isValid()) {
 
          //Only read article, if not same as currently
          //viewed article (thus don´t reload for article internal links)

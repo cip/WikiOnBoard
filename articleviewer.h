@@ -28,6 +28,8 @@ public:
     QSize getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl);
     void moveTextBrowserTextCursorToVisibleArea();
     void openArticleByUrl(QUrl url);
+    const QUrl welcomeUrl;
+    void setWelcomePage(QString welcomePage);
 protected:
     void hideWaitCursor();
     void showWaitCursor();
@@ -37,6 +39,7 @@ private:
     bool hasTouchScreen;
     bool showImages;
     int zoomLevel;
+    QString welcomePage;
 signals:
     void openExternalLink( QUrl url);
     void articleOpened(QString articleTitle);

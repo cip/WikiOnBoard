@@ -77,7 +77,6 @@ private:
 
     bool hasTouchScreen;
     bool fullScreen;
-    const QUrl welcomeUrl;
     QString fromUTF8EncodedStdString(std::string s) {
     	return QString::fromUtf8(s.data(), int(s.size())); 
     }

@@ -58,7 +58,7 @@
 
 
 WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
-    QMainWindow(parent), m_bgc(bgc), welcomeUrl(QUrl(QLatin1String("wikionboard://welcome")))
+    QMainWindow(parent), m_bgc(bgc)
 
         {
         zimFileWrapper = new ZimFileWrapper(this);
@@ -97,7 +97,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 
 	ui.setupUi(this);
         articleViewer = new ArticleViewer(ui.articlePage,zimFileWrapper,hasTouchScreen);
-        ui.gridLayout_3->addWidget(articleViewer);        
+        ui.gridLayout_3->addWidget(articleViewer);
         indexList = new IndexList(ui.indexPage,zimFileWrapper, hasTouchScreen);
         ui.gridLayout_2->addWidget(indexList,1,0);
         setStatusBar(0); //Remove status bar to increase useable screen size.
@@ -308,6 +308,12 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         positiveSoftKeyActionMenuArticlePageNoFileOpen->setMenu(menuArticlePageNoFileOpen);
         this->addAction(positiveSoftKeyActionMenuArticlePageNoFileOpen);
 
+         //Set welcome page
+        QString zimDownloadUrl = QString(tr("https://github.com/cip/WikiOnBoard/wiki/Get-eBooks","Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE"));
+        QString getEBookLinkCaption = QString(tr("Download zimfile", "link"));
+        QString zimDownloadUrlHtml = QString(tr("<a href=\"%1\">%2</a>", "DON'T translate this").arg(zimDownloadUrl,getEBookLinkCaption));
+        QString informativeText = QString(tr("[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Menu option %2 in option menu %4 opens zimfile on mobile", "Text is interpreted as HTML. Html for body and link (%1) automatically added. Other Html tags can be used if desired")).arg(zimDownloadUrlHtml,openZimFileDialogAction->text(),zimDownloadUrl, positiveSoftKeyActionMenuArticlePage->text());
+        articleViewer->setWelcomePage(informativeText);
 
 	// Set context menu policy for widgets to suppress the useless 'Actions' submenu
 #ifdef Q_OS_SYMBIAN
@@ -671,7 +677,7 @@ void WikiOnBoard::switchToWelcomePage()
 {
     articleViewer->clear();
     switchToArticlePage();    
-    articleViewer->setSource(welcomeUrl);
+    articleViewer->setSource(articleViewer->welcomeUrl);
 }
 
 
