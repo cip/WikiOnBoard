@@ -23,14 +23,27 @@ class ArticleViewer : public QTextBrowser
 {
     Q_OBJECT
 public:
-    ArticleViewer(QWidget* parent = 0, ZimFileWrapper* zimFileWrapper = 0);
-  //  ~ArticleViewer() {//TODO};
+    ArticleViewer(QWidget* parent = 0, ZimFileWrapper* zimFileWrapper = 0, bool hasTouchScreen = true);
     QVariant loadResource ( int type, const QUrl & name );
+    QSize getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl);
+    void moveTextBrowserTextCursorToVisibleArea();
+    void openArticleByUrl(QUrl url);
+protected:
+    void hideWaitCursor();
+    void showWaitCursor();
 private:
     ZimFileWrapper* zimFileWrapper;
+    QString articleTitle;
+    bool hasTouchScreen;
     bool showImages;
     int zoomLevel;
+signals:
+    void openExternalLink( QUrl url);
+    void articleOpened(QString articleTitle);
 public slots:
+    void onAnchorClicked (QUrl url);
+    void onSourceChanged (QUrl url );
+
     void toggleImageDisplay(bool checked);
     void zoom(int zoomDelta);
     void zoomOutOneStep();

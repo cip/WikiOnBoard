@@ -43,7 +43,7 @@ public:
     zim::File::const_iterator getArticleByUrl(QString articleUrl,QChar nameSpace='A', bool closestMatchIfNotFound=true);
 
     QString getArticleTextByTitle(QString articleTitle);
-    QPixmap getImageByUrl(QString imageUrl);
+    QPixmap getImageByUrl(QString imageUrl, QSize newSize=QSize());
     QString getMetaDataString(QString key);
     std::pair<bool, QString> getMetaData(QString key);
 

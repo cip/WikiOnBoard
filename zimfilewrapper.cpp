@@ -163,7 +163,7 @@ QString ZimFileWrapper::getArticleTextByUrl(QString articleUrl)
 
 //Note: expects encoded URL (as used in articles). Therefore don't use
 // this for decoded URL (as in zim file index)
-QPixmap ZimFileWrapper::getImageByUrl(QString imageUrl)
+QPixmap ZimFileWrapper::getImageByUrl(QString imageUrl, QSize newSize)
 {
     QTime timer;
     QTime subTimer;
@@ -202,8 +202,6 @@ QPixmap ZimFileWrapper::getImageByUrl(QString imageUrl)
     }
     qDebug() << " Image (URL: "<< imageUrl << ", Size: "<<blob.size()<<") loaded from zim file";
     qDebug() << "Loading image data" << imageUrl << " from zim file took" << subTimer.restart() << " milliseconds";
-    QSize newSize = QSize(); //getMaximumDisplaySizeInCurrentArticleForImage(imageUrl); //FIXME not available yet.
-    qDebug() << " Searching image size took " << subTimer.restart() << " milliseconds";
     QBuffer *imageBuffer = new QBuffer();
     imageBuffer->setData(blob.data(),blob.size());
     QImageReader *imageReader = new QImageReader(imageBuffer);

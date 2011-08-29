@@ -26,10 +26,7 @@
 #include <QMessageBox>
 #include <QStringBuilder>
 #include <QTextCodec>
-#include <QTextBlock>
 #include <QDesktopWidget>
-#include <QPixmap>
-#include <QSize>
 //"Official" kinetic scrolling. (Backport from Qt 4.8) 
 //	See http://qt.gitorious.org/qt-labs/kineticscroller/commits/solution and
 //		http://bugreports.qt.nokia.com/browse/QTBUG-9054?focusedCommentId=130700&page=com.atlassian.jira.plugin.system.issuetabpanels%3Acomment-tabpanel#action_130700
@@ -47,8 +44,6 @@
 
 #include <QTime>
 //#include <QElapsedTimer>
-//TODO: not necessary for symbian, why necessary on linux? (and anyway exception should be replaced
-//  by something else
 #include <stdexcept>
 
 #if defined(Q_OS_SYMBIAN)
@@ -101,7 +96,7 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 	settings.endGroup();
 
 	ui.setupUi(this);
-        articleViewer = new ArticleViewer(ui.articlePage,zimFileWrapper);
+        articleViewer = new ArticleViewer(ui.articlePage,zimFileWrapper,hasTouchScreen);
         ui.gridLayout_3->addWidget(articleViewer);        
         indexList = new IndexList(ui.indexPage,zimFileWrapper, hasTouchScreen);
         ui.gridLayout_2->addWidget(indexList,1,0);
@@ -117,38 +112,19 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
         } else {
             qWarning()<<"Could not connect sourceChanged";
         }
-        if (connect(articleViewer,SIGNAL(anchorClicked(QUrl)),this, SLOT(on_articleViewer_anchorClicked(QUrl)))) {
-            qDebug() << "Connected anchorClicked";
+        if (connect(articleViewer,SIGNAL(articleOpened(QString)),this, SLOT(onArticleOpened(QString)))) {
+            qDebug() << "Connected articleOpened";
         } else {
-            qWarning()<<"Could not connect anchorClicked";
+            qWarning()<<"Could not connect articleOpened";
+        }
+
+        if (connect(articleViewer,SIGNAL(openExternalLink(QUrl)),this, SLOT(openExternalLink(QUrl)))) {
+            qDebug() << "Connected openExternalLink";
+        } else {
+            qWarning()<<"Could not connect openExternalLink";
         }
         connect(QApplication::desktop(), SIGNAL(workAreaResized(int)), this, SLOT(workAreaResized(int)));
-        //  LeftMouseButtonGesture used, as use of TouchGesture together
-	// with mouse click events (like link clicked) problematic.
-        QtScroller::grabGesture(articleViewer->viewport(), QtScroller::LeftMouseButtonGesture);
-					
-        QtScrollerProperties properties = QtScroller::scroller(articleViewer->viewport())->scrollerProperties();
-	//properties.setScrollMetric(QtScrollerProperties::DragStartDistance,
-	 //	                                QVariant(1.0/1000)); 
-	//properties.setScrollMetric(QtScrollerProperties::DragVelocitySmoothingFactor,
-		// 	 	                                QVariant(0.9)); 
-		
-//	properties.setScrollMetric(QtScrollerProperties::AcceleratingFlickMaximumTime,
-        // 	 	 	                                QVariant(0.0));
-	//Avoid scrolling right/left for up/down gestures. Higher value
-	// would be better regarding this, but then finger scrolling is
-	// is not working very well. 
-	
-	//properties.setScrollMetric(QtScrollerProperties::AxisLockThreshold,
-	 //			 	 	 	                                QVariant(0.2));	 		 	 
-	//properties.setScrollMetric(QtScrollerProperties::DecelerationFactor,
-	 //		 	 	 	 	 	                                QVariant(0.400));			 		 	 
-//	properties.setScrollMetric(QtScrollerProperties::MaximumVelocity,
-  //               QVariant(200.0/1000.0));	
-	//properties.setScrollMetric(QtScrollerProperties::MousePressEventDelay,
-	  //               QVariant(0.2));	
-			 
-        QtScroller::scroller(articleViewer->viewport())->setScrollerProperties(properties);
+
 	
 #ifdef Q_OS_SYMBIAN
 	//Enable Softkeys in fullscreen mode. 
@@ -171,7 +147,6 @@ WikiOnBoard::WikiOnBoard(void* bgc, QWidget *parent) :
 		{
 		showMaximized();
 		}
-	currentlyViewedUrl = QUrl(QLatin1String(""));
         openZimFileDialogAction = new QAction(tr("Open Zimfile"), this);
 	connect(openZimFileDialogAction, SIGNAL(triggered()), this,
 			SLOT(openZimFileDialog()));
@@ -370,38 +345,6 @@ bool WikiOnBoard::openZimFile(QString zimfilename) {
     return ok;
 }
 
-QSize WikiOnBoard::getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl) {
-    QSize size;
-    for (QTextBlock it = articleViewer->document()->begin(); it != articleViewer->document()->end(); it = it.next()) {
-        //          qDebug() << it.text();
-        QTextBlock::iterator fragit;
-        for (fragit = it.begin(); !(fragit.atEnd()); ++fragit) {
-            QTextFragment currentFragment = fragit.fragment();
-            if (currentFragment.isValid()) {
-                QTextCharFormat charFormat= currentFragment.charFormat();
-                if (charFormat.isImageFormat()) {
-                    //qDebug() << "char format image name" <<charFormat.toImageFormat().name()<< "size: "<<charFormat.toImageFormat().width()<<" x "<< charFormat.toImageFormat().height();
-                    if (charFormat.toImageFormat().name()==imageUrl) {
-                        //TODO: Is this comparision really reliable?
-                        QSize tmpSize = QSize(charFormat.toImageFormat().width(),charFormat.toImageFormat().height());
-                        if (!size.isValid()) {
-                            size =tmpSize;
-                        } else {
-                            qDebug() << "Same image referenced multiple times. Current image size "<< tmpSize << " maximum size up to now "<<size;
-                            size = size.expandedTo(tmpSize);
-                        }
-                        qDebug() << " size of to be loaded image: "<<size;
-                    }
-
-                }
-            }
-        }
-    }
-    return size;
-}
-
-
-
 
 void WikiOnBoard::articleListOpenArticle(QListWidgetItem * item)
         {
@@ -426,81 +369,6 @@ void WikiOnBoard::articleListOpenArticle()
     }
 }
 
-void WikiOnBoard::openArticleByUrl(QUrl url)
-{
-    QString path = url.path();
-    QString encodedPath = QString::fromUtf8(url.encodedPath().data(),url.encodedPath().length());
-
-    qDebug() << "openArticleByUrl: " <<url.toString()<<"\nurl.path():"<<path << "\nurl.encodedPath():"<< encodedPath;
-
-    if (url==welcomeUrl) {
-        qDebug()  << "Url is welcome URL. Set article text to welcome text";
-        QString zimDownloadUrl = QString(tr("https://github.com/cip/WikiOnBoard/wiki/Get-eBooks","Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE"));
-        QString getEBookLinkCaption = QString(tr("Download zimfile", "link"));
-        QString zimDownloadUrlHtml = QString(tr("<a href=\"%1\">%2</a>", "DON'T translate this").arg(zimDownloadUrl,getEBookLinkCaption));
-
-        QString informativeText = QString(tr("[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Menu option %2 in option menu %4 opens zimfile on mobile", "Text is interpreted as HTML. Html for body and link (%1) automatically added. Other Html tags can be used if desired")).arg(zimDownloadUrlHtml,openZimFileDialogAction->text(),zimDownloadUrl, positiveSoftKeyActionMenuArticlePage->text());
-        articleViewer->setHtml(informativeText);
-
-    } else if (zimFileWrapper->isValid()) {
-
-        //Only read article, if not same as currently
-	//viewed article (thus don´t reload for article internal links)
-	//TODO: this does not work as appearantly before calling changedSource
-	// content is deleted. Therefore for now just reload in any case url.
-	// Optimize (by handling in anchorClicked, but check what happens
-	//	to history then)
-	//if (!path.isEmpty() && (currentlyViewedUrl.path()!=url.path())) {	
-	
-        QString articleTitle = zimFileWrapper->getArticleTitleByUrl(encodedPath);
-	qDebug() << "Set index search field to title of article: "<< articleTitle;   	
-	ui.articleName->setText(articleTitle);
-	
-        QTime timer;
-        timer.start();
-        QString articleText = zimFileWrapper->getArticleTextByUrl(encodedPath);
-        qDebug() << "Reading article " <<path <<" from zim file took" << timer.restart() << " milliseconds";
-        articleViewer->setHtml(articleText);
-        qDebug() << "Loading article into textview (setHtml()) took" << timer.restart() << " milliseconds";
-	if (url.hasFragment())
-        {
-            //Either a link within current file (if path was empty), or to   newly opened file
-            QString fragment = url.fragment();
-            articleViewer->scrollToAnchor(fragment);
-            //Now text visible, but cursor not moved.
-            //=> Move cursor to current visisble location.
-            // TODO: no better way to achieve this. Furthermore, actually
-            //	cursor reason for problem or something else?)
-            moveTextBrowserTextCursorToVisibleArea();
-        }
-	else
-        {
-            QTextCursor cursor = articleViewer->textCursor();
-
-            //Move cursor to start of file
-            cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-            articleViewer->setTextCursor(cursor);
-            if (hasTouchScreen == false)
-            {
-                //FIXME: This is a really ugly hack for the nextprevious link problem
-                // described in keyEventHandler. Note that for links with anchor this
-                // does not work
-                // On touchscreen devices workaround is not performed.
-                QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-                                                            Qt::Key_Up, Qt::NoModifier, QString(), false, 1);
-                QApplication::sendEvent(articleViewer, remappedKeyEvent);
-                remappedKeyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
-                                                 Qt::NoModifier, QString(), false, 1);
-                QApplication::sendEvent(articleViewer, remappedKeyEvent);
-
-            }
-        }
-	/// ui.stackedWidget->setCurrentWidget(ui.articlePage);
-        qDebug() << "Loading article into textview (gotoAnchor/moveposition) took" << timer.restart() << " milliseconds";
-    } else {
-        qWarning() << "openArticleByUrl called with non welcome page url while no zim file open. Should not happen";
-    }
-}
 
 bool WikiOnBoard::openExternalLink(QUrl url)
 	{
@@ -552,33 +420,6 @@ bool WikiOnBoard::openExternalLink(QUrl url)
 
 	//External link, open browser
 	QDesktopServices::openUrl(url);
-	}
-
-//FIXME move to articleviewer. (Signal externlink, else load internally (+signal?))
-void WikiOnBoard::on_articleViewer_anchorClicked(QUrl url)
-	{
-	qDebug() << "on_textBrowser_anchorClicked: Url: " << url.toString();
-        qDebug() << " Check  url.scheme(). " <<url.scheme();
-        if ((QString::compare(url.scheme(), QLatin1String("http"), Qt::CaseInsensitive)==0)||
-                (QString::compare(url.scheme(), QLatin1String("https"), Qt::CaseInsensitive)==0))
-		{
-                    qDebug() << "url scheme is http or https => open in browser";
-                    openExternalLink(url);
-		}
-	else
-                {
-                        qDebug() << "Url is not an external website => search in zim file";
-                        articleViewer->setSource(url);
-		}
-	}
-
-//FIXME move to articleviewer
-void WikiOnBoard::on_articleViewer_sourceChanged(QUrl url)
-	{
-	showWaitCursor();
-	openArticleByUrl(url);
-	hideWaitCursor();
-	currentlyViewedUrl = url;
 	}
 
 void WikiOnBoard::backArticleHistoryOrIndexPage()
@@ -829,7 +670,7 @@ void WikiOnBoard::switchToArticlePage()
 void WikiOnBoard::switchToWelcomePage()
 {
     articleViewer->clear();
-    switchToArticlePage();
+    switchToArticlePage();    
     articleViewer->setSource(welcomeUrl);
 }
 
@@ -858,15 +699,7 @@ void WikiOnBoard::searchArticle()
         indexList->populateArticleList(ui.articleName->text());
 	}
 
-//FIXME move
-void WikiOnBoard::moveTextBrowserTextCursorToVisibleArea()
-	{
-        int position = articleViewer->cursorForPosition(QPoint(0, 0)).position();
-        QTextCursor cursor = articleViewer->textCursor();
-	cursor.setPosition(position, QTextCursor::MoveAnchor);
-        articleViewer->setTextCursor(cursor);
-	}
-
+//FIXME move to appropriate components.
 void WikiOnBoard::keyPressEvent(QKeyEvent* event)
 	{
 	QEvent *remappedKeyEvent;
@@ -1031,33 +864,6 @@ void WikiOnBoard::toggleFullScreen()
 	settings.endGroup();
 	}
 
-
-void WikiOnBoard::showWaitCursor()
-	{
-        //If mouse cursor in edge of screen (which is the case for non-touch
-        // smartphones often, move it to the middle of main widget)
-        if ((QCursor::pos().x() == 0) && (QCursor::pos().y()==0)) {
-		QCursor::setPos(this->mapToGlobal(QPoint(this->width()/2,this->height()/2)));
-	}
-	//Force cursor visible on all platforms
-        #if defined(Q_OS_SYMBIAN)
-            QApplication::setNavigationMode(Qt::NavigationModeCursorForceVisible);
-        #endif
-        //On Symbian^3 waitcursor not working for some reason.
-        QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-        // processEvent leads clears article page while loading.
-        // (At least some user feedback on S^3 that something is going on...)
-        qApp->processEvents();
-}
-
-void WikiOnBoard::hideWaitCursor()
-	{	
-	QApplication::restoreOverrideCursor();
-        #if defined(Q_OS_SYMBIAN)
-            QApplication::setNavigationMode(Qt::NavigationModeNone);
-        #endif
-}
-
 //http://www.developer.nokia.com/Community/Wiki/Implementing_a_split_screen_for_software_keyboard
 // Qt slot that sets the approriate flag to the text editor.
 void WikiOnBoard::enableSplitScreen()
@@ -1077,4 +883,9 @@ void WikiOnBoard::enableSplitScreen()
     }
     #endif
 #endif
+}
+
+void WikiOnBoard::onArticleOpened(QString articleTitle) {
+    qDebug() << "Set index search field to title of article: "<< articleTitle;
+    ui.articleName->setText(articleTitle);
 }

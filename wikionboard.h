@@ -34,9 +34,10 @@ class WikiOnBoard : public QMainWindow
 {
     Q_OBJECT
 public:
-        WikiOnBoard(void* bgc, QWidget *parent = 0);
-        ~WikiOnBoard();
-        QSize getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl);
+    WikiOnBoard(void* bgc, QWidget *parent = 0);
+    ~WikiOnBoard();
+    QSize getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl);
+
 
 protected:
     void keyPressEvent(QKeyEvent *event);    
@@ -57,7 +58,7 @@ private:
     QAction* zoomOutAction;
     QAction* searchArticleAction;
     QAction* clearSearchAction;
-        
+
     QAction* openArticleAction;
     QAction* switchToIndexPageAction;
     QAction* backArticleHistoryAction;
@@ -80,44 +81,36 @@ private:
     QString fromUTF8EncodedStdString(std::string s) {
     	return QString::fromUtf8(s.data(), int(s.size())); 
     }
-    QUrl currentlyViewedUrl;
-    void openArticleByUrl(QUrl url);
     QString articleListItemToString(QListWidgetItem *);
 
     std::pair <bool, QListWidgetItem*> getArticleListItem(zim::File::const_iterator it);
 
-    
-    void moveTextBrowserTextCursorToVisibleArea();
     void showWaitCursor();
     void hideWaitCursor();
-    bool openExternalLink(QUrl url);
     QString byteArray2HexQString(const QByteArray &byteArray);
 private slots:
-	 void switchToArticlePage();
-	 void switchToIndexPage();
-         void switchToWelcomePage();
-	 void searchArticle();
-     
-    //void on_textBrowser_anchorClicked(QUrl url);  
-     void backArticleHistoryOrIndexPage();
-          
-     void on_articleViewer_anchorClicked(QUrl url);
-     void on_articleViewer_sourceChanged(QUrl url);
-     
+    void switchToArticlePage();
+    void switchToIndexPage();
+    void switchToWelcomePage();
+    void searchArticle();
+    //FIXME void on_articleViewer_sourceChanged(QUrl url);
+    void onArticleOpened(QString articleTitle);
 
-     
-     void openZimFileDialog();
-     void gotoHomepage();
-     void aboutCurrentZimFile();
-     void about();
-     
-     void articleListOpenArticle();
-     void articleListOpenArticle(QListWidgetItem * item );
+    void backArticleHistoryOrIndexPage();
 
-     //void on_articleListWidget_itemClicked ( QListWidgetItem * item ); 	  
-     void toggleFullScreen();
-     void enableSplitScreen(); //Enable Split-screen virtual keyboard for symbian.
-     void workAreaResized(int screen);
+    void openZimFileDialog();
+    void gotoHomepage();
+    void aboutCurrentZimFile();
+    void about();
+
+    void articleListOpenArticle();
+    void articleListOpenArticle(QListWidgetItem * item );
+
+    void toggleFullScreen();
+    void enableSplitScreen(); //Enable Split-screen virtual keyboard for symbian.
+    void workAreaResized(int screen);
+    bool openExternalLink(QUrl url);
+
 };
 
 #endif // WIKIONBOARD_H
