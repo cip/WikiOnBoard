@@ -22,55 +22,36 @@
 #include <QSettings>
 #include <QPushButton>
 #include <QDesktopServices>
-#include <QtGui/QTextBrowser>
 #include "ui_wikionboard.h"
 
 #include <zim/zim.h>
 #include <zim/fileiterator.h>
+#include "zimfilewrapper.h"
+#include "articleviewer.h"
+#include "indexlist.h"
 
 #include <QtDeclarative/QDeclarativeExtensionPlugin>
 #include <QtDeclarative/qdeclarative.h>
 #include <QtGui/QGraphicsProxyWidget>
 
-enum ArticleListItemDataRole {
-	ArticleUrlRole=Qt::UserRole,
-	ArticleIndexRole,
-	ArticleTitleRole
-};
-
-
-class WikiOnBoard;
-class ArticleViewer : public QTextBrowser
-{
-    Q_OBJECT
-public:
-    ArticleViewer(QWidget* parent = 0, WikiOnBoard* wikiOnBoard = 0); //TODO: move zim functionality from wikionboard to article viewer
-  //  ~ArticleViewer() {//TODO};
-    QVariant loadResource ( int type, const QUrl & name );
-private:
-    WikiOnBoard* wikiOnBoard;
-    bool showImages;
-public slots:
-    void toggleImageDisplay(bool checked);
-
-};
-
 class WikiOnBoard : public QMainWindow
 {
     Q_OBJECT
-
 public:
-        WikiOnBoard(QWidget *parent = 0);
-        ~WikiOnBoard();                        
-        QPixmap getImageByUrl(QString imageUrl);
-        QSize getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl);
-        ArticleViewer* articleViewer;
+    WikiOnBoard(void* bgc, QWidget *parent = 0);
+    ~WikiOnBoard();
+    QSize getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl);
+
 
 protected:
     void keyPressEvent(QKeyEvent *event);    
-    void resizeEvent ( QResizeEvent * event );  
+    bool openZimFile(QString zimfilename);
 private:     
+    ZimFileWrapper* zimFileWrapper;
     Ui::WikiOnBoard ui;
+    ArticleViewer* articleViewer;
+    IndexList* indexList;
+    void* m_bgc;
     QAction* positiveSoftKeyActionMenuIndexPage;
     QAction* positiveSoftKeyActionMenuArticlePage;
     QAction* positiveSoftKeyActionMenuArticlePageNoFileOpen;
@@ -81,7 +62,7 @@ private:
     QAction* zoomOutAction;
     QAction* searchArticleAction;
     QAction* clearSearchAction;
-        
+
     QAction* openArticleAction;
     QAction* switchToIndexPageAction;
     QAction* backArticleHistoryAction;
@@ -98,81 +79,42 @@ private:
     QAction* aboutAction;
     QAction* aboutQtAction;    
 
-    zim::File* zimFile;
-    int zoomLevel;
     bool hasTouchScreen;
     bool fullScreen;
-    const QUrl welcomeUrl;
     QString fromUTF8EncodedStdString(std::string s) {
     	return QString::fromUtf8(s.data(), int(s.size())); 
     }
-    zim::File::const_iterator getArticleByUrl(QString articleUrl,QChar nameSpace='A', bool closestMatchIfNotFound=true);
-    QString getArticleTitleByUrl(QString articleUrl);           
-    QString getArticleTextByUrl(QString articleUrl);   
-    QString getArticleTextByTitle(QString articleTitle);
-    std::pair<bool, QString> getMetaData(QString key);
-    QString getMetaDataString(QString key);
-    QString byteArray2HexQString(const QByteArray & byteArray);
-    QUrl currentlyViewedUrl;    
-    void openArticleByUrl(QUrl url);
     QString articleListItemToString(QListWidgetItem *);
 
     std::pair <bool, QListWidgetItem*> getArticleListItem(zim::File::const_iterator it);
-    void populateArticleList(); 
-    void populateArticleList(QString articleName, int ignoreFirstN, bool direction_up, bool noDelete=false);
-    void articleListSelectPreviousEntry();
-    void articleListSelectNextEntry();
-        
-    
-    bool openZimFile(QString zimFileName);
-    void moveTextBrowserTextCursorToVisibleArea();
+
     void showWaitCursor();
     void hideWaitCursor();
-    bool openExternalLink(QUrl url);
+    QString byteArray2HexQString(const QByteArray &byteArray);
 private slots:
-	 void switchToArticlePage();
-	 void switchToIndexPage();
-         void switchToWelcomePage();
-	 void searchArticle();
-     
-    //void on_textBrowser_anchorClicked(QUrl url);  
-     void backArticleHistoryOrIndexPage();
-          
-     void on_articleViewer_anchorClicked(QUrl url);
-     void on_articleViewer_sourceChanged(QUrl url);
-     
+    void switchToArticlePage();
+    void switchToIndexPage();
+    void switchToWelcomePage();
+    void searchArticle();
+    //FIXME void on_articleViewer_sourceChanged(QUrl url);
+    void onArticleOpened(QString articleTitle);
 
-     
-     void openZimFileDialog();
-     void gotoHomepage();
-     void aboutCurrentZimFile();
-     void about();
-     
-     void articleListOpenArticle(); 	  
-     void articleListOpenArticle(QListWidgetItem * item ); 	  
-          
-     //void on_articleListWidget_itemClicked ( QListWidgetItem * item ); 	  
-     void toggleFullScreen();
-     void zoom(int zoomDelta);
-     void zoomOut();
-     void zoomIn();
-     int addItemsToArticleList(bool up, int addCount=100, int maxCount=120);
-     void enableSplitScreen(); //Enable Split-screen virtual keyboard for symbian.
-     void workAreaResized(int screen);
+    void backArticleHistoryOrIndexPage();
+
+    void openZimFileDialog();
+    void gotoHomepage();
+    void aboutCurrentZimFile();
+    void about();
+
+    void articleListOpenArticle();
+    void articleListOpenArticle(QListWidgetItem * item );
+
+    void toggleFullScreen();
+    void enableSplitScreen(); //Enable Split-screen virtual keyboard for symbian.
+    void workAreaResized(int screen);
+    bool openExternalLink(QUrl url);
+
 };
-
-class ArticleListFilter : public QObject {
-	Q_OBJECT
-public:
-	ArticleListFilter() {};
-
-protected:
-	
-    bool eventFilter(QObject *o, QEvent *e);
-signals: 
-	bool approachingEndOfList(bool up);
-};
-
 
 class ArticleViewerQML : public QGraphicsProxyWidget
 {
@@ -216,6 +158,54 @@ private:
    // WikiOnBoard *wikionboard;
    // QPushButton *widget;
     ArticleViewer *widget;
+
+};
+
+
+class 	IndexListQML : public QGraphicsProxyWidget
+{
+    Q_OBJECT
+  //  Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
+
+public:
+    IndexListQML(QGraphicsItem* parent = 0)
+        : QGraphicsProxyWidget(parent)
+    {
+
+        //widget = new WikiOnBoard(); //TODO parent?
+       // widget = new QPushButton(QLatin1String("MyPushButton"));
+        //wikionboard = new WikiOnBoard();
+        //widget = wikionboard->articleViewer;
+        ZimFileWrapper* zimFileWrapper = new ZimFileWrapper(0);
+        zimFileWrapper->openZimFile(QLatin1String("C:\\Users\\Christian\\Downloads\\wikipedia_en_wp1_0.8_45000+_12_2010.zimaa"));
+        widget = new IndexList(0,zimFileWrapper);
+        widget->setAttribute(Qt::WA_NoSystemBackground);
+        setWidget(widget);
+
+        QObject::connect(widget, SIGNAL(clicked(bool)), this, SIGNAL(clicked(bool)));
+    }
+
+    /*QString text() const
+    {
+        return widget->text();
+    }
+
+    void setText(const QString& text)
+    {
+        if (text != widget->text()) {
+            widget->setText(text);
+            emit textChanged();
+        }
+    }*/
+/*
+Q_SIGNALS:
+    void clicked(bool);
+    void textChanged();
+*/
+private:
+   // WikiOnBoard *wikionboard;
+   // QPushButton *widget;
+    IndexList *widget;
 
 };
 
