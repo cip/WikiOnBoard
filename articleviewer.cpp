@@ -110,6 +110,11 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
                timer.start();
                QSize newSize = getMaximumDisplaySizeInCurrentArticleForImage(encodedPath);
                qDebug() << " Searching image size took " << timer.elapsed() << " milliseconds";
+               //getImageByUrl returns null pixmap if image not found in zim file
+               // QTextBrowser in this case tries loading from other sources, relevant
+               // is in particular that it does load then images embedded in HTML.
+               // Note that if no image is loaded scrolling can be very jerky. However,
+               // this is a problem in the zim file anyway (missing resource)
                return zimFileWrapper->getImageByUrl(encodedPath,newSize);
            } else {
               qDebug() << "loadResource: type is ImageResource but showImages=0. Returns 1x1 pixel image. ";

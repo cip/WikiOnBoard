@@ -195,9 +195,7 @@ QPixmap ZimFileWrapper::getImageByUrl(QString imageUrl, QSize newSize)
     }
     catch (const std::exception& e)
     {
-        qDebug() << "Error in load image. Return 1x1 pixel image instead";
-        image = QPixmap(1,1);
-        image.fill();
+        qDebug() << "Error in load image. Return null pixmap. ";
         return image;
     }
     qDebug() << " Image (URL: "<< imageUrl << ", Size: "<<blob.size()<<") loaded from zim file";
