@@ -68,8 +68,7 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
     }
  }
 
-//
- QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl) {
+QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl) {
     QSize size;
     for (QTextBlock it = document()->begin(); it != document()->end(); it = it.next()) {
         //          qDebug() << it.text();
@@ -83,21 +82,24 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
                     if (charFormat.toImageFormat().name()==imageUrl) {
                         //TODO: Is this comparision really reliable?
                         QSize tmpSize = QSize(charFormat.toImageFormat().width(),charFormat.toImageFormat().height());
-                        if (!size.isValid()) {
-                            size =tmpSize;
+                        if (tmpSize.width()!=0 && tmpSize.height()!=0) {
+                            if (!size.isValid()) {
+                                size =tmpSize;
+                            } else {
+                                qDebug() << "Same image referenced multiple times. Current image size "<< tmpSize << " maximum size up to now "<<size;
+                                size = size.expandedTo(tmpSize);
+                            }
+                          qDebug() << " size of to be loaded image: "<<size;
                         } else {
-                            qDebug() << "Same image referenced multiple times. Current image size "<< tmpSize << " maximum size up to now "<<size;
-                            size = size.expandedTo(tmpSize);
+                            qDebug() << " image size (height or width) is 0. As this also occurs if no size defined in HTML don't use this size to prevent resize to 0.";
                         }
-                        qDebug() << " size of to be loaded image: "<<size;
                     }
-
                 }
             }
         }
     }
     return size;
- }
+}
 
  QVariant ArticleViewer::loadResource ( int type, const QUrl & name ) {
        if (type==QTextDocument::ImageResource) {

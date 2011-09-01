@@ -213,6 +213,10 @@ QPixmap ZimFileWrapper::getImageByUrl(QString imageUrl, QSize newSize)
         if ((newSize.height()==0)||(newSize.width()==0)) {
             image = QPixmap(1,1);
             image.fill();
+            //Note that this branch currently is never triggered,
+            // because ArticleViewer::getMaximumDisplaySizeInCurrentArticleViewer
+            //  returns invalid size if height or width is 0. (This is because it cannot
+            // distinguish between 0 size definition and missing size tag)
             qDebug() << "Size defined in HTML was 0. ("<<newSize << ". Return 1x1 pixel size instead to avoid repeated reload attempts";
         } else {
             if (imageReader->supportsOption(QImageIOHandler::ScaledSize)) {
