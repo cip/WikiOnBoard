@@ -124,9 +124,10 @@ IndexList::IndexList(QWidget *parent, ZimFileWrapper* zimFileWrapper, bool hasTo
 
     // ScrollPerPixel required for kinetic scrolling
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-
-    //QtScroller::grabGesture(viewport(), QtScroller::LeftMouseButtonGesture);
-
+    #ifndef Q_WS_SIMULATOR
+        //Crashes on simulator.
+        QtScroller::grabGesture(viewport(), QtScroller::LeftMouseButtonGesture);
+    #endif
     ArticleListFilter *articleListFilter = new ArticleListFilter(this);
     viewport()->installEventFilter(articleListFilter);
     connect(articleListFilter,SIGNAL(approachingEndOfList(bool)),this, SLOT(addItemsToArticleList(bool)));

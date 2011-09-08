@@ -177,11 +177,15 @@ public:
         //wikionboard = new WikiOnBoard();
         //widget = wikionboard->articleViewer;
         ZimFileWrapper* zimFileWrapper = new ZimFileWrapper(0);
+        #if defined(Q_OS_SYMBIAN)
+        zimFileWrapper->openZimFile(QLatin1String("e:\\wikipedia-de.zim"));
+        #else
         zimFileWrapper->openZimFile(QLatin1String("C:\\Users\\Christian\\Downloads\\wikipedia_en_wp1_0.8_45000+_12_2010.zimaa"));
+        #endif
         widget = new IndexList(0,zimFileWrapper);
         widget->setAttribute(Qt::WA_NoSystemBackground);
         setWidget(widget);
-
+        widget->populateArticleList(QLatin1String(""),0,false); //TODO move to qml
         QObject::connect(widget, SIGNAL(clicked(bool)), this, SIGNAL(clicked(bool)));
     }
 
@@ -197,10 +201,10 @@ public:
             emit textChanged();
         }
     }*/
-/*
+
 Q_SIGNALS:
     void clicked(bool);
-    void textChanged();
+/*    void textChanged();
 */
 private:
    // WikiOnBoard *wikionboard;

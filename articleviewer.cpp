@@ -55,7 +55,10 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
     zoom(zoomInit);
     //  LeftMouseButtonGesture used, as use of TouchGesture together
     // with mouse click events (like link clicked) problematic.
-    //FIXME QtScroller::grabGesture(viewport(), QtScroller::LeftMouseButtonGesture);
+    #ifndef Q_WS_SIMULATOR
+        //Crashes on simulator.
+        QtScroller::grabGesture(viewport(), QtScroller::LeftMouseButtonGesture);
+    #endif
     if (connect(this,SIGNAL(sourceChanged(QUrl)),this, SLOT(onSourceChanged(QUrl)))) {
         qDebug() << "Connected sourceChanged";
     } else {
@@ -68,8 +71,7 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
     }
  }
 
-//
- QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl) {
+QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl) {
     QSize size;
     for (QTextBlock it = document()->begin(); it != document()->end(); it = it.next()) {
         //          qDebug() << it.text();
@@ -83,21 +85,24 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
                     if (charFormat.toImageFormat().name()==imageUrl) {
                         //TODO: Is this comparision really reliable?
                         QSize tmpSize = QSize(charFormat.toImageFormat().width(),charFormat.toImageFormat().height());
-                        if (!size.isValid()) {
-                            size =tmpSize;
+                        if (tmpSize.width()!=0 && tmpSize.height()!=0) {
+                            if (!size.isValid()) {
+                                size =tmpSize;
+                            } else {
+                                qDebug() << "Same image referenced multiple times. Current image size "<< tmpSize << " maximum size up to now "<<size;
+                                size = size.expandedTo(tmpSize);
+                            }
+                          qDebug() << " size of to be loaded image: "<<size;
                         } else {
-                            qDebug() << "Same image referenced multiple times. Current image size "<< tmpSize << " maximum size up to now "<<size;
-                            size = size.expandedTo(tmpSize);
+                            qDebug() << " image size (height or width) is 0. As this also occurs if no size defined in HTML don't use this size to prevent resize to 0.";
                         }
-                        qDebug() << " size of to be loaded image: "<<size;
                     }
-
                 }
             }
         }
     }
     return size;
- }
+}
 
  QVariant ArticleViewer::loadResource ( int type, const QUrl & name ) {
        if (type==QTextDocument::ImageResource) {
@@ -108,6 +113,11 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
                timer.start();
                QSize newSize = getMaximumDisplaySizeInCurrentArticleForImage(encodedPath);
                qDebug() << " Searching image size took " << timer.elapsed() << " milliseconds";
+               //getImageByUrl returns null pixmap if image not found in zim file
+               // QTextBrowser in this case tries loading from other sources, relevant
+               // is in particular that it does load then images embedded in HTML.
+               // Note that if no image is loaded scrolling can be very jerky. However,
+               // this is a problem in the zim file anyway (missing resource)
                return zimFileWrapper->getImageByUrl(encodedPath,newSize);
            } else {
               qDebug() << "loadResource: type is ImageResource but showImages=0. Returns 1x1 pixel image. ";

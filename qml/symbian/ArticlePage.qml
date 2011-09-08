@@ -28,6 +28,7 @@ WikionboardPage {
      }
 */
      ArticleViewerQML {
+
      }
      /*
      Flickable {
