@@ -471,7 +471,7 @@ void WikiOnBoard::openZimFileDialog()
     // of first file)
     QString file = QFileDialog::getOpenFileName(this,
                                                 tr("Choose eBook in zim format to open"), path,
-                                                tr("eBooks (*.zim *.zimaa)"));
+                                                tr("eBooks (*.zim *.zimaa)"),0,QFileDialog::DontUseNativeDialog);
 #if defined(Q_OS_SYMBIAN)
     QApplication::setNavigationMode(Qt::NavigationModeNone);
 #endif
