@@ -354,14 +354,19 @@ Articles : %2, Images: %3, Categories: %4
 <context>
     <name>ZimFileWrapper</name>
     <message>
-        <location filename="zimfilewrapper.cpp" line="123"/>
-        <source>Error: article not found. (URL: %1 )</source>
-        <translation type="unfinished"></translation>
+        <location filename="zimfilewrapper.cpp" line="69"/>
+        <source>[TRANSLATOR] Explain that file %1 too large for configuration, and that help say how to solve </source>
+        <translation>Sorry, this eBook cannot be opened on your mobile phone, because the file is too large. Please select &quot;Help&quot; to find out how to solve this.</translation>
     </message>
     <message>
-        <location filename="zimfilewrapper.cpp" line="367"/>
+        <location filename="zimfilewrapper.cpp" line="133"/>
+        <source>Error: article not found. (URL: %1 )</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="zimfilewrapper.cpp" line="379"/>
         <source>Not available</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 </TS>
