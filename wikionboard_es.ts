@@ -410,14 +410,19 @@ Fecha de compilacion: %3</translation>
 <context>
     <name>ZimFileWrapper</name>
     <message>
-        <location filename="zimfilewrapper.cpp" line="123"/>
-        <source>Error: article not found. (URL: %1 )</source>
-        <translation type="unfinished">Error: Artículo no encontrado (URL: %1)</translation>
+        <location filename="zimfilewrapper.cpp" line="69"/>
+        <source>[TRANSLATOR] Explain that file %1 too large for configuration, and that help say how to solve </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="zimfilewrapper.cpp" line="367"/>
+        <location filename="zimfilewrapper.cpp" line="133"/>
+        <source>Error: article not found. (URL: %1 )</source>
+        <translation>Error: Artículo no encontrado (URL: %1)</translation>
+    </message>
+    <message>
+        <location filename="zimfilewrapper.cpp" line="379"/>
         <source>Not available</source>
-        <translation type="unfinished">No disponible</translation>
+        <translation>No disponible</translation>
     </message>
 </context>
 </TS>

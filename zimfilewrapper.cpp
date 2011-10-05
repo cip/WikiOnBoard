@@ -61,6 +61,16 @@ bool ZimFileWrapper::openZimFile(QString zimFileName)
     catch (const std::exception& e)
     {
         errorStr = QString::fromStdString(e.what());
+        qDebug() << "Opening file "<<zimFileName<<" failed. error message: "<<errorStr;
+#if defined(Q_OS_SYMBIAN)
+        QFile f(zimFileName);
+        qDebug() << "Size of file: "<<f.size();
+        if (f.size()<0) {
+            errorStr = tr("[TRANSLATOR] Explain that file %1 too large for configuration, and that help say how to solve ").arg(zimFileName);
+        }
+
+#endif
+
         return false;
     }
 }
