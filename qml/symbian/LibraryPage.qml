@@ -104,14 +104,14 @@ WikionboardPage {
             anchors.topMargin: UI.MARGIN_DEFAULT
             anchors.horizontalCenter: parent.horizontalCenter
 
-            text:"Find eBook on Phone"
+            text: qsTr("Find eBook on Phone")
         }
         Button {
             id: downloadEBookButton
             anchors.top: addEBookButton.bottom
             anchors.topMargin: UI.MARGIN_DEFAULT
             anchors.horizontalCenter: parent.horizontalCenter
-            text:"Download eBook"
+            text: qsTr("Download eBook")
         }
     //}
     }
