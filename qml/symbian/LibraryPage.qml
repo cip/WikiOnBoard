@@ -50,7 +50,11 @@ WikionboardPage {
             subTitleText: "Alte deutsche wikipedia"
             fileName : "e:\\wikipedia-de.zim"
         }
-
+        ListElement {
+            titleText: "Wikipedia EN (N8)"
+            subTitleText: "English Wikipedia, 11.12.2009, 43455 Artikel"
+            fileName : "e:\\wikipedia_en_wp1_0.8_45000+_12_2010.zimaa"
+        }
 
     }
 
