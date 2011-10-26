@@ -10,14 +10,19 @@ WikionboardPage {
      id: index     
      signal openArticle(string articleUrl)
      Rectangle {
-           anchors { fill: parent; bottomMargin: 4*parent.height/5 }
-        TextInput {
+         anchors { fill: parent; bottomMargin: 6*parent.height/7 }
+         TextField {
             id: articleName
-            anchors {fill:parent;}
+            //TODO: for some reason halfoutside of screen if
+            // verticalCenter: parent.verticalCenter.
+            anchors.top: parent.verticalCenter
+            width: parent.width
+            onTextChanged: console.log("TODO:Update search: "+text)
          }
      }
+
      Rectangle {
-        anchors { fill: parent; topMargin: parent.height/5 }
+        anchors { fill: parent; topMargin: parent.height/7 }
         IndexListQML {
             anchors { fill: parent}
             onOpenArticle: {
