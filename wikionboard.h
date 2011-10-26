@@ -135,7 +135,7 @@ public:
         zimFileWrapper->openZimFile(QLatin1String("C:\\Users\\Christian\\Downloads\\wikipedia_en_wp1_0.8_45000+_12_2010.zimaa"));
         #endif
 
-        //widget = new WikiOnBoard(); //TODO parent?
+        //widget = new WikiOnBoard();  //TODO parent?
        // widget = new QPushButton(QLatin1String("MyPushButton"));
         //wikionboard = new WikiOnBoard();
         //widget = wikionboard->articleViewer;
@@ -238,20 +238,5 @@ private:
     IndexList *widget;
 
 };
-
-/*
-class QWidgetsPlugin : public QDeclarativeExtensionPlugin
- {
-     Q_OBJECT
- public:
-     void registerTypes(const char *uri)
-     {
-         qmlRegisterType<ArticleViewer>(uri, 1, 0, "ArticleViewer");
-     }
- };
-
- #include "qwidgets.moc"
-
- Q_EXPORT_PLUGIN2(qmlqwidgetsplugin, QWidgetsPlugin);*/
 
 #endif // WIKIONBOARD_H
