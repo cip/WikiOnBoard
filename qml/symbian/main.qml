@@ -66,7 +66,7 @@ Window {
             }
         }
         onOpenZimFile: {
-            console.log("Open zimfile");
+            console.log("Open zimfile:"+fileName);
             pageStack.push(indexPage);
         }
 

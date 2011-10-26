@@ -7,7 +7,7 @@ import "UIConstants.js" as UI
 
 WikionboardPage {
     id: library
-    signal openZimFile();
+    signal openZimFile(string fileName);
     property string photoAuthor
     property string photoDate
     property string photoDescription
@@ -32,11 +32,13 @@ WikionboardPage {
 
         ListElement {
             titleText: "Wikipedia DE"
-            subTitleText: "Deutsche Wikipedia, 10.08.2010, 13455 Artikel"
+            subTitleText: "Deutsche Wikipedia, 10.08.2010, 13455 Artikel"            
+            fileName : "C:\\Users\\Christian\\Downloads\\wikipedia_en_wp1_0.8_45000+_12_2010.zimaa"
         }
         ListElement {
             titleText: "Wikipedia EN"
             subTitleText: "English Wikipedia, 11.12.2009, 43455 Artikel"
+            fileName : "C:\\Users\\Christian\\Downloads\\wikipedia_en_wp1_0.8_45000+_12_2010.zimaa"
         }
     }
 
@@ -72,7 +74,7 @@ WikionboardPage {
                     text: subTitleText
                 }
             }
-            onClicked: library.openZimFile()
+            onClicked: library.openZimFile(fileName)
 
         }
     }
