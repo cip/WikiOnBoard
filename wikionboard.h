@@ -127,8 +127,7 @@ public:
         : QGraphicsProxyWidget(parent)
     {
         widget = new ArticleViewer(0,0);
-        widget->setAttribute(Qt::WA_NoSystemBackground);
-        setWidget(widget);        
+        setWidget(widget);
         QObject::connect(widget, SIGNAL(clicked(bool)), this, SIGNAL(clicked(bool)));
     }
 
