@@ -155,6 +155,16 @@ Q_SIGNALS:
     void clicked(bool);
     void textChanged();
 */
+public slots:
+    void openArticle(QString articleUrl) {
+        //TODO use url in qml?
+        QUrl url(articleUrl);
+        QUrl urlDecoded =url.toString();
+        QString urlEncoded = QString::fromUtf8(url.toEncoded().data(),url.toEncoded().length());
+        qDebug() << "ArticleViewerQML.openArticle: url (decoded): " <<urlDecoded<<"\nurl (encoded):"<<urlEncoded ;
+        widget->setSource(url);
+    }
+
 private:
    // WikiOnBoard *wikionboard;
    // QPushButton *widget;

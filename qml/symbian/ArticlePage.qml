@@ -28,7 +28,13 @@ WikionboardPage {
      }
 */
      ArticleViewerQML {
+        id: articleViewer
 
+     }
+
+     function openArticle(articleUrl) {
+         console.log("in ArticlePage openArticle. Url:"+articleUrl)
+         articleViewer.openArticle(articleUrl)
      }
      /*
      Flickable {

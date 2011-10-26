@@ -15,14 +15,14 @@ WikionboardPage {
             id: articleName
             anchors {fill:parent;}
          }
-         }
+     }
      Rectangle {
         anchors { fill: parent; topMargin: parent.height/5 }
-     IndexListQML {
-         onOpenArticle: {
-             index.openArticle(articleUrl);
-
-         }
-     }
+        IndexListQML {
+            anchors { fill: parent}
+            onOpenArticle: {
+                 index.openArticle(articleUrl);
+             }
+        }
      }
  }

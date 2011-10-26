@@ -99,6 +99,7 @@ Window {
 
         onOpenArticle: {
             console.log("Item clicked in index list"+articleUrl+ "Open in articlePage")
+            articlePage.openArticle(articleUrl)
             pageStack.push(articlePage);
         }
 
@@ -122,6 +123,8 @@ Window {
                 onClicked: pageStack.replace(largeImagePage);
             }
         }
+
+
     }
 /*
     Splash {
