@@ -29,7 +29,7 @@ WikionboardPage {
 */
      ArticleViewerQML {
         id: articleViewer
-
+        anchors.fill: parent
      }
 
      function openArticle(articleUrl) {
