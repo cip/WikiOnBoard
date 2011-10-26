@@ -228,3 +228,9 @@ unix:!symbian {
 }
 message(QT Variable: $$QT)
 message(Libs Variable: $$LIBS)
+symbian {
+    # Copied from QTCREATORBUG-5589
+    # Required for S^3 SDK, else linking fails
+    LIBS += -lusrt2_2.lib
+}
+
