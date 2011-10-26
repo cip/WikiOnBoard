@@ -206,6 +206,12 @@ public:
 Q_SIGNALS:
       void openArticle(const QString articleUrl);
 
+public slots:
+    void searchArticle(QString articleTitle) {
+        qDebug() << "IndexListQML.searchArticle: articleTitle: " <<articleTitle;
+        widget-> populateArticleList(articleTitle);
+    }
+
 private slots:
       void itemClicked(QListWidgetItem* item) {
           QString url;

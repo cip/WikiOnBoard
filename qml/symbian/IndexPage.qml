@@ -17,13 +17,17 @@ WikionboardPage {
             // verticalCenter: parent.verticalCenter.
             anchors.top: parent.verticalCenter
             width: parent.width
-            onTextChanged: console.log("TODO:Update search: "+text)
+            onTextChanged: {
+                console.log("TODO:Update search: "+text)
+                indexListQML.searchArticle(text)
+            }
          }
      }
 
      Rectangle {
         anchors { fill: parent; topMargin: parent.height/7 }
         IndexListQML {
+            id: indexListQML
             anchors { fill: parent}
             onOpenArticle: {
                  index.openArticle(articleUrl);
