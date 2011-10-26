@@ -164,7 +164,7 @@ Q_SIGNALS:
     void clicked(bool);
     void textChanged();
 */
-public slots:
+public slots:    
     void openArticle(QString articleUrl) {
         //TODO use url in qml?
         QUrl url(articleUrl);
@@ -192,20 +192,9 @@ public:
         : QGraphicsProxyWidget(parent)
     {
 
-        //widget = new WikiOnBoard(); //TODO parent?
-       // widget = new QPushButton(QLatin1String("MyPushButton"));
-        //wikionboard = new WikiOnBoard();
-        //widget = wikionboard->articleViewer;
-        ZimFileWrapper* zimFileWrapper = new ZimFileWrapper(0);
-        #if defined(Q_OS_SYMBIAN)
-        zimFileWrapper->openZimFile(QLatin1String("e:\\wikipedia-de.zim"));
-        #else
-        zimFileWrapper->openZimFile(QLatin1String("C:\\Users\\Christian\\Downloads\\wikipedia_en_wp1_0.8_45000+_12_2010.zimaa"));
-        #endif
-        widget = new IndexList(0,zimFileWrapper);
+        widget = new IndexList(0, 0);
         widget->setAttribute(Qt::WA_NoSystemBackground);
         setWidget(widget);
-        widget->populateArticleList(QLatin1String(""),0,false); //TODO move to qml
         QObject::connect(widget, SIGNAL(itemClicked(QListWidgetItem*)), this,
                         SLOT(itemClicked(QListWidgetItem *)));
 
@@ -216,6 +205,10 @@ Q_SIGNALS:
       void openArticle(const QString articleUrl);
 
 public slots:
+    void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {
+        widget->setZimFileWrapper(zimFileWrapper);
+    }
+
     void searchArticle(QString articleTitle) {
         qDebug() << "IndexListQML.searchArticle: articleTitle: " <<articleTitle;
         widget-> populateArticleList(articleTitle);

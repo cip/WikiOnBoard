@@ -19,6 +19,10 @@ class IndexList : public QListWidget
     Q_OBJECT
 public:
     explicit IndexList(QWidget *parent = 0, ZimFileWrapper* zimFileWrapper = 0, bool hasTouchScreen = true);
+    void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {
+        this->zimFileWrapper = zimFileWrapper;
+    }
+
     std::pair<bool, QListWidgetItem *> getArticleListItem(zim::File::const_iterator it);
     void populateArticleList(QString articleName);
     void populateArticleList(QString articleName, int ignoreFirstN, bool direction_up, bool noDelete=false);
@@ -27,6 +31,7 @@ public:
     QString articleListItemToString(QListWidgetItem *item);
     QUrl currentItemUrl();
     void resizeEvent ( QResizeEvent * event );
+
 public slots:
     int addItemsToArticleList(bool up, int addCount=100, int maxCount=120);
 private:

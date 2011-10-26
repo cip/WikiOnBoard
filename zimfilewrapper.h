@@ -39,7 +39,7 @@ public:
     ~ZimFileWrapper();
     bool isValid() {return valid;}
     QString errorString() {return errorStr;}
-    bool openZimFile(QString zimFileName);
+Q_INVOKABLE bool openZimFile(QString zimFileName);
     zim::File::const_iterator getArticleByUrl(QString articleUrl,QChar nameSpace='A', bool closestMatchIfNotFound=true);
 
     QString getArticleTextByTitle(QString articleTitle);

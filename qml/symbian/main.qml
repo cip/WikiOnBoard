@@ -67,6 +67,7 @@ Window {
         }
         onOpenZimFile: {
             console.log("Open zimfile:"+fileName);
+            backend.openZimFile(fileName);
             pageStack.push(indexPage);
         }
 
@@ -126,6 +127,11 @@ Window {
 
 
     }
+
+    Backend {
+        id: backend
+    }
+
 /*
     Splash {
         id: splash

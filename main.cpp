@@ -24,8 +24,10 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     //TODO use QDeclarativeExtensionPlugin instead? (probably not very useful, because QMLViewer anyway
     //does not display Symbian QML components
+    qmlRegisterType<ZimFileWrapper>("WikiOnBoardModule", 1, 0, "ZimFileWrapper");
     qmlRegisterType<ArticleViewerQML>("WikiOnBoardModule", 1, 0, "ArticleViewerQML");
     qmlRegisterType<IndexListQML>("WikiOnBoardModule", 1, 0, "IndexListQML");
+
     QmlApplicationViewer viewer;
     viewer.setMainQmlFile(QLatin1String("qml/symbian/main.qml"));
     viewer.showExpanded();

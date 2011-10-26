@@ -20,7 +20,14 @@ WikionboardPage {
             onTextChanged: {
                 console.log("TODO:Update search: "+text)
                 indexListQML.searchArticle(text)
-            }
+            }            
+         }
+     }
+     onStatusChanged: {
+         console.log("IndexPage onStatusChanged: status"+status)
+         if (PageStatus.Activating == status) {
+             console.log("IndexPage onStatusChanged: PageStatus.Activating")
+             indexListQML.searchArticle(articleName.text)
          }
      }
 
@@ -32,6 +39,10 @@ WikionboardPage {
             onOpenArticle: {
                  index.openArticle(articleUrl);
              }
+        }
+        Component.onCompleted: {
+            console.log("onCompleted IndexPage. Set zimfilewrapper")
+            indexListQML.setZimFileWrapper(backend.getZimFileWrapper())
         }
      }
  }
