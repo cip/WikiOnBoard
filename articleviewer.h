@@ -24,6 +24,9 @@ class ArticleViewer : public QTextBrowser
     Q_OBJECT
 public:
     ArticleViewer(QWidget* parent = 0, ZimFileWrapper* zimFileWrapper = 0, bool hasTouchScreen = true);
+    void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {
+        this->zimFileWrapper = zimFileWrapper;
+    }
     QVariant loadResource ( int type, const QUrl & name );
     QSize getMaximumDisplaySizeInCurrentArticleForImage(QString imageUrl);
     void moveTextBrowserTextCursorToVisibleArea();

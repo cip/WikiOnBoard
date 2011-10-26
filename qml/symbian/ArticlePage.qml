@@ -28,13 +28,18 @@ WikionboardPage {
      }
 */
      ArticleViewerQML {
-        id: articleViewer
+        id: articleViewerQML
         anchors.fill: parent
+     }
+
+     Component.onCompleted: {
+         console.log("onCompleted ArticlePage. Set zimfilewrapper")
+         articleViewerQML.setZimFileWrapper(backend.getZimFileWrapper())
      }
 
      function openArticle(articleUrl) {
          console.log("in ArticlePage openArticle. Url:"+articleUrl)
-         articleViewer.openArticle(articleUrl)
+         articleViewerQML.openArticle(articleUrl)
      }
      /*
      Flickable {

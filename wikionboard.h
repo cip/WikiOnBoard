@@ -126,24 +126,9 @@ public:
     ArticleViewerQML(QGraphicsItem* parent = 0)
         : QGraphicsProxyWidget(parent)
     {
-
-        //FIXME:
-        ZimFileWrapper* zimFileWrapper = new ZimFileWrapper(0);
-        #if defined(Q_OS_SYMBIAN)
-        zimFileWrapper->openZimFile(QLatin1String("e:\\wikipedia-de.zim"));
-        #else
-        zimFileWrapper->openZimFile(QLatin1String("C:\\Users\\Christian\\Downloads\\wikipedia_en_wp1_0.8_45000+_12_2010.zimaa"));
-        #endif
-
-        //widget = new WikiOnBoard();  //TODO parent?
-       // widget = new QPushButton(QLatin1String("MyPushButton"));
-        //wikionboard = new WikiOnBoard();
-        //widget = wikionboard->articleViewer;
-        widget = new ArticleViewer(0,zimFileWrapper);
+        widget = new ArticleViewer(0,0);
         widget->setAttribute(Qt::WA_NoSystemBackground);
-        setWidget(widget);
-
-        widget->toggleImageDisplay(true); //TODO: use settings
+        setWidget(widget);        
         QObject::connect(widget, SIGNAL(clicked(bool)), this, SIGNAL(clicked(bool)));
     }
 
@@ -165,6 +150,11 @@ Q_SIGNALS:
     void textChanged();
 */
 public slots:    
+    void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {
+        widget->setZimFileWrapper(zimFileWrapper);
+        widget->toggleImageDisplay(true); //TODO: use settings
+    }
+
     void openArticle(QString articleUrl) {
         //TODO use url in qml?
         QUrl url(articleUrl);
