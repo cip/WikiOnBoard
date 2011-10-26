@@ -33,6 +33,7 @@
 #include <QtDeclarative/QDeclarativeExtensionPlugin>
 #include <QtDeclarative/qdeclarative.h>
 #include <QtGui/QGraphicsProxyWidget>
+#include <qdebug>
 
 class WikiOnBoard : public QMainWindow
 {
@@ -186,27 +187,27 @@ public:
         widget->setAttribute(Qt::WA_NoSystemBackground);
         setWidget(widget);
         widget->populateArticleList(QLatin1String(""),0,false); //TODO move to qml
-        QObject::connect(widget, SIGNAL(clicked(bool)), this, SIGNAL(clicked(bool)));
-    }
+        QObject::connect(widget, SIGNAL(itemClicked(QListWidgetItem*)), this,
+                        SLOT(itemClicked(QListWidgetItem *)));
 
-    /*QString text() const
-    {
-        return widget->text();
+        //QObject::connect(widget, SIGNAL(clicked(bool)), this, SIGNAL(clicked(bool)));
     }
-
-    void setText(const QString& text)
-    {
-        if (text != widget->text()) {
-            widget->setText(text);
-            emit textChanged();
-        }
-    }*/
 
 Q_SIGNALS:
-    void clicked(bool);
-/*    void textChanged();
-*/
+      void openArticle(const QString articleUrl);
+
+private slots:
+      void itemClicked(QListWidgetItem* item) {
+          QString url;
+          if (item != NULL) {
+              url = item->data(ArticleUrlRole).toUrl().toString();
+          }
+          qDebug() << "In IndexListQML itemclicked. emit openarticle(articleUrl="<<url<<")";
+          emit openArticle(url);
+      }
+
 private:
+
    // WikiOnBoard *wikionboard;
    // QPushButton *widget;
     IndexList *widget;

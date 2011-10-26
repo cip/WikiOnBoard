@@ -96,6 +96,12 @@ Window {
                 onClicked: pageStack.replace(articlePage);
             }
         }
+
+        onOpenArticle: {
+            console.log("Item clicked in index list"+articleUrl+ "Open in articlePage")
+            pageStack.push(articlePage);
+        }
+
     }
 
     ArticlePage {

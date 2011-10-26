@@ -82,17 +82,18 @@ WikionboardPage {
 
         width: parent.width; height: parent.height
         contentWidth: width
-        contentHeight: content.childrenRect.height + UI.MARGIN_XLARGE * 2
+        contentHeight: parent.childrenRect.height + UI.MARGIN_XLARGE * 2
         flickableDirection: Flickable.VerticalFlick
 /*        Column {
           anchors.fill: parent
           spacing: UI.MARGIN_DEFAULT*/
+
         ListView {
             id: list
             //anchors.horizontalCenter: parent.horizontalCenter
             anchors { fill: parent; bottomMargin: parent.height/5 }
             //width: parent.width - parent.spacing; height: 120
-            clip: true
+            clip: true            
             delegate: listDelegate
             model: libraryModel
             header: listHeading
@@ -107,7 +108,7 @@ WikionboardPage {
             text: qsTr("Find eBook on Phone")
         }
         Button {
-            id: downloadEBookButton
+            id: downloadEBookButton            
             anchors.top: addEBookButton.bottom
             anchors.topMargin: UI.MARGIN_DEFAULT
             anchors.horizontalCenter: parent.horizontalCenter
