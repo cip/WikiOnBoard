@@ -32,7 +32,7 @@ WikionboardPage {
 
         ListElement {
             titleText: "Wikipedia DE (Simu)"
-            subTitleText: "Deutsche Wikipedia, 10.08.2010, 13455 Artikel"            
+            subTitleText: "Deutsche Wikipedia, 10.08.2010, 13455 Artikel"
             fileName : "C:\\Users\\Christian\\Downloads\\wikipedia_de_all_10_2010_beta1.zim"
         }
         ListElement {
@@ -95,56 +95,38 @@ WikionboardPage {
         }
     }
 
-    Flickable {
-        id: flickable
 
-        width: parent.width; height: parent.height
-        contentWidth: width
-        contentHeight: parent.childrenRect.height + UI.MARGIN_XLARGE * 2
-        flickableDirection: Flickable.VerticalFlick
-/*        Column {
-          anchors.fill: parent
-          spacing: UI.MARGIN_DEFAULT*/
+    ListView {
+        id: libraryListView
+        //anchors.horizontalCenter: parent.horizontalCenter
+        anchors { fill: parent; bottomMargin: parent.height*1/5}
+        clip: true
+        delegate: listDelegate
+        model: libraryModel
+        header: listHeading
+    }
 
-        ListView {
-            id: list
-            //anchors.horizontalCenter: parent.horizontalCenter
-            anchors { fill: parent; bottomMargin: parent.height/5 }
-            //width: parent.width - parent.spacing; height: 120
-            clip: true            
-            delegate: listDelegate
-            model: libraryModel
-            header: listHeading
-        }
+    Column {
+        anchors.top: libraryListView.bottom
+        anchors.topMargin: UI.MARGIN_XLARGE
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right:  parent.right
 
         Button {
             id: addEBookButton
-            anchors.top: list.bottom
+            anchors.top: parent.top
             anchors.topMargin: UI.MARGIN_DEFAULT
             anchors.horizontalCenter: parent.horizontalCenter
 
             text: qsTr("Find eBook on Phone")
         }
         Button {
-            id: downloadEBookButton            
+            id: downloadEBookButton
             anchors.top: addEBookButton.bottom
             anchors.topMargin: UI.MARGIN_DEFAULT
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Download eBook")
         }
-    //}
     }
-
-
-    /*
-         Column {
-             id: content
-
-             anchors.top: parent.top
-             anchors.left: parent.left
-             anchors.right: parent.right
-             anchors.margins: UI.MARGIN_XLARGE
-             spacing: UI.DETAILS_SPACING
- }
-     }*/
 }
