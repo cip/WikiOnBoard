@@ -402,7 +402,7 @@ Version vom: %3
     <message>
         <location filename="zimfilewrapper.cpp" line="69"/>
         <source>[TRANSLATOR] Explain that file %1 too large for configuration, and that help say how to solve </source>
-        <translation>Dieses eBook kann leider auf ihrem Handy nicht geöffnet werden, weil die Datei zu groß ist. Bitte wähle &quot;Hilfe&quot; für eine Anleitung dieses Problem zu lösen.</translation>
+        <translation>Dieses eBook kann leider auf ihrem Handy nicht geöffnet werden, weil die Datei zu groß ist. Bitte wähle &quot;Hilfe&quot; für eine Anleitung wie dieses Problem gelöst werden kann.</translation>
     </message>
     <message>
         <location filename="zimfilewrapper.cpp" line="133"/>
