@@ -48,8 +48,8 @@ ListModel {
     }
 
     Component.onCompleted: {
-        initDev()
-        //Settings.restore(model);
+        //initDev()
+        Settings.restore(model);
 
     }
 

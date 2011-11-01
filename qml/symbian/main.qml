@@ -48,11 +48,11 @@ Window {
 
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
 
-        function findZimFiles() {
+        function findZimFiles(path) {
             console.log("sendMessage")
-            searchZimFileWorker.sendMessage({'action': 'appendCurrentTime', 'model': libraryModel});
-            /*
-            backend.zimFileIterator("C:\\Users\\Christian\\Downloads\\");
+            //searchZimFileWorker.sendMessage({'action': 'appendCurrentTime', 'model': libraryModel});
+            //FIXME
+            backend.zimFileIterator(path);
             var zimFile;
 
             //This does not work yet (not time to redraw..)
@@ -65,7 +65,7 @@ Window {
             }
             console.log("finished adding zimfiles");
             libraryPageBusyIndicator.running = false
-            libraryPageBusyIndicator.visible = false*/
+            libraryPageBusyIndicator.visible = false
         }
 
         WorkerScript {
@@ -89,7 +89,11 @@ Window {
             ToolButton {
                 iconSource: "toolbar-refresh"
                 onClicked: {
-                    libraryPage.findZimFiles();
+                    //FIXME (first windows, 2nd are symbian...)
+                    libraryPage.findZimFiles("C:\\Users\\Christian\\Downloads\\");
+                    libraryPage.findZimFiles("E:\\");
+                    libraryPage.findZimFiles("F:\\");
+
                 }
             }
             ToolButton {
