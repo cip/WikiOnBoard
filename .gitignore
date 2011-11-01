@@ -1,5 +1,7 @@
 Makefile*
 
+*~
+
 # Directories to ignore
 # ---------------------
 debug
@@ -19,6 +21,9 @@ doc-build
 .rcc
 .pch
 .metadata
+obj
+moc
+ui
 
 # Symbian build system generated files 	
 # ---------------------
@@ -48,3 +53,9 @@ plugin_commonU.def
 .cproject
 .make.cache
 *.d/Makefile
+
+
+#QT Creator user specific project files
+# ---------------------
+*.pro.user
+
