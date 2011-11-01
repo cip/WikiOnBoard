@@ -8,6 +8,9 @@ import WikiOnBoardModule 1.0
 
 WikionboardPage {
      id: article
+
+     signal backwardAvailable(bool available)
+     signal forwardAvailable(bool available)
 /*
      property string photoAuthor
      property string photoDate
@@ -30,6 +33,18 @@ WikionboardPage {
      ArticleViewerQML {
         id: articleViewerQML
         anchors.fill: parent
+
+        onBackwardAvailable: {
+               console.log("onBackwardAvailable:"+available);
+               article.backwardAvailable(available);
+        }
+
+        onForwardAvailable: {
+               console.log("onForwardAvailable:"+available);
+               article.forwardAvailable(available);
+        }
+
+
      }
 
      Component.onCompleted: {
@@ -50,6 +65,14 @@ WikionboardPage {
      function forward() {
          console.log("in ArticlePage forward")
          articleViewerQML.forward()
+     }
+
+     function isBackwardAvailable() {
+         return articleViewerQML.isBackwardAvailable();
+     }
+
+     function isForwardAvailable() {
+         return articleViewerQML.isForwardAvailable();
      }
 
      /*

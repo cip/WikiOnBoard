@@ -100,18 +100,34 @@ Window {
 
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
 
+        onBackwardAvailable: {
+            console.log("onBackwardAvailable. Set backwardButton enabled to : "+available);
+            backwardButton.enabled = available;
+        }
+
+        onForwardAvailable: {
+            console.log("onForwardAvailable. Set forwardButton enabled to : "+available);
+            forwardButton.enabled = available;
+        }
+
         tools: ToolBarLayout {
             ToolButton {                
                 iconSource: "toolbar-back"
                 onClicked: pageStack.pop();
             }
             ToolButton {
+                id: backwardButton
                 iconSource: "toolbar-previous"
-                onClicked: articlePage.backward();
+                onClicked: {
+                    articlePage.backward();
+                }
             }
             ToolButton {
+                id: forwardButton
                 iconSource: "toolbar-next"
-                onClicked: articlePage.forward();
+                onClicked: {
+                    articlePage.forward();
+                }
             }
             ToolButton {
                 iconSource: "toolbar-menu"

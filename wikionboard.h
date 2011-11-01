@@ -128,7 +128,8 @@ public:
     {
         widget = new ArticleViewer(0,0);
         setWidget(widget);
-        QObject::connect(widget, SIGNAL(clicked(bool)), this, SIGNAL(clicked(bool)));
+        QObject::connect(widget, SIGNAL(backwardAvailable(bool)), this, SIGNAL(backwardAvailable(bool)));
+        QObject::connect(widget, SIGNAL(forwardAvailable(bool)), this, SIGNAL(forwardAvailable(bool)));
     }
 
     /*QString text() const
@@ -148,6 +149,10 @@ Q_SIGNALS:
     void clicked(bool);
     void textChanged();
 */
+Q_SIGNALS:
+      void backwardAvailable ( bool available);
+      void forwardAvailable ( bool available);
+
 public slots:    
     void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {
         widget->setZimFileWrapper(zimFileWrapper);
@@ -171,6 +176,16 @@ public slots:
     void forward() {
         qDebug() << "ArticleViewerQML.forward()";
         widget->forward();
+    }
+
+    bool isBackwardAvailable() {
+        qDebug() << "ArticleViewerQML.isBackwardAvailable()";
+        return widget->isBackwardAvailable();
+    }
+
+    bool isForwardAvailable() {
+        qDebug() << "ArticleViewerQML.isForwardAvailable()";
+        return widget->isForwardAvailable();
     }
 
 private:
