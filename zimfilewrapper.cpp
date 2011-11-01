@@ -317,7 +317,17 @@ zim::File::const_iterator ZimFileWrapper::getArticleByUrl(QString articleUrl,QCh
         //TODO remove this when correct behavior clarified.
         strippedArticleUrl=articleUrl.remove(0, 2); //Remove /A
         qWarning() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with "<< nameSpace << "/. Assume "<<nameSpace<<"/ refers to article name space. ";
-    } else {
+    } else if (articleUrl.startsWith(QLatin1String("/"))) {
+        // Workaround for welcomepage bug: after opening
+        // welcomepage, links clicked in an article always contain welcome://.. in url.
+        // as host/scheme is stripped before getArticleByUrl is called, this
+        // is not visible here, except for an addional slash at the beginnig of the Url.
+        // TODO: remove actually removes from articleUrl as well. As only
+        // debug output is affected (actually shows stripped) but for all cases here,
+        // this has not been fixed.
+        strippedArticleUrl=articleUrl.remove(0, 1); //Remove /
+        qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with /, but does not contain expected namespace  "<< nameSpace.toLatin1() <<". Strip / from URL and assume remaining part is relative to nameSpace "<< nameSpace;
+     } else {
         strippedArticleUrl=articleUrl;
         qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" does not start with "<< nameSpace.toLatin1() <<"/ or /"<< nameSpace << "/. Assume it is a relative URL to "<< nameSpace << "/";
     }
