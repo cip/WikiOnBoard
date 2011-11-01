@@ -34,11 +34,23 @@ Window {
         function findZimFiles() {
             backend.zimFileIterator("C:\\Users\\Christian\\Downloads\\");
             var zimFile;
+            //This does not work yet (not time to redraw..)
+            libraryPageBusyIndicator.visible = true
+            libraryPageBusyIndicator.running = true
             while ((zimFile = backend.nextZimFile()) !== "" ) {
                 console.log("zimfile found:"+zimFile)
                 libraryPage.addZimFile(zimFile);
+                libraryPageBusyIndicator.running = true
             }
             console.log("finished adding zimfiles");
+            libraryPageBusyIndicator.running = false
+            libraryPageBusyIndicator.visible = false
+        }
+        BusyIndicator {
+                     anchors.centerIn: parent
+                     id: libraryPageBusyIndicator
+                     running: false
+                     visible: false
         }
 
         tools: ToolBarLayout {
