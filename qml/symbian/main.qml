@@ -12,55 +12,43 @@ Window {
 
         anchors.fill: parent
         toolBar: toolBar
-        //onDepthChanged: searchBar.close();
+        //onDepthChanged:
     }
 
     StatusBar {
         id: statusBar
-
         anchors { top: parent.top; left: parent.left; right: parent.right }
-        //opacity: largeImagePage.chromeOpacity
     }
-
-/*    SearchBar {
-        id: searchBar
-
-        anchors.top: statusBar.bottom
-        width: statusBar.width
-        onSearchTagChanged: photoFeedModel.tags = searchTag
-    }*/
 
     ToolBar {
         id: toolBar
 
         anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
-        //opacity: largeImagePage.chromeOpacity
-    }
+     }
 
     LibraryPage {
         id: libraryPage
 
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
-        /*inPortrait: window.inPortrait
-        model: PhotoFeedModel {
-            id: photoFeedModel
-        }*/
+
         tools: ToolBarLayout {
             ToolButton {
-                //iconSource: "images/tb_back.svg"
                 text: "Exit" //Strange, not icon available
                 onClicked: Qt.quit();
             }
             ToolButton {
                 iconSource: "toolbar-refresh"
                 onClicked: {
-                   // photoFeedModel.reload();
-                 //   searchBar.close();
+                    //TODO, questionable whether useful at all
                 }
             }
             ToolButton {
                 iconSource: "toolbar-search"
                 onClicked: pageStack.push(indexPage);
+            }
+            ToolButton {
+                iconSource: "toolbar-menu"
+                //onClicked:
             }
         }
 
@@ -82,18 +70,7 @@ Window {
                 banner.showMessage(s)
                 console.log(s)
             }
-
-
         }
-
-        /*
-
-        onPhotoClicked: {
-              largeImagePage.setPhotoData(url, photoWidth, photoHeight);
-            detailsPage.setPhotoData(author, date, description, tags, title,
-                                     photoWidth, photoHeight);
-            pageStack.push(indexPage);
-        }*/
     }
 
     IndexPage {
@@ -103,6 +80,10 @@ Window {
             ToolButton {
                 iconSource: "toolbar-back"
                 onClicked: pageStack.pop();
+            }
+            ToolButton {
+                iconSource: "toolbar-menu"
+                //onClicked:
             }
         }
 
@@ -137,24 +118,11 @@ Window {
                 //onClicked:
             }
         }
-
-
     }
 
     Backend {
         id: backend
     }
-
-/*
-    Splash {
-        id: splash
-
-        image : "images/splash.png"
-        timeout: 1000
-        fadeout: 700
-        Component.onCompleted: splash.activate();
-        onFinished: splash.destroy();
-    }*/
 
     Component.onCompleted: pageStack.push(libraryPage);
 }
