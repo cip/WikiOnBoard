@@ -412,7 +412,7 @@ Fecha de compilacion: %3</translation>
     <message>
         <location filename="zimfilewrapper.cpp" line="69"/>
         <source>[TRANSLATOR] Explain that file %1 too large for configuration, and that help say how to solve </source>
-        <translation type="unfinished"></translation>
+        <translation>Lo sentimos, este eBook no se puede abrir en tu movíl porque el archivo es demasiado grande. Por favor, selecciona &quot;Ayuda&quot; y encontrarás las instrucciones para resolverlo.</translation>
     </message>
     <message>
         <location filename="zimfilewrapper.cpp" line="133"/>

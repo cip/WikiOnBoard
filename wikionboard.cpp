@@ -634,7 +634,7 @@ void WikiOnBoard::switchToArticlePage()
         {
 
         if (zimFileWrapper->isValid()) {
-            #ifdef Q_OS_SYMBIAN
+            #if defined(Q_OS_SYMBIAN) || defined(QT_SIMULATOR)
                 positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::PositiveSoftKey);
                 positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::NoSoftKey);
                 backArticleHistoryAction->setSoftKeyRole(QAction::NegativeSoftKey);
@@ -646,7 +646,7 @@ void WikiOnBoard::switchToArticlePage()
 
         } else {            
             qDebug() << " switchToArticlePage with no zim file opened. (Basically happens for Welcome page) Display menu without goto index.  And don't display back. ";
-            #ifdef Q_OS_SYMBIAN
+            #if defined(Q_OS_SYMBIAN) || defined(QT_SIMULATOR)
                 positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::PositiveSoftKey);
                 emptyAction->setSoftKeyRole(QAction::NegativeSoftKey);
                 positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::NoSoftKey);
@@ -657,7 +657,7 @@ void WikiOnBoard::switchToArticlePage()
                 qDebug() << "add openZimFileDialogAction to toolbar";
                 ui.toolBar->addAction(openZimFileDialogAction);
 
-#endif
+            #endif
 
         }
         positiveSoftKeyActionMenuIndexPage->setSoftKeyRole(QAction::NoSoftKey);
@@ -680,7 +680,7 @@ void WikiOnBoard::switchToWelcomePage()
 
 void WikiOnBoard::switchToIndexPage()
 	{
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(QT_SIMULATOR)
     positiveSoftKeyActionMenuIndexPage->setSoftKeyRole(QAction::PositiveSoftKey);
     positiveSoftKeyActionMenuArticlePage->setSoftKeyRole(QAction::NoSoftKey);
     positiveSoftKeyActionMenuArticlePageNoFileOpen->setSoftKeyRole(QAction::NoSoftKey);
