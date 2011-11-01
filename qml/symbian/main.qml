@@ -7,6 +7,18 @@ import "settings.js" as Settings
 
 Window {
     id: window
+    function openZimFile(fileName) {
+
+        console.log("Open zimfile:"+fileName);
+        if (backend.openZimFile(fileName)) {
+            Settings.setSetting("lastZimFile",fileName);
+            pageStack.push(indexPage);
+        } else {
+            var s = "Error opening zim file: "+fileName+" Error: "+backend.errorString()
+            banner.showMessage(s)
+            console.log(s)
+        }
+    }
 
     PageStack {
         id: pageStack
@@ -25,7 +37,7 @@ Window {
         id: toolBar
 
         anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
-     }
+    }
 
     ZimFileSelectPage {
         id: zimFileSelectPage
@@ -70,16 +82,16 @@ Window {
         }
 
         WorkerScript {
-                id: searchZimFileWorker
-                source: "searchzimfiles.js"
-                //onMessage: {console.log("message received"+message)}
-            }
+            id: searchZimFileWorker
+            source: "searchzimfiles.js"
+            //onMessage: {console.log("message received"+message)}
+        }
 
         BusyIndicator {
-                     anchors.centerIn: parent
-                     id: libraryPageBusyIndicator
-                     running: false
-                     visible: false
+            anchors.centerIn: parent
+            id: libraryPageBusyIndicator
+            running: false
+            visible: false
         }
 
         tools: ToolBarLayout {
@@ -121,14 +133,7 @@ Window {
         }
 
         onOpenZimFile: {
-            console.log("Open zimfile:"+fileName);
-            if (backend.openZimFile(fileName)) {
-                pageStack.push(indexPage);
-            } else {
-                var s = "Error opening zim file: "+fileName+" Error: "+backend.errorString()
-                banner.showMessage(s)
-                console.log(s)
-            }
+            window.openZimFile(fileName)
         }
     }
 
@@ -168,7 +173,7 @@ Window {
         }
 
         tools: ToolBarLayout {
-            ToolButton {                
+            ToolButton {
                 iconSource: "toolbar-back"
                 onClicked: pageStack.pop();
             }
@@ -198,11 +203,17 @@ Window {
     }
 
     Component.onCompleted: {
-        Settings.initialize();
-        Settings.setSetting("test","value");
-        console.log("Storage:" + Settings.getSetting("test"));
+        //Sets zimFileWrapper in this components
+        articlePage.init();
+        indexPage.init();
 
+        Settings.initialize();
+        var lastZimFile =  Settings.getSetting("lastZimFile");
         pageStack.push(libraryPage);
+        if (lastZimFile != "Unknown") {
+            console.log("lastZimFile:"+lastZimFile+" open it.")
+            window.openZimFile(lastZimFile)
+        }
     }
 }
 

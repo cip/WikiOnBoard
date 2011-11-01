@@ -70,7 +70,9 @@ WikionboardPage {
                     text: getSubTitle()
                 }
             }
-            onClicked: library.openZimFile(fileName)
+            onClicked: {
+                library.openZimFile(fileName)
+            }
             onPressAndHold: {
                 console.log("in pressAndHold: index "+index)
                 libraryItemMenu.openMenu(index)

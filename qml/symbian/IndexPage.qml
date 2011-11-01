@@ -9,6 +9,11 @@ import WikiOnBoardModule 1.0
 WikionboardPage {
      id: index     
      signal openArticle(string articleUrl)
+
+     function init() {
+        indexListQML.setZimFileWrapper(backend.getZimFileWrapper())
+     }
+
      Rectangle {
          anchors { fill: parent; bottomMargin: parent.height-articleName.height }
          TextField {
@@ -38,9 +43,6 @@ WikionboardPage {
                  index.openArticle(articleUrl);
              }
         }
-        Component.onCompleted: {
-            console.log("onCompleted IndexPage. Set zimfilewrapper")
-            indexListQML.setZimFileWrapper(backend.getZimFileWrapper())
-        }
+
      }
  }
