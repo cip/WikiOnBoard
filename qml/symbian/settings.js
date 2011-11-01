@@ -78,7 +78,8 @@ function modelToJSON(model,writer) {
         // (not including attributes).
         for (var prop in obj) {
             if (!prop.match("^attributes")) {
-                json += "\""+prop+"\": \"" + obj[prop] + "\",";
+                //log("JSON.stringify("+obj[prop]+")="+JSON.stringify(obj[prop]))
+                json += "\""+prop+"\": " + JSON.stringify(obj[prop]) + ",";
             }
         }
 
@@ -90,6 +91,7 @@ function modelToJSON(model,writer) {
                 var attr = obj.attributes.get(y)
                 // Here the whole attribute can be written as is
                 // so JSON.stringify is used
+                //log("JSON.stringify: attr: "+attr)
                 json += JSON.stringify(attr)
             }
             json += "]"
@@ -108,6 +110,7 @@ function modelToJSON(model,writer) {
 function store(model) {
     // Writes one JSON-formatted ListModel entry to storage.
     function writeEntry(id, json) {
+        //log("write json to db: id: "+id+" json:"+json)
         var db = getDatabase();
         db.transaction( function(tx) {
                            tx.executeSql('CREATE TABLE IF NOT EXISTS Entry(id INT, json TEXT)');
@@ -146,6 +149,7 @@ function restore(model)
                        try {
                            var rs = tx.executeSql('SELECT * FROM Entry');
                            for (var i = 0; i < rs.rows.length; i++) {
+                               //log("restore: json: "+rs.rows.item(i).json)
                                readEntry(rs.rows.item(i).json)
                            }
                        } catch (error) {
