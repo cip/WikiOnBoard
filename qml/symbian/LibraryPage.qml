@@ -91,10 +91,33 @@ WikionboardPage {
                 }
             }
             onClicked: library.openZimFile(fileName)
-
+            onPressAndHold: {
+                console.log("in pressAndHold: index "+index)
+                libraryItemMenu.openMenu(index)
+            }
         }
     }
 
+    ContextMenu {
+           id: libraryItemMenu
+           property int itemIndex
+           itemIndex: -1
+           MenuLayout {
+               MenuItem {
+                   text: "Remove"
+                   onClicked: {
+                       console.log(" Remove item "+libraryItemMenu.itemIndex)
+                       libraryModel.remove(libraryItemMenu.itemIndex)
+                    }
+                }
+           }
+
+           function openMenu(index) {
+                   itemIndex = index
+                   console.log("in openMenu: index "+itemIndex);
+                   open();
+            }
+    }
 
     ListView {
         id: libraryListView
