@@ -44,7 +44,7 @@ Q_INVOKABLE bool openZimFile(QString zimFileName);
 
     QString getArticleTextByTitle(QString articleTitle);
     QPixmap getImageByUrl(QString imageUrl, QSize newSize=QSize());
-    QString getMetaDataString(QString key);
+Q_INVOKABLE QString getMetaDataString(QString key);
     std::pair<bool, QString> getMetaData(QString key);
 
     QString getArticleTitleByUrl(QString articleUrl);

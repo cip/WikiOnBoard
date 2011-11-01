@@ -63,7 +63,7 @@ WikionboardPage {
                 }
                 ListItemText {
                     function getSubTitle() {
-                        return description
+                        return date+" "+language+" "+description
                     }
 
                     mode: listItem.mode

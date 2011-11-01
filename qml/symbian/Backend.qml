@@ -22,4 +22,7 @@ Item {
         return zimFileWrapper
     }
 
+    function getMetaDataString(key) {
+        return zimFileWrapper.getMetaDataString(key);
+    }
 }
