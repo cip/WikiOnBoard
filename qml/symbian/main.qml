@@ -31,9 +31,14 @@ Window {
         id: libraryPage
 
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+
         function findZimFiles() {
+            console.log("sendMessage")
+            searchZimFileWorker.sendMessage({'action': 'appendCurrentTime', 'model': libraryModel});
+            /*
             backend.zimFileIterator("C:\\Users\\Christian\\Downloads\\");
             var zimFile;
+
             //This does not work yet (not time to redraw..)
             libraryPageBusyIndicator.visible = true
             libraryPageBusyIndicator.running = true
@@ -44,8 +49,15 @@ Window {
             }
             console.log("finished adding zimfiles");
             libraryPageBusyIndicator.running = false
-            libraryPageBusyIndicator.visible = false
+            libraryPageBusyIndicator.visible = false*/
         }
+
+        WorkerScript {
+                id: searchZimFileWorker
+                source: "searchzimfiles.js"
+                //onMessage: {console.log("message received"+message)}
+            }
+
         BusyIndicator {
                      anchors.centerIn: parent
                      id: libraryPageBusyIndicator
