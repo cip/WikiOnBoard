@@ -10,12 +10,10 @@ WikionboardPage {
      id: index     
      signal openArticle(string articleUrl)
      Rectangle {
-         anchors { fill: parent; bottomMargin: 6*parent.height/7 }
+         anchors { fill: parent; bottomMargin: parent.height-articleName.height }
          TextField {
             id: articleName
-            //TODO: for some reason halfoutside of screen if
-            // verticalCenter: parent.verticalCenter.
-            anchors.top: parent.verticalCenter
+            anchors.verticalCenter: parent.verticalCenter
             width: parent.width
             onTextChanged: {
                 console.log("TODO:Update search: "+text)
@@ -32,7 +30,7 @@ WikionboardPage {
      }
 
      Rectangle {
-        anchors { fill: parent; topMargin: parent.height/7 }
+        anchors { fill: parent; topMargin: articleName.height }
         IndexListQML {
             id: indexListQML
             anchors { fill: parent}

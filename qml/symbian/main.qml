@@ -29,6 +29,7 @@ Window {
 
     ZimFileSelectPage {
         id: zimFileSelectPage
+        anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
         onZimFileSelected: {
             console.log("zimFileSelected:"+file)
             libraryPage.addZimFile(file);
@@ -133,7 +134,7 @@ Window {
 
     IndexPage {
         id: indexPage
-
+        anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
         tools: ToolBarLayout {
             ToolButton {
                 iconSource: "toolbar-back"
@@ -155,9 +156,7 @@ Window {
 
     ArticlePage {
         id: articlePage
-
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
-
         onBackwardAvailable: {
             console.log("onBackwardAvailable. Set backwardButton enabled to : "+available);
             backwardButton.enabled = available;
