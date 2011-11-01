@@ -8,6 +8,7 @@ import "UIConstants.js" as UI
 WikionboardPage {
     id: library
     signal openZimFile(string fileName);
+    signal findEbookClicked();
     property string photoAuthor
     property string photoDate
     property string photoDescription
@@ -124,6 +125,7 @@ WikionboardPage {
             id: addEBookButton
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Find eBook on Phone")
+            onClicked: findEbookClicked()
         }
         Button {
             id: downloadEBookButton

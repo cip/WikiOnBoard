@@ -27,6 +27,17 @@ Window {
         anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
      }
 
+    ZimFileSelectPage {
+        id: zimFileSelectPage
+        tools: ToolBarLayout {
+            ToolButton {
+                iconSource: "toolbar-back"
+                onClicked: pageStack.pop();
+            }
+        }
+
+    }
+
     LibraryPage {
         id: libraryPage
 
@@ -95,6 +106,10 @@ Window {
                 open()
             }
         }
+        onFindEbookClicked: {
+            pageStack.push(zimFileSelectPage)
+        }
+
         onOpenZimFile: {
             console.log("Open zimfile:"+fileName);
             if (backend.openZimFile(fileName)) {
