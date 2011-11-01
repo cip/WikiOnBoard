@@ -43,7 +43,18 @@ WikionboardPage {
 
                 ListItemText {
                     function getTitle() {
-                        return title
+                        //FIXME, do this in a better way.
+                        if (title == "Not available" || title == "") {
+                            var s = ""
+                            if (fileName.length>20) {
+                                s = "..."+fileName.substr(fileName.length-20,fileName.length)
+                            } else {
+                                s = fileName
+                            }
+                            return s
+                        } else {
+                            return title
+                        }
                     }
                     mode: listItem.mode
                     role: "Title"
