@@ -21,16 +21,18 @@
 #include <QImageReader>
 #include <QTime>
 #include <stdexcept>
+#include <QDirIterator>
 
 ZimFileWrapper::ZimFileWrapper(QObject *parent) :
     QObject(parent)
 {
     zimFile = 0;
     valid = false;
-    errorStr = QString();
+    errorStr = QString();    
 }
 ZimFileWrapper::~ZimFileWrapper(){
     delete zimFile;
+    delete dirIterator;
 }
 
 bool ZimFileWrapper::openZimFile(QString zimFileName)
@@ -388,5 +390,25 @@ QString ZimFileWrapper::getMetaDataString(QString key) {
     std::pair<bool, QString> metaData = getMetaData(key);
     return metaData.first ? metaData.second : QString(tr("Not available"));
 }
+
+//TODO probably better to have separate class (like ZimFileIterator)
+void ZimFileWrapper::zimFileIterator(QString path) {
+    delete dirIterator;
+    dirIterator = new QDirIterator(path, QDirIterator::Subdirectories);
+
+}
+
+QString ZimFileWrapper::nextZimFile() {
+    while (dirIterator->hasNext()) {
+        dirIterator->next();
+        if ((dirIterator->fileInfo().suffix().compare(QLatin1String("zim"),Qt::CaseInsensitive)==0)
+                || (dirIterator->fileInfo().suffix().compare(QLatin1String("zimaa"),Qt::CaseInsensitive)==0)) {
+            qDebug() << "zim file found: " << dirIterator->fileInfo().absoluteFilePath();
+               return dirIterator->fileInfo().absoluteFilePath();
+        }
+    }
+    return QString();
+}
+
 
 

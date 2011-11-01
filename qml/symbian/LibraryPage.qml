@@ -25,6 +25,9 @@ WikionboardPage {
         details.photoHeight = photoHeight;
         details.photoWidth = photoWidth;
     }
+    function addZimFile(fileName) {
+        libraryModel.addZimFile(fileName);
+    }
 
     LibraryModel {
         id: libraryModel

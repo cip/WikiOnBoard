@@ -25,4 +25,14 @@ Item {
     function getMetaDataString(key) {
         return zimFileWrapper.getMetaDataString(key);
     }
+
+    function zimFileIterator(path) {
+        return zimFileWrapper.zimFileIterator(path);
+    }
+
+    function nextZimFile() {
+        return zimFileWrapper.nextZimFile();
+    }
+
+
 }

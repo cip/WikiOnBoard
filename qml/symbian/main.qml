@@ -31,6 +31,15 @@ Window {
         id: libraryPage
 
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+        function findZimFiles() {
+            backend.zimFileIterator("C:\\Users\\Christian\\Downloads\\");
+            var zimFile;
+            while ((zimFile = backend.nextZimFile()) !== "" ) {
+                console.log("zimfile found:"+zimFile)
+                libraryPage.addZimFile(zimFile);
+            }
+            console.log("finished adding zimfiles");
+        }
 
         tools: ToolBarLayout {
             ToolButton {
@@ -40,7 +49,7 @@ Window {
             ToolButton {
                 iconSource: "toolbar-refresh"
                 onClicked: {
-                    //TODO, questionable whether useful at all
+                    libraryPage.findZimFiles();
                 }
             }
             ToolButton {

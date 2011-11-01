@@ -24,6 +24,7 @@
 #include <zim/fileiterator.h>
 #include <QPixmap>
 #include <QFile>
+#include <QDirIterator>
 
 //TODO define implictly shared class?
 class ZimFileWrapper : public QObject
@@ -33,7 +34,7 @@ private:
     zim::File* zimFile;
     bool valid;
     QString errorStr;
-
+    QDirIterator* dirIterator;
 public:
     explicit ZimFileWrapper(QObject *parent = 0);
     ~ZimFileWrapper();
@@ -62,6 +63,8 @@ Q_INVOKABLE QString getMetaDataString(QString key);
         return QString::fromUtf8(s.data(), int(s.size()));
     }
 
+    Q_INVOKABLE void zimFileIterator(QString path);
+    Q_INVOKABLE QString nextZimFile();
 protected:
 
 signals:
