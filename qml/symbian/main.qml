@@ -2,6 +2,7 @@
 import QtQuick 1.0
 ////import com.nokia.meego 1.0
 import com.nokia.symbian 1.0
+import com.nokia.extras 1.0
 
 Window {
     id: window
@@ -65,10 +66,27 @@ Window {
                 onClicked: pageStack.push(indexPage);
             }
         }
+
+        // Create an info banner with no icon
+        InfoBanner {
+            id: banner
+            text: ""
+            function showMessage(msg) {
+                text = msg
+                open()
+            }
+        }
         onOpenZimFile: {
             console.log("Open zimfile:"+fileName);
-            backend.openZimFile(fileName);
-            pageStack.push(indexPage);
+            if (backend.openZimFile(fileName)) {
+                pageStack.push(indexPage);
+            } else {
+                var s = "Error opening zim file: "+fileName+" Error: "+backend.errorString()
+                banner.showMessage(s)
+                console.log(s)
+            }
+
+
         }
 
         /*
@@ -114,14 +132,14 @@ Window {
         tools: ToolBarLayout {
             ToolButton {
                 //iconSource: "images/tb_back.svg"
-                text: "back"
+                text: "Index"
                 onClicked: pageStack.pop();
             }
             ToolButton {
                 //iconSource: "images/tb_info.svg"
-                text: "info"
+                text: "Back"
                 checked: true
-                onClicked: pageStack.replace(largeImagePage);
+                onClicked: articlePage.backward();
             }
         }
 
@@ -145,3 +163,5 @@ Window {
 
     Component.onCompleted: pageStack.push(libraryPage);
 }
+
+

@@ -38,7 +38,7 @@ public:
     explicit ZimFileWrapper(QObject *parent = 0);
     ~ZimFileWrapper();
     bool isValid() {return valid;}
-    QString errorString() {return errorStr;}
+Q_INVOKABLE QString errorString() {return errorStr;}
 Q_INVOKABLE bool openZimFile(QString zimFileName);
     zim::File::const_iterator getArticleByUrl(QString articleUrl,QChar nameSpace='A', bool closestMatchIfNotFound=true);
 

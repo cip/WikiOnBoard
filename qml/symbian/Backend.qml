@@ -10,8 +10,12 @@ Item {
     }
 
     function openZimFile(filename) {
-        console.log("in backend openZimFile: "+filename)
-        zimFileWrapper.openZimFile(filename)
+        console.log("in backend openZimFile: "+filename);
+        return zimFileWrapper.openZimFile(filename);
+    }
+
+    function errorString() {
+        return zimFileWrapper.errorString();
     }
 
     function getZimFileWrapper() {
