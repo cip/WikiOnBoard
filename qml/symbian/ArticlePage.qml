@@ -41,6 +41,17 @@ WikionboardPage {
          console.log("in ArticlePage openArticle. Url:"+articleUrl)
          articleViewerQML.openArticle(articleUrl)
      }
+
+     function backward() {
+         console.log("in ArticlePage backward")
+         articleViewerQML.backward()
+     }
+
+     function forward() {
+         console.log("in ArticlePage forward")
+         articleViewerQML.forward()
+     }
+
      /*
      Flickable {
 

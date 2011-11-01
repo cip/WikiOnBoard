@@ -163,6 +163,16 @@ public slots:
         widget->setSource(url);
     }
 
+    void backward() {
+        qDebug() << "ArticleViewerQML.backward()";
+        widget->backward();
+    }
+
+    void forward() {
+        qDebug() << "ArticleViewerQML.forward()";
+        widget->forward();
+    }
+
 private:
    // WikiOnBoard *wikionboard;
    // QPushButton *widget;
