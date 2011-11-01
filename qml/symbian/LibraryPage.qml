@@ -115,16 +115,11 @@ WikionboardPage {
 
         Button {
             id: addEBookButton
-            anchors.top: parent.top
-            anchors.topMargin: UI.MARGIN_DEFAULT
             anchors.horizontalCenter: parent.horizontalCenter
-
             text: qsTr("Find eBook on Phone")
         }
         Button {
             id: downloadEBookButton
-            anchors.top: addEBookButton.bottom
-            anchors.topMargin: UI.MARGIN_DEFAULT
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Download eBook")
         }
