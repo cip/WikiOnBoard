@@ -48,21 +48,18 @@ Window {
         tools: ToolBarLayout {
             ToolButton {
                 //iconSource: "images/tb_back.svg"
-                text: "back"
+                text: "Exit" //Strange, not icon available
                 onClicked: Qt.quit();
             }
             ToolButton {
-                //iconSource: "images/tb_reload.svg"
-                text: "reload"
+                iconSource: "toolbar-refresh"
                 onClicked: {
                    // photoFeedModel.reload();
                  //   searchBar.close();
                 }
             }
             ToolButton {
-                //iconSource: "images/tb_search.svg"
-                text: "search"
-                //onClicked: searchBar.toggle();
+                iconSource: "toolbar-search"
                 onClicked: pageStack.push(indexPage);
             }
         }
@@ -104,15 +101,8 @@ Window {
 
         tools: ToolBarLayout {
             ToolButton {
-                //iconSource: "images/tb_back.svg"
-                text: "back"
+                iconSource: "toolbar-back"
                 onClicked: pageStack.pop();
-            }
-            ToolButton {
-                //iconSource: "images/tb_info.svg"
-                text: "info"
-                checked: false
-                onClicked: pageStack.replace(articlePage);
             }
         }
 
@@ -130,16 +120,21 @@ Window {
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
 
         tools: ToolBarLayout {
-            ToolButton {
-                //iconSource: "images/tb_back.svg"
-                text: "Index"
+            ToolButton {                
+                iconSource: "toolbar-back"
                 onClicked: pageStack.pop();
             }
             ToolButton {
-                //iconSource: "images/tb_info.svg"
-                text: "Back"
-                checked: true
+                iconSource: "toolbar-previous"
                 onClicked: articlePage.backward();
+            }
+            ToolButton {
+                iconSource: "toolbar-next"
+                onClicked: articlePage.forward();
+            }
+            ToolButton {
+                iconSource: "toolbar-menu"
+                //onClicked:
             }
         }
 
