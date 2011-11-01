@@ -26,8 +26,8 @@ Item {
         return zimFileWrapper.getMetaDataString(key);
     }
 
-    function zimFileIterator(path) {
-        return zimFileWrapper.zimFileIterator(path);
+    function zimFileIterator(path, recurseSubdirs) {
+        return zimFileWrapper.zimFileIterator(path, recurseSubdirs);
     }
 
     function nextZimFile() {

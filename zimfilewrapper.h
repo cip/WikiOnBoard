@@ -63,7 +63,7 @@ Q_INVOKABLE QString getMetaDataString(QString key);
         return QString::fromUtf8(s.data(), int(s.size()));
     }
 
-    Q_INVOKABLE void zimFileIterator(QString path);
+    Q_INVOKABLE void zimFileIterator(QString path, bool recurseSubdirs);
     Q_INVOKABLE QString nextZimFile();
 protected:
 

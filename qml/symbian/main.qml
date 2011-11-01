@@ -48,11 +48,11 @@ Window {
 
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
 
-        function findZimFiles(path) {
+        function findZimFiles(path, recurseSubdirs) {
             console.log("sendMessage")
             //searchZimFileWorker.sendMessage({'action': 'appendCurrentTime', 'model': libraryModel});
             //FIXME
-            backend.zimFileIterator(path);
+            backend.zimFileIterator(path, recurseSubdirs);
             var zimFile;
 
             //This does not work yet (not time to redraw..)
@@ -90,9 +90,9 @@ Window {
                 iconSource: "toolbar-refresh"
                 onClicked: {
                     //FIXME (first windows, 2nd are symbian...)
-                    libraryPage.findZimFiles("C:\\Users\\Christian\\Downloads\\");
-                    libraryPage.findZimFiles("E:\\");
-                    libraryPage.findZimFiles("F:\\");
+                    libraryPage.findZimFiles("C:\\Users\\Christian\\Downloads\\",true);
+                    libraryPage.findZimFiles("E:\\", false);
+                    libraryPage.findZimFiles("F:\\", false);
 
                 }
             }

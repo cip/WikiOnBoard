@@ -392,10 +392,13 @@ QString ZimFileWrapper::getMetaDataString(QString key) {
 }
 
 //TODO probably better to have separate class (like ZimFileIterator)
-void ZimFileWrapper::zimFileIterator(QString path) {
+void ZimFileWrapper::zimFileIterator(QString path, bool recurseSubdirs) {
     delete dirIterator;
-    dirIterator = new QDirIterator(path, QDirIterator::Subdirectories);
-
+    if (recurseSubdirs) {
+        dirIterator = new QDirIterator(path, QDirIterator::Subdirectories);
+    } else {
+        dirIterator = new QDirIterator(path);
+    }
 }
 
 QString ZimFileWrapper::nextZimFile() {
