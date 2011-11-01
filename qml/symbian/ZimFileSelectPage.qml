@@ -11,7 +11,7 @@ WikionboardPage {
             showDotAndDotDot: true
             showOnlyReadable: true
             folder: "file://"
-            nameFilters: ["*.zim"]
+            nameFilters: ["*.zim","*.zimaa"]
             sortField: FolderListModel.Name
         }
 
