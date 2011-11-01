@@ -3,6 +3,7 @@ import QtQuick 1.0
 ////import com.nokia.meego 1.0
 import com.nokia.symbian 1.0
 import com.nokia.extras 1.0
+import "settings.js" as Settings
 
 Window {
     id: window
@@ -140,7 +141,13 @@ Window {
         id: backend
     }
 
-    Component.onCompleted: pageStack.push(libraryPage);
+    Component.onCompleted: {
+        Settings.initialize();
+        Settings.setSetting("test","value");
+        console.log("Storage:" + Settings.getSetting("test"));
+
+        pageStack.push(libraryPage);
+    }
 }
 
 
