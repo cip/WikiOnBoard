@@ -29,6 +29,11 @@ Window {
 
     ZimFileSelectPage {
         id: zimFileSelectPage
+        onZimFileSelected: {
+            console.log("zimFileSelected:"+file)
+            libraryPage.addZimFile(file);
+            pageStack.pop();
+        }
         tools: ToolBarLayout {
             ToolButton {
                 iconSource: "toolbar-back"
