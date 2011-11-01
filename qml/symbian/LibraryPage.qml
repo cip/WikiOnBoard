@@ -52,22 +52,23 @@ WikionboardPage {
             id: listItem
             Column {
                 anchors.fill: listItem.paddingItem
-                function getTitle() {
-                    return title
-                }
 
-                function getSubTitle() {
-                    return ""
-                }
                 ListItemText {
+                    function getTitle() {
+                        return title
+                    }
                     mode: listItem.mode
                     role: "Title"
-                    text: title
+                    text: getTitle()
                 }
                 ListItemText {
+                    function getSubTitle() {
+                        return description
+                    }
+
                     mode: listItem.mode
                     role: "SubTitle"
-                    text: description
+                    text: getSubTitle()
                 }
             }
             onClicked: library.openZimFile(fileName)
