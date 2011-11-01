@@ -95,6 +95,13 @@ WikionboardPage {
                        libraryModel.remove(libraryItemMenu.itemIndex)
                     }
                 }
+               MenuItem {
+                   text: "Remove All"
+                   onClicked: {
+                       console.log(" Remove all items");
+                       libraryModel.clear();
+                    }
+               }
            }
 
            function openMenu(index) {
