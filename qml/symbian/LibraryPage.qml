@@ -9,23 +9,7 @@ WikionboardPage {
     id: library
     signal openZimFile(string fileName);
     signal findEbookClicked();
-    property string photoAuthor
-    property string photoDate
-    property string photoDescription
-    property string photoTags
-    property string photoTitle
-    property int photoHeight
-    property int photoWidth
 
-    function setPhotoData(author, date, description, tags, title, photoWidth, photoHeight) {
-        details.photoAuthor = author;
-        details.photoDate = date;
-        details.photoDescription = description;
-        details.photoTags = tags;
-        details.photoTitle = title;
-        details.photoHeight = photoHeight;
-        details.photoWidth = photoWidth;
-    }
     function addZimFile(fileName) {
         libraryModel.addZimFile(fileName);
     }
