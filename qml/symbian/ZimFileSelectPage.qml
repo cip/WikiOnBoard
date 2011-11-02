@@ -4,11 +4,17 @@ import com.nokia.symbian 1.0
 
 WikionboardPage {
     signal zimFileSelected(string file)
+
+    function folderUp() {
+        folderModel.folder = folderModel.parentFolder
+    }
+
     ListView {
         anchors { fill: parent}
         FolderListModel {
             id: folderModel
-            showDotAndDotDot: true
+            // Not very useful, because not displayed at  drive (like c:) level
+            //showDotAndDotDot: true
             showOnlyReadable: true
             folder: "file://"
             nameFilters: ["*.zim","*.zimaa"]

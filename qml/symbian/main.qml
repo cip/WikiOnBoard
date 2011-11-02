@@ -52,6 +52,10 @@ Window {
                 iconSource: "toolbar-back"
                 onClicked: pageStack.pop();
             }
+            ToolButton {
+                iconSource: "toolbar-previous"
+                onClicked: zimFileSelectPage.folderUp()
+            }
         }
 
     }
