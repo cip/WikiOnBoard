@@ -30,8 +30,10 @@ ListModel {
                         backend.getMetaDataString("Language"),
                         backend.getMetaDataString("Relation")
                         )
+            return true
         } else {
             console.log("could not add zim file. error: "+ backend.errorString());
+            return false
         }
 
     }

@@ -11,7 +11,7 @@ WikionboardPage {
     signal findEbookClicked();
 
     function addZimFile(fileName) {
-        libraryModel.addZimFile(fileName);
+        return libraryModel.addZimFile(fileName);
     }
 
     LibraryModel {

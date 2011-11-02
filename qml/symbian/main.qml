@@ -50,8 +50,13 @@ Window {
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
         onZimFileSelected: {
             console.log("zimFileSelected:"+file)
-            libraryPage.addZimFile(file);
-            pageStack.pop();
+            if (libraryPage.addZimFile(file)) {
+                pageStack.pop();
+            } else {
+                var s = "Error adding zim file: "+file+" Error: "+backend.errorString()
+                banner.showMessage(s)
+
+            }
         }
         tools: ToolBarLayout {
             ToolButton {
