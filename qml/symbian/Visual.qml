@@ -4,7 +4,7 @@ import QtQuick 1.0
 Item {
     // General
     property string defaultFontFamily: "Helvetica"  // Defaults to correct ones in device
-    property int defaultFontSize: 14
+    property int defaultFontSize: platformStyle.fontSizeLarge
     //property color defaultFontColor: "#6f6a5c"
     property color defaultFontColor: "white"
     property color defaultFontColorLink: "#7c0505"
