@@ -72,6 +72,22 @@ Window {
         }
     }
 
+    HelpPage {
+        id: helpPage
+        anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+        tools: ToolBarLayout {
+            ToolButton {
+                iconSource: "toolbar-back"
+                onClicked: pageStack.pop()
+            }
+        }
+
+        onFindEbookClicked: {
+            pageStack.pop();
+            pageStack.push(zimFileSelectPage)
+        }
+    }
+
     LibraryPage {
         id: libraryPage
 
@@ -152,7 +168,10 @@ Window {
         onOpenZimFile: {
             window.openZimFile(fileName)
         }
+
+        onDownloadEbookClicked: pageStack.push(helpPage)
     }
+
 
     IndexPage {
         id: indexPage

@@ -9,6 +9,7 @@ WikionboardPage {
     id: library
     signal openZimFile(string fileName);
     signal findEbookClicked();
+    signal downloadEbookClicked();
 
     function addZimFile(fileName) {
         return libraryModel.addZimFile(fileName);
@@ -135,6 +136,7 @@ WikionboardPage {
             id: downloadEBookButton
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Download eBook")
+            onClicked: downloadEbookClicked()
         }
     }
 }
