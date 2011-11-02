@@ -179,6 +179,14 @@ Window {
     ArticlePage {
         id: articlePage
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+
+        onOpenExternalLink: {
+            //TODO ask banner.showMessage("Open url "+url+" in system web browser.");
+            if (!Qt.openUrlExternally(url)) {
+                banner.showMessage(qsTr("Opening line\""+url+"\" in system web browser failed."));
+            }
+        }
+
         onBackwardAvailable: {
             console.log("onBackwardAvailable. Set backwardButton enabled to : "+available);
             backwardButton.enabled = available;

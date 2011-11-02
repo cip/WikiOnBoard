@@ -131,6 +131,7 @@ public:
         setWidget(widget);
         QObject::connect(widget, SIGNAL(backwardAvailable(bool)), this, SIGNAL(backwardAvailable(bool)));
         QObject::connect(widget, SIGNAL(forwardAvailable(bool)), this, SIGNAL(forwardAvailable(bool)));
+        QObject::connect(widget, SIGNAL(openExternalLink(QUrl)), this, SIGNAL(openExternalLink(QUrl)));
     }
 
     bool showImages() const
@@ -147,11 +148,10 @@ public:
     }
 
 Q_SIGNALS:
-    void showImagesChanged(bool showImages);
-
-Q_SIGNALS:
-      void backwardAvailable ( bool available);
-      void forwardAvailable ( bool available);
+     void showImagesChanged(bool showImages);
+     void backwardAvailable ( bool available);
+     void forwardAvailable ( bool available);
+     void openExternalLink( QUrl url);
 
 public slots:    
     void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {

@@ -15,7 +15,7 @@ WikionboardPage {
      property alias showImages: showImageMenuItem.checked
      signal backwardAvailable(bool available)
      signal forwardAvailable(bool available)
-
+     signal openExternalLink(url url)
      function init() {
         articleViewerQML.setZimFileWrapper(backend.getZimFileWrapper())
      }
@@ -47,7 +47,11 @@ WikionboardPage {
         onForwardAvailable: {
                console.log("onForwardAvailable:"+available);
                article.forwardAvailable(available);
-        }        
+        }
+        onOpenExternalLink: {
+            console.log("onOpenExternalLink:"+url);
+            article.openExternalLink(url);
+        }
      }
 
      function openArticle(articleUrl) {
