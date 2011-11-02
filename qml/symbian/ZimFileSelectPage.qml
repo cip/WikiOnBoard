@@ -27,10 +27,7 @@ WikionboardPage {
 
         Component {
             id: fileDelegate
-            Item {
-                height: visual.defaultItemHeight
-                width: folderListView.width
-
+            ListItem {
                 Image {
                     id: folderIcon
                     //height: parent.height*2/3
