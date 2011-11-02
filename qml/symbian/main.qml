@@ -105,7 +105,8 @@ Window {
 
         tools: ToolBarLayout {
             ToolButton {
-                text: "Exit" //Strange, not icon available
+                id: exitButton
+                iconSource: "./gfx/toolbar-icons/close_stop.svg"
                 onClicked: Qt.quit();
             }
             ToolButton {
