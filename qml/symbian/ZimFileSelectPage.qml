@@ -2,14 +2,16 @@ import QtQuick 1.0
 import Qt.labs.folderlistmodel 1.0
 import com.nokia.symbian 1.0
 
-WikionboardPage {
+WikionboardPage {    
     signal zimFileSelected(string file)
 
     function folderUp() {
         folderModel.folder = folderModel.parentFolder
     }
+    property bool isDriveSelection : true
 
-    ListView {
+    onIsDriveSelectionChanged: console.log("isDriveSelection:"+isDriveSelection)
+    ListView {        
         anchors { fill: parent}
         FolderListModel {
             id: folderModel
@@ -19,6 +21,7 @@ WikionboardPage {
             folder: "file://"
             nameFilters: ["*.zim","*.zimaa"]
             sortField: FolderListModel.Name
+            onFolderChanged: {isDriveSelection = (parentFolder=="")}
         }
 
         Component {

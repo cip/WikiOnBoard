@@ -40,6 +40,7 @@ Window {
     }
 
     ZimFileSelectPage {
+        //TODO: Probably makes sense to use loader. (Else list populated on app start)
         id: zimFileSelectPage
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
         onZimFileSelected: {
@@ -53,10 +54,14 @@ Window {
                 onClicked: pageStack.pop();
             }
             ToolButton {
+                id: upButton
                 iconSource: "toolbar-previous"
                 onClicked: zimFileSelectPage.folderUp()
+                enabled: !zimFileSelectPage.isDriveSelection
             }
         }
+
+        onIsDriveSelectionChanged: upButton.enabled = !isDriveSelection
 
     }
 
