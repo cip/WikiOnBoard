@@ -11,7 +11,8 @@ WikionboardPage {
     property bool isDriveSelection : true
 
     onIsDriveSelectionChanged: console.log("isDriveSelection:"+isDriveSelection)
-    ListView {        
+    ListView {
+        id: folderListView
         anchors { fill: parent}
         FolderListModel {
             id: folderModel
@@ -26,36 +27,63 @@ WikionboardPage {
 
         Component {
             id: fileDelegate
-            ListItem {
-                id: listItem
-                Column {
-                    anchors.fill: listItem.paddingItem
-                    ListItemText {
-                        mode: listItem.mode
-                        role: "Title"
-                        text: fileName
-                    }
+            Item {
+                height: 75
+                width: folderListView.width
+
+                Rectangle {
+                    width: 4
+                    height: parent.height
+                    color: "#2d2875"
+                    visible: index % 2
                 }
-                onClicked:{
-                    console.log("listonclicked. file: "+fileName+ "index: "+index )
-                    if (folderModel.isFolder(index)) {
-                        if (fileName == "..")
-                            folderModel.folder = folderModel.parentFolder
-                        else
-                            folderModel.folder += "/" + fileName
 
-                        console.log(folderModel.folder)
-                    } else {
-                         var file = folderModel.folder + "/" + fileName
-                          console.log("ZImFileSelect file selected:"+file)
+                Image {
+                    id: folderIcon
 
-                        file = file.split("file:///")[1]; //FIXME: hardly a reliabe solution
-                        console.log("ZImFileSelect file selected: (After file:// removal)"+file)
-                          zimFileSelected(file)
+                    anchors { left: parent.left; verticalCenter: parent.verticalCenter }
+                    source: "./gfx/list-icons/folder.svg"
+                    visible: folderModel.isFolder(index)
+                }
+
+                Text {
+                    anchors {
+                        left: folderIcon.right
+                        right: parent.right
+                        leftMargin: 5
+                        verticalCenter: parent.verticalCenter
                     }
+                    elide: Text.ElideRight
+                    font.pixelSize: 22
+                    font.letterSpacing: -1
+                    color: "white"
+                    text: fileName
+                }
 
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        console.log("listonclicked. file: "+fileName+ "index: "+index )
+                        if (folderModel.isFolder(index)) {
+                            if (fileName == "..")
+                                folderModel.folder = folderModel.parentFolder
+                            else
+                                folderModel.folder += "/" + fileName
+
+                            console.log(folderModel.folder)
+                        } else {
+                            var file = folderModel.folder + "/" + fileName
+                            console.log("ZImFileSelect file selected:"+file)
+
+                            file = file.split("file:///")[1]; //FIXME: hardly a reliabe solution
+                            console.log("ZImFileSelect file selected: (After file:// removal)"+file)
+                            zimFileSelected(file)
+                        }
+                    }
                 }
             }
+
         }
 
 
