@@ -182,6 +182,9 @@ Window {
         property url url
         icon: visual.internetToolbarIconSource
         titleText: qsTr("Open link in browser")
+        //TODO: %1 translation scheme not working in qml?
+        //TODO: Would be nice if the self-signed string can be displayed as well
+        message: qsTr("[TRANSLATOR] Explain that link\""+url+"\" clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.")
         acceptButtonText: qsTr("Open")
         rejectButtonText: qsTr("Cancel")
         onClickedOutside: reject()
@@ -191,9 +194,6 @@ Window {
             }
         }
         function askAndOpenUrlExternally(url) {
-            //TODO: %1 translation scheme not working in qml?
-            //TODO: Would be nice if the self-signed string can be displayed as well
-            message = qsTr("[TRANSLATOR] Explain that link\""+url+"\" clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.")
             openExternalLinkQueryDialog.url = url
             open();
         }
