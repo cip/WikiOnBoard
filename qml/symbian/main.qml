@@ -55,19 +55,16 @@ Window {
         }
         tools: ToolBarLayout {
             ToolButton {
+                id: backButton
                 iconSource: "toolbar-back"
-                onClicked: pageStack.pop();
+                onClicked: zimFileSelectPage.isDriveSelection?pageStack.pop():zimFileSelectPage.folderUp()
             }
             ToolButton {
-                id: upButton
-                iconSource: "toolbar-previous"
-                onClicked: zimFileSelectPage.folderUp()
-                enabled: !zimFileSelectPage.isDriveSelection
+                iconSource: visual.closeToolbarIconSource
+                onClicked: pageStack.pop();
             }
+
         }
-
-        onIsDriveSelectionChanged: upButton.enabled = !isDriveSelection
-
     }
 
     LibraryPage {
