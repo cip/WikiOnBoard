@@ -28,21 +28,15 @@ WikionboardPage {
         Component {
             id: fileDelegate
             Item {
-                height: 75
+                height: visual.defaultItemHeight
                 width: folderListView.width
-
-                Rectangle {
-                    width: 4
-                    height: parent.height
-                    color: "#2d2875"
-                    visible: index % 2
-                }
 
                 Image {
                     id: folderIcon
-
+                    //height: parent.height*2/3
+                    //width: parent.height*2/3
                     anchors { left: parent.left; verticalCenter: parent.verticalCenter }
-                    source: "./gfx/list-icons/folder.svg"
+                    source: visual.folderListIconSource
                     visible: folderModel.isFolder(index)
                 }
 
@@ -50,13 +44,13 @@ WikionboardPage {
                     anchors {
                         left: folderIcon.right
                         right: parent.right
-                        leftMargin: 5
+                        leftMargin: visual.margins
                         verticalCenter: parent.verticalCenter
                     }
                     elide: Text.ElideRight
-                    font.pixelSize: 22
+                    font.pixelSize: visual.defaultFontSize
                     font.letterSpacing: -1
-                    color: "white"
+                    color: visual.defaultFontColor
                     text: fileName
                 }
 

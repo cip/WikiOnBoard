@@ -9,7 +9,7 @@ Page {
         id: background
 
         anchors.fill: parent
-        color: UI.FLICKRPAGE_BG_COLOR
+        color: visual.defaultBackgroundColor
 
         Image {
             //source: "images/stripes.png"

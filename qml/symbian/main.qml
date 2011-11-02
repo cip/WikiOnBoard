@@ -20,6 +20,11 @@ Window {
         }
     }
 
+    Visual {
+        id: visual
+    }
+
+
     PageStack {
         id: pageStack
 
@@ -106,7 +111,7 @@ Window {
         tools: ToolBarLayout {
             ToolButton {
                 id: exitButton
-                iconSource: "./gfx/toolbar-icons/close_stop.svg"
+                iconSource: visual.closeToolbarIconSource
                 onClicked: Qt.quit();
             }
             ToolButton {
