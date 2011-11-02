@@ -176,15 +176,36 @@ Window {
 
     }
 
+    QueryDialog {
+        //TODO should probably be handled by loader. (Or directly dynamically)
+        id: openExternalLinkQueryDialog
+        property url url
+        icon: visual.internetToolbarIconSource
+        titleText: qsTr("Open link in browser")
+        acceptButtonText: qsTr("Open")
+        rejectButtonText: qsTr("Cancel")
+        onClickedOutside: reject()
+        onAccepted:  {
+            if (!Qt.openUrlExternally(url)) {
+                banner.showMessage(qsTr("Opening link \""+url+"\" in system web browser failed."));
+            }
+        }
+        function askAndOpenUrlExternally(url) {
+            //TODO: %1 translation scheme not working in qml?
+            //TODO: Would be nice if the self-signed string can be displayed as well
+            message = qsTr("[TRANSLATOR] Explain that link\""+url+"\" clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.")
+            openExternalLinkQueryDialog.url = url
+            open();
+        }
+    }
+
     ArticlePage {
         id: articlePage
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
 
         onOpenExternalLink: {
             //TODO ask banner.showMessage("Open url "+url+" in system web browser.");
-            if (!Qt.openUrlExternally(url)) {
-                banner.showMessage(qsTr("Opening line\""+url+"\" in system web browser failed."));
-            }
+            openExternalLinkQueryDialog.askAndOpenUrlExternally(url);
         }
 
         onBackwardAvailable: {

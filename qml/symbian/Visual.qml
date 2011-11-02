@@ -18,6 +18,7 @@ Item {
     property string folderListIconSource: "./gfx/list-icons/folder.svg"
     property string closeToolbarIconSource: "./gfx/toolbar-icons/close_stop.svg"
     property string okToolbarIconSource: "./gfx/toolbar-icons/ok.svg"
+    property string internetToolbarIconSource: "./gfx/toolbar-icons/internet.svg"
 
     // Title bar
     property int titleFontSize: 36
