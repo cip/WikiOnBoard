@@ -9,36 +9,43 @@ WikionboardPage {
     id: helpPage
     signal findEbookClicked();
 
-    Text {
-        id: helpText
-        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-        font.pixelSize: platformStyle.fontSizeSmall
-        color: visual.defaultFontColor        
-        anchors { fill: parent; bottomMargin: parent.height*1/5}
-        anchors.topMargin: 10
-        anchors.rightMargin: 10
-        anchors.leftMargin: 10
+    Flickable {
+        anchors.fill: parent
+        contentHeight : helpText.paintedHeight+buttons.height
+        contentWidth : width
+        flickableDirection: Flickable.VerticalFlick
+        clip: true
 
-        text: qsTr("[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Menu option %2 in option menu %4 opens zimfile on mobile")        
-    }
+        Text {
+            id: helpText
+            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+            font.pixelSize: platformStyle.fontSizeSmall
+            color: visual.defaultFontColor
+            x: 10
+            y: 10
+            height: helpPage.height*4/5
+            width: helpPage.width-2*x
 
-    Column {
-        anchors.top: helpText.bottom
-        anchors.topMargin: UI.MARGIN_XLARGE
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right:  parent.right
-
-        Button {
-            id: addEBookButton
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Find eBook on Phone")
-            onClicked: findEbookClicked()
+            text: qsTr("[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Menu option %2 in option menu %4 opens zimfile on mobile")
         }
-        Button {
-            id: downloadEBookButton
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Download eBook")
+
+        Column {
+            id: buttons
+            y : helpText.paintedHeight+helpText.y+10
+            width: helpPage.width
+
+
+            Button {
+                id: addEBookButton
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Find eBook on Phone")
+                onClicked: findEbookClicked()
+            }
+            Button {
+                id: downloadEBookButton
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr("Download eBook")
+            }
         }
     }
 }
