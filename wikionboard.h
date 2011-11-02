@@ -120,9 +120,10 @@ private slots:
 class ArticleViewerQML : public QGraphicsProxyWidget
 {
     Q_OBJECT
-  //  Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
+    Q_PROPERTY(bool showImages READ showImages WRITE setShowImages NOTIFY showImagesChanged)
 
 public:
+
     ArticleViewerQML(QGraphicsItem* parent = 0)
         : QGraphicsProxyWidget(parent)
     {
@@ -132,31 +133,29 @@ public:
         QObject::connect(widget, SIGNAL(forwardAvailable(bool)), this, SIGNAL(forwardAvailable(bool)));
     }
 
-    /*QString text() const
+    bool showImages() const
     {
-        return widget->text();
+        return widget->showImages();
     }
 
-    void setText(const QString& text)
+    void setShowImages(const bool showImages)
     {
-        if (text != widget->text()) {
-            widget->setText(text);
-            emit textChanged();
+        if (showImages != widget->showImages()) {
+            widget->setShowImages(showImages);
+            emit showImagesChanged(showImages);
         }
-    }*/
-/*
+    }
+
 Q_SIGNALS:
-    void clicked(bool);
-    void textChanged();
-*/
+    void showImagesChanged(bool showImages);
+
 Q_SIGNALS:
       void backwardAvailable ( bool available);
       void forwardAvailable ( bool available);
 
 public slots:    
     void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {
-        widget->setZimFileWrapper(zimFileWrapper);
-        widget->toggleImageDisplay(true); //TODO: use settings
+        widget->setZimFileWrapper(zimFileWrapper);        
     }
 
     void openArticle(QString articleUrl) {

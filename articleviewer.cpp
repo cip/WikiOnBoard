@@ -26,7 +26,7 @@
 ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bool hasTouchScreen)
     : QTextBrowser(parent),zimFileWrapper(zimFileWrapper),hasTouchScreen(hasTouchScreen), welcomeUrl(QUrl(QLatin1String("wikionboard://welcome")))
  {
-    showImages=false;
+    m_showImages=false;
     articleTitle = QString();
     welcomePage = QString();
     //QTextBrowser settings
@@ -106,10 +106,10 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
 
  QVariant ArticleViewer::loadResource ( int type, const QUrl & name ) {
        if (type==QTextDocument::ImageResource) {
-           if (showImages) {
+           if (m_showImages) {
                QString encodedPath = QString::fromUtf8(name.encodedPath().data(),name.encodedPath().length());
                QTime timer;
-               qDebug() << "loadResource.: type is ImageResource and showImages =1 => load image from zim file. " << name.toString()<<"\nurl.path():"<<name.path() << "\nurl.encodedPath():"<< encodedPath;
+               qDebug() << "loadResource.: type is ImageResource and m_showImages =1 => load image from zim file. " << name.toString()<<"\nurl.path():"<<name.path() << "\nurl.encodedPath():"<< encodedPath;
                timer.start();
                QSize newSize = getMaximumDisplaySizeInCurrentArticleForImage(encodedPath);
                qDebug() << " Searching image size took " << timer.elapsed() << " milliseconds";
@@ -120,7 +120,7 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
                // this is a problem in the zim file anyway (missing resource)
                return zimFileWrapper->getImageByUrl(encodedPath,newSize);
            } else {
-              qDebug() << "loadResource: type is ImageResource but showImages=0. Returns 1x1 pixel image. ";
+              qDebug() << "loadResource: type is ImageResource but m_showImages=0. Returns 1x1 pixel image. ";
               //Returning one pixel image leads to much faster scrolling than returning empty variant or not handling it at all.
               // (Fix for issue 57).
               QPixmap emptyImage = QPixmap(1,1);
@@ -133,13 +133,13 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
 
  void ArticleViewer::toggleImageDisplay(bool checked) {
 
-     showImages = checked;
+     m_showImages = checked;
      QSettings settings;
      settings.beginGroup(QLatin1String("UISettings"));
-     if ((!settings.contains(QLatin1String("showImages"))) || (settings.value(QLatin1String("showImages"),
-                     true).toBool() != showImages))
+     if ((!settings.contains(QLatin1String("m_showImages"))) || (settings.value(QLatin1String("m_showImages"),
+                     true).toBool() != m_showImages))
              {
-             settings.setValue(QLatin1String("showImages"), showImages);
+             settings.setValue(QLatin1String("m_showImages"), m_showImages);
              }
      settings.endGroup();
      reload();

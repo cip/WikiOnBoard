@@ -188,7 +188,7 @@ Window {
             console.log("onForwardAvailable. Set forwardButton enabled to : "+available);
             forwardButton.enabled = available;
         }
-
+        onShowImagesChanged: Settings.setSetting("showImages",showImages);
         tools: ToolBarLayout {
             ToolButton {
                 iconSource: "toolbar-back"
@@ -229,9 +229,17 @@ Window {
         var lastZimFile =  Settings.getSetting("lastZimFile");
         pageStack.push(libraryPage);
         if (lastZimFile != "Unknown") {
-            console.log("lastZimFile:"+lastZimFile+" open it.")
+            console.log("Setting lastZimFile:"+lastZimFile+" open it.")
             window.openZimFile(lastZimFile)
         }
+        var showImages = Settings.getSetting("showImages");
+        if (showImages != "Unknown") {
+            console.log("Setting showImages is "+showImages+". set articlePage showImages accordingly")
+            articlePage.showImages = showImages;
+        } else {
+            articlePage.showImages = true;
+        }
+
     }
 }
 

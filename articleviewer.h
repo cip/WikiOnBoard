@@ -22,7 +22,8 @@
 class ArticleViewer : public QTextBrowser
 {
     Q_OBJECT
-public:
+    Q_PROPERTY(bool showImages READ showImages WRITE setShowImages)
+public:   
     ArticleViewer(QWidget* parent = 0, ZimFileWrapper* zimFileWrapper = 0, bool hasTouchScreen = true);
     void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {
         this->zimFileWrapper = zimFileWrapper;
@@ -33,16 +34,25 @@ public:
     void openArticleByUrl(QUrl url);
     const QUrl welcomeUrl;
     void setWelcomePage(QString welcomePage);
+    void setShowImages(bool showImages) {
+        if (m_showImages != showImages) {
+            m_showImages = showImages;
+            reload();
+        }
+     }
+    bool showImages() const
+        { return m_showImages; }
+
 protected:
     void hideWaitCursor();
     void showWaitCursor();
 private:
     ZimFileWrapper* zimFileWrapper;
     QString articleTitle;
-    bool hasTouchScreen;
-    bool showImages;
+    bool hasTouchScreen;    
     int zoomLevel;
     QString welcomePage;
+    bool m_showImages;
 signals:
     void openExternalLink( QUrl url);
     void articleOpened(QString articleTitle);
