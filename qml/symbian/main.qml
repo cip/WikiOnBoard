@@ -210,6 +210,7 @@ Window {
             }
             ToolButton {
                 iconSource: "toolbar-menu"
+                onClicked: articlePage.openMenu()
                 //onClicked:
             }
         }

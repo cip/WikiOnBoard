@@ -16,6 +16,20 @@ WikionboardPage {
         articleViewerQML.setZimFileWrapper(backend.getZimFileWrapper())
      }
 
+     function openMenu() {
+         articlePageMenu.open()
+     }
+
+     Menu {
+             id: articlePageMenu
+             // define the items in the menu and corresponding actions
+             content: MenuLayout {
+                 MenuItemCheckable {
+                     text: qsTr("Show Images")
+                     onClicked: console.log("show images")
+                 }
+             }
+         }
      ArticleViewerQML {
         id: articleViewerQML
         anchors.fill: parent
