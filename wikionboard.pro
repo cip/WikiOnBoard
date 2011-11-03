@@ -69,6 +69,17 @@ symbian: {
 DEFINES += QT_NO_CAST_FROM_ASCII \
            QT_NO_CAST_TO_ASCII
 #message(QMAKESPEC: $$QMAKESPEC)
+
+
+win32: {
+#Update and generate translations here (during simulator builds)
+#Not really the best but for now ok. (may not work for c++ strings?)
+message(Generate translations)
+system($$quote(lupdate wikionboard.pro))
+system($$quote(lupdate qml/symbian -ts $${TRANSLATIONS}))
+system($$quote(lrelease wikionboard.pro))
+}
+
 message(QT_VERSION: $$QT_VERSION)
 symbian: { 
     message(S60_VERSION: $$S60_VERSION)
