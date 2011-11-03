@@ -92,6 +92,17 @@ Window {
         }
     }
 
+    AboutPage {
+        id: aboutPage
+        anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+        tools: ToolBarLayout {
+            ToolButton {
+                iconSource: "toolbar-back"
+                onClicked: pageStack.pop()
+            }
+        }
+    }
+
     LibraryPage {
         id: libraryPage
 
@@ -172,7 +183,7 @@ Window {
         onOpenZimFile: {
             window.openZimFile(fileName)
         }
-
+        onShowAboutClicked: pageStack.push(aboutPage)
         onDownloadEbookClicked: pageStack.push(helpPage)
     }
 

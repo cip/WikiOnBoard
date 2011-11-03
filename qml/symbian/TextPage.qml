@@ -9,6 +9,9 @@ WikionboardPage {
     id: textPage
     signal linkActivated(string link)
     property alias text: txt.text
+    function getHtmlLink(caption, url) {
+        return "<a href=\"%1\">%2</a>".replace("%1",url).replace("%2",caption);
+    }
     Flickable {
         anchors.fill: parent
         contentHeight : txt.paintedHeight

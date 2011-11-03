@@ -15,10 +15,6 @@ TextPage {
     property string findEBookUrl : "internal://findEBook";
     property string findEBookCaption : qsTr("Find eBook on Phone"); //TODO: Overhead as proprties?
 
-    function getHtmlLink(caption, url) {
-        return "<a href=\"%1\">%2</a>".replace("%1",url).replace("%2",caption);
-    }
-
     text: qsTr("[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Click %2 to open zimfile on mobile").replace(
               "%1",getHtmlLink(getEBookLinkCaption, zimDownloadUrl)).replace(
               "%2",getHtmlLink(findEBookCaption, findEBookUrl))
