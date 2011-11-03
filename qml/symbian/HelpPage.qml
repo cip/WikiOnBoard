@@ -5,47 +5,33 @@ import com.nokia.symbian 1.0
 
 import "UIConstants.js" as UI
 
-WikionboardPage {
+TextPage {
     id: helpPage
     signal findEbookClicked();
+    signal openExternalLink(string url);
+    //% "Change link to page with localized zim files." (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE"
+    property string zimDownloadUrl : qsTr("https://github.com/cip/WikiOnBoard/wiki/Get-eBooks");
+    property string getEBookLinkCaption : qsTr("Download zimfile");
+    property string findEBookUrl : "internal://findEBook";
+    property string findEBookCaption : qsTr("Find eBook on Phone"); //TODO: Overhead as proprties?
 
-    Flickable {
-        anchors.fill: parent
-        contentHeight : helpText.paintedHeight+buttons.height
-        contentWidth : width
-        flickableDirection: Flickable.VerticalFlick
-        clip: true
-
-        Text {
-            id: helpText
-            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-            font.pixelSize: platformStyle.fontSizeSmall
-            color: visual.defaultFontColor
-            x: 10
-            y: 10
-            height: helpPage.height*4/5
-            width: helpPage.width-2*x
-
-            text: qsTr("[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Menu option %2 in option menu %4 opens zimfile on mobile")
-        }
-
-        Column {
-            id: buttons
-            y : helpText.paintedHeight+helpText.y+10
-            width: helpPage.width
-
-
-            Button {
-                id: addEBookButton
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr("Find eBook on Phone")
-                onClicked: findEbookClicked()
-            }
-            Button {
-                id: downloadEBookButton
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr("Download eBook")
-            }
-        }
+    function getHtmlLink(caption, url) {
+        return "<a href=\"%1\">%2</a>".replace("%1",url).replace("%2",caption);
     }
+
+    text: qsTr("[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Click %2 to open zimfile on mobile").replace(
+              "%1",getHtmlLink(getEBookLinkCaption, zimDownloadUrl)).replace(
+              "%2",getHtmlLink(findEBookCaption, findEBookUrl))
+    onLinkActivated: {
+                       console.log("helpPage.linkActivated: "+link)
+                        //TODO internal links to text page?
+                        if (link == findEBookUrl){
+                            findEbookClicked()
+                        } else {
+                            openExternalLink(link)
+                        }
+    }
+
+
 }
+

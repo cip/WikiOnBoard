@@ -86,6 +86,10 @@ Window {
             //pageStack.pop(); FIXME: works as expected regarding page, but toolbar is cleared :(
             pageStack.push(zimFileSelectPage)
         }
+        onOpenExternalLink: {
+            //TODO perhaps show different.
+            openExternalLinkQueryDialog.askAndOpenUrlExternally(url);
+        }
     }
 
     LibraryPage {
