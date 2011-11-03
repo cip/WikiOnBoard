@@ -18,12 +18,40 @@
 #include <qdeclarative.h>
 #include "qmlapplicationviewer.h"
 #include "wikionboard.h"
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    //TODO use QDeclarativeExtensionPlugin instead? (probably not very useful, because QMLViewer anyway
-    //does not display Symbian QML components
+    //Load translation
+    QTranslator translatorDefault;
+    QTranslator translatorLocale;
+
+    qDebug() << "current path:" << QDir::currentPath();    
+    qDebug() << "application dir path: "<<QCoreApplication::applicationDirPath();
+    //TODO: applicationDirPath is actually default for load anyway, but for other targets
+    // than symbian probably necessary to change path.
+    QString translationsDir =  QCoreApplication::applicationDirPath();
+    qDebug() << "searching translation files in directory: "<<translationsDir;
+    //First load english tranlsations. (replaces translation from source code, to separate text and code more)
+    if (translatorDefault.load(QLatin1String("wikionboard_en"), translationsDir)) {
+        qDebug() <<"Installing translator for english. (Replaces (some) texts from source code)";
+        app.installTranslator(&translatorDefault);
+    } else {
+        qWarning() << "Loading translation file for english failed. Will use text from source code instead, which may be less complete/polished";
+    }
+    QString locale = QLocale::system().name();
+    //Load tranlsation for local language, if available.
+    //Note: If translator.load does not find locale file, it automatically strips local name and tries again.
+    //  E.g. If wikionboard_de_AT.qsf does not exist, it tries wikionboard_de.qsf next.
+    //Note: In case of english locale the same translator is installed twice. This should however
+    // not have a negative impact.
+    if (translatorLocale.load(QLatin1String("wikionboard_") + locale, translationsDir)) {
+        qDebug() << "Installing transloator for locale: "<<locale;
+        app.installTranslator(&translatorLocale);
+    } else {
+        qDebug() << "Loading translation file for locale " << locale << " failed. (english translator is used instead)";
+    }
     qmlRegisterType<ZimFileWrapper>("WikiOnBoardModule", 1, 0, "ZimFileWrapper");
     qmlRegisterType<ArticleViewerQML>("WikiOnBoardModule", 1, 0, "ArticleViewerQML");
     qmlRegisterType<IndexListQML>("WikiOnBoardModule", 1, 0, "IndexListQML");
