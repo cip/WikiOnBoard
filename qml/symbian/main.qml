@@ -195,14 +195,16 @@ Window {
 
     }
 
-    QueryDialog {
+    QueryDialogWrapMode {
         //TODO should probably be handled by loader. (Or directly dynamically)
         id: openExternalLinkQueryDialog
-        property url url
+        property url url        
         icon: visual.internetToolbarIconSource        
         titleText: qsTr("Open link in browser")
+        //To ensure url is wrappd. QueryDialogWrapMode is just a copy of the symbian component,
+        // but with message wrapMode exposed.
+        messageWrapMode: Text.WrapAtWordBoundaryOrAnywhere
         //TODO: Would be nice if the self-signed string can be displayed as well
-        //TODO: Urls are not wrapped if too long
         message: qsTr("[TRANSLATOR] Explain that link \"%1\" clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.").replace("%1", url)
         acceptButtonText: qsTr("Open")
         rejectButtonText: qsTr("Cancel")
