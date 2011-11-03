@@ -83,7 +83,7 @@ Window {
         }
 
         onFindEbookClicked: {
-            pageStack.pop();
+            //pageStack.pop(); FIXME: works as expected regarding page, but toolbar is cleared :(
             pageStack.push(zimFileSelectPage)
         }
     }
@@ -199,17 +199,17 @@ Window {
         //TODO should probably be handled by loader. (Or directly dynamically)
         id: openExternalLinkQueryDialog
         property url url
-        icon: visual.internetToolbarIconSource
+        icon: visual.internetToolbarIconSource        
         titleText: qsTr("Open link in browser")
-        //TODO: %1 translation scheme not working in qml?
         //TODO: Would be nice if the self-signed string can be displayed as well
-        message: qsTr("[TRANSLATOR] Explain that link\""+url+"\" clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.")
+        //TODO: Urls are not wrapped if too long
+        message: qsTr("[TRANSLATOR] Explain that link \"%1\" clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.").replace("%1", url)
         acceptButtonText: qsTr("Open")
         rejectButtonText: qsTr("Cancel")
         onClickedOutside: reject()
         onAccepted:  {
             if (!Qt.openUrlExternally(url)) {
-                banner.showMessage(qsTr("Opening link \""+url+"\" in system web browser failed."));
+                banner.showMessage(qsTr("Opening link \"%1\" in system web browser failed.").replace("%1",url));
             }
         }
         function askAndOpenUrlExternally(url) {
