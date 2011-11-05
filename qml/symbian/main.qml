@@ -220,7 +220,9 @@ Window {
         // but with message wrapMode exposed.
         messageWrapMode: Text.WrapAtWordBoundaryOrAnywhere
         //TODO: Would be nice if the self-signed string can be displayed as well
-        message: qsTr("[TRANSLATOR] Explain that link \"%1\" clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.").replace("%1", url)
+        message: qsTr("[TRANSLATOR] Explain that link \"%1\" clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.\n%2").replace(
+                     "%1", url).replace(
+                     "%2", appInfo.isSelfSigned?qsTr("[TRANLATOR]Explain that may not work if browser running.","only displayed if self_signed"):"")
         acceptButtonText: qsTr("Open")
         rejectButtonText: qsTr("Cancel")
         onClickedOutside: reject()
