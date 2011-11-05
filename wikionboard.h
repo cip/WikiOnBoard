@@ -194,25 +194,6 @@ private:
 
 };
 
-//Get VERSION from qmake .pro file as string
-#define __VER1M__(x) #x
-#define __VERM__(x) __VER1M__(x)
-#define __APPVERSIONSTRING__ __VERM__(__APPVERSION__)
-
-class WikiOnBoardInfo : public QObject
-{
-    Q_OBJECT
-    Q_PROPERTY(QString version READ version)
-
-public:
-    WikiOnBoardInfo(QObject *parent=0):QObject(parent) {
-    }
-
-    QString version() const {
-        return QString::fromLocal8Bit(__APPVERSIONSTRING__);
-    }
-};
-
 class 	IndexListQML : public QGraphicsProxyWidget
 {
     Q_OBJECT

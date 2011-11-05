@@ -21,6 +21,12 @@
 #include <QTranslator>
 #include <QDeclarativeContext>
 #include <QDeclarativeEngine>
+#include <QDeclarativePropertyMap>
+
+//Get VERSION from qmake .pro file as string
+#define __VER1M__(x) #x
+#define __VERM__(x) __VER1M__(x)
+#define __APPVERSIONSTRING__ __VERM__(__APPVERSION__)
 
 int main(int argc, char *argv[])
 {
@@ -60,8 +66,16 @@ int main(int argc, char *argv[])
 
     QmlApplicationViewer viewer;    
     QDeclarativeContext *context = viewer.engine()->rootContext();
-    WikiOnBoardInfo info;
-    context->setContextProperty(QLatin1String("WikiOnBoardInfo"), &info);
+    QDeclarativePropertyMap appInfo;
+    appInfo.insert(QLatin1String("version"), QVariant(QString::fromLocal8Bit(__APPVERSIONSTRING__)));
+    bool isSelfSigned= false;
+    #ifdef __IS_SELFSIGNED__==1
+        isSelfSigned = true;
+    #endif
+    appInfo.insert(QLatin1String("isSelfSigned"), QVariant(isSelfSigned));
+    appInfo.insert(QLatin1String("buildDate"), QVariant(QString::fromLocal8Bit(__DATE__)));
+
+    context->setContextProperty(QLatin1String("appInfo"), &appInfo);
 
     viewer.setMainQmlFile(QLatin1String("qml/symbian/main.qml"));
     viewer.showExpanded();
