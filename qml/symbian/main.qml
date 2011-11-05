@@ -13,6 +13,7 @@ Window {
         if (backend.openZimFile(fileName)) {
             Settings.setSetting("lastZimFile",fileName);
             pageStack.push(indexPage);
+            tabGroup.currentTab = indexPage;
         } else {
             var s = "Error opening zim file: "+fileName+" Error: "+backend.errorString()
             banner.showMessage(s)
@@ -103,118 +104,11 @@ Window {
         }
     }
 
-    LibraryPage {
-        id: libraryPage
-
-        anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
-
-        function findZimFiles(path, recurseSubdirs) {
-            console.log("sendMessage")
-            //searchZimFileWorker.sendMessage({'action': 'appendCurrentTime', 'model': libraryModel});
-            //FIXME
-            backend.zimFileIterator(path, recurseSubdirs);
-            var zimFile;
-
-            //This does not work yet (not time to redraw..)
-            libraryPageBusyIndicator.visible = true
-            libraryPageBusyIndicator.running = true
-            while ((zimFile = backend.nextZimFile()) !== "" ) {
-                console.log("zimfile found:"+zimFile)
-                libraryPage.addZimFile(zimFile);
-                libraryPageBusyIndicator.running = true
-            }
-            console.log("finished adding zimfiles");
-            libraryPageBusyIndicator.running = false
-            libraryPageBusyIndicator.visible = false
-        }
-
-        WorkerScript {
-            id: searchZimFileWorker
-            source: "searchzimfiles.js"
-            //onMessage: {console.log("message received"+message)}
-        }
-
-        BusyIndicator {
-            anchors.centerIn: parent
-            id: libraryPageBusyIndicator
-            running: false
-            visible: false
-        }
-
-        tools: ToolBarLayout {
-            ToolButton {
-                id: exitButton
-                iconSource: visual.closeToolbarIconSource
-                onClicked: Qt.quit();
-            }
-            ToolButton {
-                iconSource: "toolbar-refresh"
-                onClicked: {
-                    //FIXME (first windows, 2nd are symbian...)
-                    libraryPage.findZimFiles("C:\\Users\\Christian\\Downloads\\",true);
-                    libraryPage.findZimFiles("E:\\", false);
-                    libraryPage.findZimFiles("F:\\", false);
-
-                }
-            }
-            ToolButton {
-                iconSource: "toolbar-search"
-                onClicked: pageStack.push(indexPage);
-            }
-            ToolButton {
-                iconSource: "toolbar-menu"
-                //onClicked:
-            }
-        }
-
-        // Create an info banner with no icon
-        InfoBanner {
-            id: banner
-            text: ""
-            function showMessage(msg) {
-                text = msg
-                open()
-            }
-        }
-        onFindEbookClicked: {
-            pageStack.push(zimFileSelectPage)
-        }
-
-        onOpenZimFile: {
-            window.openZimFile(fileName)
-        }
-        onShowAboutClicked: pageStack.push(aboutPage)
-        onDownloadEbookClicked: pageStack.push(helpPage)
-    }
-
-
-    IndexPage {
-        id: indexPage
-        anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
-        tools: ToolBarLayout {
-            ToolButton {
-                iconSource: "toolbar-back"
-                onClicked: pageStack.pop();
-            }
-            ToolButton {
-                iconSource: "toolbar-menu"
-                //onClicked:
-            }
-        }
-
-        onOpenArticle: {
-            console.log("Item clicked in index list"+articleUrl+ "Open in articlePage")
-            articlePage.openArticle(articleUrl)
-            pageStack.push(articlePage);
-        }
-
-    }
-
     QueryDialogWrapMode {
         //TODO should probably be handled by loader. (Or directly dynamically)
         id: openExternalLinkQueryDialog
-        property url url        
-        icon: visual.internetToolbarIconSource        
+        property url url
+        icon: visual.internetToolbarIconSource
         titleText: qsTr("Open link in browser")
         //To ensure url is wrappd. QueryDialogWrapMode is just a copy of the symbian component,
         // but with message wrapMode exposed.
@@ -237,48 +131,179 @@ Window {
         }
     }
 
-    ArticlePage {
-        id: articlePage
+    TabGroup {
+        id: tabGroup
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
 
-        onOpenExternalLink: {
-            //TODO ask banner.showMessage("Open url "+url+" in system web browser.");
-            openExternalLinkQueryDialog.askAndOpenUrlExternally(url);
-        }
+        LibraryPage {
+            id: libraryPage
 
-        onBackwardAvailable: {
-            console.log("onBackwardAvailable. Set backwardButton enabled to : "+available);
-            backwardButton.enabled = available;
-        }
+            anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
 
-        onForwardAvailable: {
-            console.log("onForwardAvailable. Set forwardButton enabled to : "+available);
-            forwardButton.enabled = available;
-        }
-        onShowImagesChanged: Settings.setSetting("showImages",showImages);
-        tools: ToolBarLayout {
-            ToolButton {
-                iconSource: "toolbar-back"
-                onClicked: pageStack.pop();
+            function findZimFiles(path, recurseSubdirs) {
+                console.log("sendMessage")
+                //searchZimFileWorker.sendMessage({'action': 'appendCurrentTime', 'model': libraryModel});
+                //FIXME
+                backend.zimFileIterator(path, recurseSubdirs);
+                var zimFile;
+
+                //This does not work yet (not time to redraw..)
+                libraryPageBusyIndicator.visible = true
+                libraryPageBusyIndicator.running = true
+                while ((zimFile = backend.nextZimFile()) !== "" ) {
+                    console.log("zimfile found:"+zimFile)
+                    libraryPage.addZimFile(zimFile);
+                    libraryPageBusyIndicator.running = true
+                }
+                console.log("finished adding zimfiles");
+                libraryPageBusyIndicator.running = false
+                libraryPageBusyIndicator.visible = false
             }
-            ToolButton {
-                id: backwardButton
-                iconSource: "toolbar-previous"
-                onClicked: {
-                    articlePage.backward();
+
+            WorkerScript {
+                id: searchZimFileWorker
+                source: "searchzimfiles.js"
+                //onMessage: {console.log("message received"+message)}
+            }
+
+            BusyIndicator {
+                anchors.centerIn: parent
+                id: libraryPageBusyIndicator
+                running: false
+                visible: false
+            }
+
+            tools: ToolBarLayout {
+                ToolButton {
+                    id: exitButton
+                    iconSource: visual.closeToolbarIconSource
+                    onClicked: Qt.quit();
+                }
+                ToolButton {
+                    iconSource: "toolbar-refresh"
+                    onClicked: {
+                        //FIXME (first windows, 2nd are symbian...)
+                        libraryPage.findZimFiles("C:\\Users\\Christian\\Downloads\\",true);
+                        libraryPage.findZimFiles("E:\\", false);
+                        libraryPage.findZimFiles("F:\\", false);
+
+                    }
+                }
+                ToolButton {
+                    iconSource: "toolbar-search"
+                    onClicked: pageStack.push(indexPage);
+                }
+                ToolButton {
+                    iconSource: "toolbar-menu"
+                    //onClicked:
                 }
             }
-            ToolButton {
-                id: forwardButton
-                iconSource: "toolbar-next"
-                onClicked: {
-                    articlePage.forward();
+
+            // Create an info banner with no icon
+            InfoBanner {
+                id: banner
+                text: ""
+                function showMessage(msg) {
+                    text = msg
+                    open()
                 }
             }
-            ToolButton {
-                iconSource: "toolbar-menu"
-                onClicked: articlePage.openMenu()
-                //onClicked:
+            onFindEbookClicked: {
+                pageStack.push(zimFileSelectPage)
+            }
+
+            onOpenZimFile: {
+                window.openZimFile(fileName)
+            }
+            onShowAboutClicked: pageStack.push(aboutPage)
+            onDownloadEbookClicked: pageStack.push(helpPage)
+        }
+
+
+        IndexPage {
+            id: indexPage
+            anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+            tools: ToolBarLayout {
+                ToolButton {
+                    iconSource: "toolbar-back"
+                    onClicked: pageStack.pop();
+                }
+                ButtonRow {
+                    id: buttonRow
+                    TabButton {
+                        id: libraryTabButton
+                        tab: libraryPage
+                        iconSource: "toolbar-back" //TODO
+                    }
+                    TabButton {
+                        id: indexTabButton
+                        tab: indexPage
+                        iconSource: "toolbar-search"
+                    }
+                    TabButton {
+                        id: articleTabButton
+                        tab: articlePage
+                        iconSource: "toolbar-back"
+                    }
+                }
+                ToolButton {
+                    iconSource: "toolbar-menu"
+                    //onClicked:
+                }
+            }
+
+            onOpenArticle: {
+                console.log("Item clicked in index list"+articleUrl+ "Open in articlePage")
+                articlePage.openArticle(articleUrl)
+                pageStack.push(articlePage);
+
+            }
+
+        }
+
+        ArticlePage {
+            id: articlePage
+            anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+
+            onOpenExternalLink: {
+                //TODO ask banner.showMessage("Open url "+url+" in system web browser.");
+                openExternalLinkQueryDialog.askAndOpenUrlExternally(url);
+            }
+
+            onBackwardAvailable: {
+                console.log("onBackwardAvailable. Set backwardButton enabled to : "+available);
+                backwardButton.enabled = available;
+            }
+
+            onForwardAvailable: {
+                console.log("onForwardAvailable. Set forwardButton enabled to : "+available);
+                forwardButton.enabled = available;
+            }
+            onShowImagesChanged: Settings.setSetting("showImages",showImages);
+            tools: ToolBarLayout {
+                ToolButton {
+                    iconSource: "toolbar-back"
+                    onClicked: pageStack.pop();
+                }
+                ToolButton {
+                    id: backwardButton
+                    iconSource: "toolbar-previous"
+                    onClicked: {
+                        articlePage.backward();
+                    }
+                }
+                ToolButton {
+                    id: forwardButton
+                    iconSource: "toolbar-next"
+                    onClicked: {
+                        articlePage.forward();
+                    }
+                }
+                ToolButton {
+                    iconSource: "toolbar-menu"
+                    onClicked: articlePage.openMenu()
+                    //onClicked:
+                }
             }
         }
     }
