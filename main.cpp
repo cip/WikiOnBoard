@@ -19,6 +19,8 @@
 #include "qmlapplicationviewer.h"
 #include "wikionboard.h"
 #include <QTranslator>
+#include <QDeclarativeContext>
+#include <QDeclarativeEngine>
 
 int main(int argc, char *argv[])
 {
@@ -56,7 +58,11 @@ int main(int argc, char *argv[])
     qmlRegisterType<ArticleViewerQML>("WikiOnBoardModule", 1, 0, "ArticleViewerQML");
     qmlRegisterType<IndexListQML>("WikiOnBoardModule", 1, 0, "IndexListQML");
 
-    QmlApplicationViewer viewer;
+    QmlApplicationViewer viewer;    
+    QDeclarativeContext *context = viewer.engine()->rootContext();
+    WikiOnBoardInfo info;
+    context->setContextProperty(QLatin1String("WikiOnBoardInfo"), &info);
+
     viewer.setMainQmlFile(QLatin1String("qml/symbian/main.qml"));
     viewer.showExpanded();
 
