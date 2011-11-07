@@ -138,7 +138,7 @@ Window {
         LibraryPage {
             id: libraryPage
 
-            anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+            anchors { fill: parent}
 
             function findZimFiles(path, recurseSubdirs) {
                 console.log("sendMessage")
@@ -222,7 +222,7 @@ Window {
 
         IndexPage {
             id: indexPage
-            anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+            anchors { fill: parent}
             tools: ToolBarLayout {
                 ToolButton {
                     iconSource: "toolbar-back"
@@ -263,8 +263,7 @@ Window {
 
         ArticlePage {
             id: articlePage
-            anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
-
+            anchors { fill: parent}
             onOpenExternalLink: {
                 //TODO ask banner.showMessage("Open url "+url+" in system web browser.");
                 openExternalLinkQueryDialog.askAndOpenUrlExternally(url);
