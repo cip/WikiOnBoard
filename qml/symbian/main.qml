@@ -12,7 +12,6 @@ Window {
         console.log("Open zimfile:"+fileName);
         if (backend.openZimFile(fileName)) {
             Settings.setSetting("lastZimFile",fileName);
-            pageStack.push(indexPage);
             tabGroup.currentTab = indexPage;
         } else {
             var s = "Error opening zim file: "+fileName+" Error: "+backend.errorString()
@@ -25,13 +24,34 @@ Window {
         id: visual
     }
 
-
-    PageStack {
-        id: pageStack
-
-        anchors.fill: parent
-        toolBar: toolBar
-        //onDepthChanged:
+    ToolBarLayout {
+        id: defaultTools
+        ToolButton {
+            iconSource: "toolbar-back"
+            onClicked: pageStack.pop();
+        }
+        ButtonRow {
+            id: buttonRow
+            TabButton {
+                id: libraryTabButton
+                tab: mainPage
+                iconSource: "toolbar-back" //TODO
+            }
+            TabButton {
+                id: indexTabButton
+                tab: indexPage
+                iconSource: "toolbar-search"
+            }
+            TabButton {
+                id: articleTabButton
+                tab: articlePage
+                iconSource: "toolbar-back"
+            }
+        }
+        ToolButton {
+            iconSource: "toolbar-menu"
+            //onClicked:
+        }
     }
 
     StatusBar {
@@ -45,64 +65,6 @@ Window {
         anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
     }
 
-    ZimFileSelectPage {
-        //TODO: Probably makes sense to use loader. (Else list populated on app start)
-        id: zimFileSelectPage
-        anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
-        onZimFileSelected: {
-            console.log("zimFileSelected:"+file)
-            if (libraryPage.addZimFile(file)) {
-                pageStack.pop();
-            } else {
-                var s = "Error adding zim file: "+file+" Error: "+backend.errorString()
-                banner.showMessage(s)
-
-            }
-        }
-        tools: ToolBarLayout {
-            ToolButton {
-                id: backButton
-                iconSource: "toolbar-back"
-                onClicked: zimFileSelectPage.isDriveSelection?pageStack.pop():zimFileSelectPage.folderUp()
-            }
-            ToolButton {
-                iconSource: visual.closeToolbarIconSource
-                onClicked: pageStack.pop();
-            }
-
-        }
-    }
-
-    HelpPage {
-        id: helpPage
-        anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
-        tools: ToolBarLayout {
-            ToolButton {
-                iconSource: "toolbar-back"
-                onClicked: pageStack.pop()
-            }
-        }
-
-        onFindEbookClicked: {
-            //pageStack.pop(); FIXME: works as expected regarding page, but toolbar is cleared :(
-            pageStack.push(zimFileSelectPage)
-        }
-        onOpenExternalLink: {
-            //TODO perhaps show different.
-            openExternalLinkQueryDialog.askAndOpenUrlExternally(url);
-        }
-    }
-
-    AboutPage {
-        id: aboutPage
-        anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
-        tools: ToolBarLayout {
-            ToolButton {
-                iconSource: "toolbar-back"
-                onClicked: pageStack.pop()
-            }
-        }
-    }
 
     QueryDialogWrapMode {
         //TODO should probably be handled by loader. (Or directly dynamically)
@@ -135,128 +97,155 @@ Window {
         id: tabGroup
         anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
 
-        LibraryPage {
-            id: libraryPage
 
+        Page {
+            id: mainPage
             anchors { fill: parent}
 
-            function findZimFiles(path, recurseSubdirs) {
-                console.log("sendMessage")
-                //searchZimFileWorker.sendMessage({'action': 'appendCurrentTime', 'model': libraryModel});
-                //FIXME
-                backend.zimFileIterator(path, recurseSubdirs);
-                var zimFile;
+            PageStack {
+                id: pageStack
 
-                //This does not work yet (not time to redraw..)
-                libraryPageBusyIndicator.visible = true
-                libraryPageBusyIndicator.running = true
-                while ((zimFile = backend.nextZimFile()) !== "" ) {
-                    console.log("zimfile found:"+zimFile)
-                    libraryPage.addZimFile(zimFile);
-                    libraryPageBusyIndicator.running = true
+                anchors.fill: parent
+                toolBar: toolBar
+
+                LibraryPage {
+                    id: libraryPage
+                    anchors { fill: parent}
+                    function findZimFiles(path, recurseSubdirs) {
+                        console.log("sendMessage")
+                        //searchZimFileWorker.sendMessage({'action': 'appendCurrentTime', 'model': libraryModel});
+                        //FIXME
+                        backend.zimFileIterator(path, recurseSubdirs);
+                        var zimFile;
+
+                        //This does not work yet (not time to redraw..)
+                        libraryPageBusyIndicator.visible = true
+                        libraryPageBusyIndicator.running = true
+                        while ((zimFile = backend.nextZimFile()) !== "" ) {
+                            console.log("zimfile found:"+zimFile)
+                            libraryPage.addZimFile(zimFile);
+                            libraryPageBusyIndicator.running = true
+                        }
+                        console.log("finished adding zimfiles");
+                        libraryPageBusyIndicator.running = false
+                        libraryPageBusyIndicator.visible = false
+                    }
+
+                    WorkerScript {
+                        id: searchZimFileWorker
+                        source: "searchzimfiles.js"
+                        //onMessage: {console.log("message received"+message)}
+                    }
+
+                    BusyIndicator {
+                        anchors.centerIn: parent
+                        id: libraryPageBusyIndicator
+                        running: false
+                        visible: false
+                    }
+
+
+                    tools: defaultTools
+
+                    // Create an info banner with no icon
+                    InfoBanner {
+                        id: banner
+                        text: ""
+                        function showMessage(msg) {
+                            text = msg
+                            open()
+                        }
+                    }
+                    onFindEbookClicked: {
+                        pageStack.push(zimFileSelectPage)
+                    }
+
+                    onOpenZimFile: {
+                        window.openZimFile(fileName)
+                    }
+                    onShowAboutClicked: pageStack.push(aboutPage)
+                    onDownloadEbookClicked: pageStack.push(helpPage)
+                    //onDepthChanged:
                 }
-                console.log("finished adding zimfiles");
-                libraryPageBusyIndicator.running = false
-                libraryPageBusyIndicator.visible = false
-            }
+                ZimFileSelectPage {
+                    //TODO: Probably makes sense to use loader. (Else list populated on app start)
+                    id: zimFileSelectPage
+                    anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+                    onZimFileSelected: {
+                        console.log("zimFileSelected:"+file)
+                        if (libraryPage.addZimFile(file)) {
+                            pageStack.pop();
+                        } else {
+                            var s = "Error adding zim file: "+file+" Error: "+backend.errorString()
+                            banner.showMessage(s)
 
-            WorkerScript {
-                id: searchZimFileWorker
-                source: "searchzimfiles.js"
-                //onMessage: {console.log("message received"+message)}
-            }
-
-            BusyIndicator {
-                anchors.centerIn: parent
-                id: libraryPageBusyIndicator
-                running: false
-                visible: false
-            }
-
-            tools: ToolBarLayout {
-                ToolButton {
-                    id: exitButton
-                    iconSource: visual.closeToolbarIconSource
-                    onClicked: Qt.quit();
-                }
-                ToolButton {
-                    iconSource: "toolbar-refresh"
-                    onClicked: {
-                        //FIXME (first windows, 2nd are symbian...)
-                        libraryPage.findZimFiles("C:\\Users\\Christian\\Downloads\\",true);
-                        libraryPage.findZimFiles("E:\\", false);
-                        libraryPage.findZimFiles("F:\\", false);
+                        }
+                    }
+                    tools: ToolBarLayout {
+                        ToolButton {
+                            id: backButton
+                            iconSource: "toolbar-back"
+                            onClicked: zimFileSelectPage.isDriveSelection?pageStack.pop():zimFileSelectPage.folderUp()
+                        }
+                        ToolButton {
+                            iconSource: visual.closeToolbarIconSource
+                            onClicked: pageStack.pop();
+                        }
 
                     }
                 }
-                ToolButton {
-                    iconSource: "toolbar-search"
-                    onClicked: pageStack.push(indexPage);
+
+                HelpPage {
+                    id: helpPage
+                    anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+                    tools: ToolBarLayout {
+                        ToolButton {
+                            iconSource: "toolbar-back"
+                            onClicked: pageStack.pop()
+                        }
+                    }
+
+                    onFindEbookClicked: {
+                        //pageStack.pop(); FIXME: works as expected regarding page, but toolbar is cleared :(
+                        pageStack.push(zimFileSelectPage)
+                    }
+                    onOpenExternalLink: {
+                        //TODO perhaps show different.
+                        openExternalLinkQueryDialog.askAndOpenUrlExternally(url);
+                    }
                 }
-                ToolButton {
-                    iconSource: "toolbar-menu"
-                    //onClicked:
+
+
+                AboutPage {
+                    id: aboutPage
+                    anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+                    tools: ToolBarLayout {
+                        ToolButton {
+                            iconSource: "toolbar-back"
+                            onClicked: pageStack.pop()
+                        }
+                    }
                 }
+
+                Component.onCompleted: {
+                    pageStack.push(libraryPage)
+                }
+
             }
 
-            // Create an info banner with no icon
-            InfoBanner {
-                id: banner
-                text: ""
-                function showMessage(msg) {
-                    text = msg
-                    open()
-                }
-            }
-            onFindEbookClicked: {
-                pageStack.push(zimFileSelectPage)
-            }
 
-            onOpenZimFile: {
-                window.openZimFile(fileName)
-            }
-            onShowAboutClicked: pageStack.push(aboutPage)
-            onDownloadEbookClicked: pageStack.push(helpPage)
         }
 
 
         IndexPage {
             id: indexPage
             anchors { fill: parent}
-            tools: ToolBarLayout {
-                ToolButton {
-                    iconSource: "toolbar-back"
-                    onClicked: pageStack.pop();
-                }
-                ButtonRow {
-                    id: buttonRow
-                    TabButton {
-                        id: libraryTabButton
-                        tab: libraryPage
-                        iconSource: "toolbar-back" //TODO
-                    }
-                    TabButton {
-                        id: indexTabButton
-                        tab: indexPage
-                        iconSource: "toolbar-search"
-                    }
-                    TabButton {
-                        id: articleTabButton
-                        tab: articlePage
-                        iconSource: "toolbar-back"
-                    }
-                }
-                ToolButton {
-                    iconSource: "toolbar-menu"
-                    //onClicked:
-                }
-            }
+            tools: defaultTools
 
             onOpenArticle: {
                 console.log("Item clicked in index list"+articleUrl+ "Open in articlePage")
                 articlePage.openArticle(articleUrl)
-                pageStack.push(articlePage);
-
+                tabGroup.currentTab = articlePage;
             }
 
         }
@@ -279,31 +268,7 @@ Window {
                 forwardButton.enabled = available;
             }
             onShowImagesChanged: Settings.setSetting("showImages",showImages);
-            tools: ToolBarLayout {
-                ToolButton {
-                    iconSource: "toolbar-back"
-                    onClicked: pageStack.pop();
-                }
-                ToolButton {
-                    id: backwardButton
-                    iconSource: "toolbar-previous"
-                    onClicked: {
-                        articlePage.backward();
-                    }
-                }
-                ToolButton {
-                    id: forwardButton
-                    iconSource: "toolbar-next"
-                    onClicked: {
-                        articlePage.forward();
-                    }
-                }
-                ToolButton {
-                    iconSource: "toolbar-menu"
-                    onClicked: articlePage.openMenu()
-                    //onClicked:
-                }
-            }
+            tools: defaultTools
         }
     }
 
@@ -318,7 +283,6 @@ Window {
 
         Settings.initialize();
         var lastZimFile =  Settings.getSetting("lastZimFile");
-        pageStack.push(libraryPage);
         if (lastZimFile != "Unknown") {
             console.log("Setting lastZimFile:"+lastZimFile+" open it.")
             window.openZimFile(lastZimFile)
