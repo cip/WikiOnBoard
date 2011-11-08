@@ -29,6 +29,13 @@ WikionboardPage {
              id: articlePageMenu
              // define the items in the menu and corresponding actions
              content: MenuLayout {
+                 ToolButton {
+                     id: forwardButton
+                     iconSource: "toolbar-next"
+                     onClicked: {
+                         articlePage.forward();
+                     }
+                 }
                  MenuItemCheckable {
                      id: showImageMenuItem
                      text: qsTr("Show Images")

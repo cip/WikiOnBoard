@@ -24,6 +24,19 @@ Window {
         id: visual
     }
 
+    StatusBar {
+        id: statusBar
+        anchors { top: parent.top; left: parent.left; right: parent.right }
+    }
+
+    ToolBarLayout {
+        id: backOnlyTools
+        ToolButton {
+            iconSource: "toolbar-back"
+            onClicked: pageStack.pop()
+        }
+    }
+
     ToolBarLayout {
         id: defaultTools
         ToolButton {
@@ -54,9 +67,45 @@ Window {
         }
     }
 
-    StatusBar {
-        id: statusBar
-        anchors { top: parent.top; left: parent.left; right: parent.right }
+    ToolBarLayout {
+        id: articlePageTools
+        ToolButton {
+            iconSource: "toolbar-back"
+            onClicked: articlePage.backward();
+        }
+    /*    ToolButton {
+            id: backwardButton
+            iconSource: "toolbar-previous"
+            onClicked: {
+                articlePage.backward();
+            }
+        }*/
+        ButtonRow {
+            id: buttonRow1
+            TabButton {
+                id: apLibraryTabButton
+                tab: mainPage
+                iconSource: "toolbar-back" //TODO
+            }
+            TabButton {
+                id: apIndexTabButton
+                tab: indexPage
+                iconSource: "toolbar-search"
+            }
+            TabButton {
+                id: apArticleTabButton
+                tab: articlePage
+                iconSource: "toolbar-back"
+            }
+        }
+
+        ToolButton {
+            iconSource: "toolbar-menu"
+            onClicked: articlePage.openMenu()
+            //onClicked:
+        }
+
+
     }
 
     ToolBar {
@@ -170,7 +219,7 @@ Window {
                 ZimFileSelectPage {
                     //TODO: Probably makes sense to use loader. (Else list populated on app start)
                     id: zimFileSelectPage
-                    anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+                    anchors { fill: parent}
                     onZimFileSelected: {
                         console.log("zimFileSelected:"+file)
                         if (libraryPage.addZimFile(file)) {
@@ -193,17 +242,20 @@ Window {
                         }
 
                     }
+                    onStatusChanged: {
+                        if (status == PageStatus.Activating) {
+                            //TODO?
+                        } else if (status == PageStatus.Deactivating) {
+                            toolBar.tools = defaultTools;
+                        }
+                    }
                 }
 
                 HelpPage {
                     id: helpPage
-                    anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
-                    tools: ToolBarLayout {
-                        ToolButton {
-                            iconSource: "toolbar-back"
-                            onClicked: pageStack.pop()
-                        }
-                    }
+                    anchors { fill: parent}
+                    tools: backOnlyTools
+
 
                     onFindEbookClicked: {
                         //pageStack.pop(); FIXME: works as expected regarding page, but toolbar is cleared :(
@@ -213,16 +265,30 @@ Window {
                         //TODO perhaps show different.
                         openExternalLinkQueryDialog.askAndOpenUrlExternally(url);
                     }
+                    onStatusChanged: {
+                        if (status == PageStatus.Activating) {
+                            toolBar.setTools(backOnlyTools)
+                        } else if (status == PageStatus.Deactivating) {
+                            toolBar.tools = defaultTools
+                        }
+                    }
                 }
 
 
                 AboutPage {
                     id: aboutPage
-                    anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+                    anchors { fill: parent}
                     tools: ToolBarLayout {
                         ToolButton {
                             iconSource: "toolbar-back"
                             onClicked: pageStack.pop()
+                        }
+                    }
+                    onStatusChanged: {
+                        if (status == PageStatus.Activating) {
+                            //TODO?
+                        } else if (status == PageStatus.Deactivating) {
+                            toolBar.tools = defaultTools;
                         }
                     }
                 }
@@ -268,7 +334,14 @@ Window {
                 forwardButton.enabled = available;
             }
             onShowImagesChanged: Settings.setSetting("showImages",showImages);
-            tools: defaultTools
+            tools: articlePageTools
+            onStatusChanged: {
+                if (status == PageStatus.Activating) {
+                    toolBar.tools = articlePageTools
+                } else if (status == PageStatus.Deactivating) {
+                    toolBar.tools = defaultTools;
+                }
+            }
         }
     }
 
