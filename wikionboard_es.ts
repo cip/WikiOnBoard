@@ -4,7 +4,7 @@
 <context>
     <name>AboutPage</name>
     <message>
-        <location filename="qml/symbian/AboutPage.qml" line="12"/>
+        <location filename="qml/symbian/AboutPage.qml" line="10"/>
         <source>WikiOnBoard %1
 Author: %2
 Uses zimlib (openzim.org) and liblzma.
@@ -21,12 +21,12 @@ Fecha de compilacion: %3 {1
 ?}</translation>
     </message>
     <message>
-        <location filename="qml/symbian/AboutPage.qml" line="18"/>
+        <location filename="qml/symbian/AboutPage.qml" line="16"/>
         <source>Christian Puehringer</source>
         <translation type="unfinished">Christian Pühringer</translation>
     </message>
     <message>
-        <location filename="qml/symbian/AboutPage.qml" line="20"/>
+        <location filename="qml/symbian/AboutPage.qml" line="18"/>
         <source>application is self-signed</source>
         <comment>only displayed if application is self-signed</comment>
         <translation type="unfinished">Aplicación está self-signed</translation>
@@ -39,7 +39,7 @@ Fecha de compilacion: %3 {1
 <context>
     <name>ArticlePage</name>
     <message>
-        <location filename="qml/symbian/ArticlePage.qml" line="34"/>
+        <location filename="qml/symbian/ArticlePage.qml" line="41"/>
         <source>Show Images</source>
         <translation type="unfinished">Mostrar imágenes</translation>
     </message>
@@ -439,35 +439,35 @@ Fecha de compilacion: %3</translation>
 <context>
     <name>main</name>
     <message>
-        <location filename="qml/symbian/main.qml" line="218"/>
+        <location filename="qml/symbian/main.qml" line="123"/>
         <source>Open link in browser</source>
         <translation type="unfinished">Abrir enlace en navegador</translation>
     </message>
     <message>
-        <location filename="qml/symbian/main.qml" line="223"/>
+        <location filename="qml/symbian/main.qml" line="128"/>
         <source>[TRANSLATOR] Explain that link &quot;%1&quot; clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/symbian/main.qml" line="225"/>
+        <location filename="qml/symbian/main.qml" line="130"/>
         <source>[TRANLATOR]Explain that may not work if browser running.</source>
         <comment>only displayed if self_signed</comment>
         <translation type="unfinished">Aviso: En la configuracíon actual  el articulo probablemente solo se podrá abrir si el navegador no está ya abierto.
 Si no se puede abrir el articulo, cierra el navegador e intentalo de nuevo.</translation>
     </message>
     <message>
-        <location filename="qml/symbian/main.qml" line="226"/>
+        <location filename="qml/symbian/main.qml" line="131"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/symbian/main.qml" line="227"/>
+        <location filename="qml/symbian/main.qml" line="132"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/symbian/main.qml" line="231"/>
+        <location filename="qml/symbian/main.qml" line="136"/>
         <source>Opening link &quot;%1&quot; in system web browser failed.</source>
         <translation type="unfinished"></translation>
     </message>

@@ -1,5 +1,5 @@
-import QtQuick 1.0
-import com.nokia.symbian 1.0
+import QtQuick 1.1
+import com.nokia.symbian 1.1
 
 //import Qt.labs.components.native 1.0
 import "UIConstants.js" as UI

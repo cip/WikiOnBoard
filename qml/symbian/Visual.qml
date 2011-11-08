@@ -1,5 +1,5 @@
 // Visual style for Symbian
-import QtQuick 1.0
+import QtQuick 1.1
 
 Item {
     // General
