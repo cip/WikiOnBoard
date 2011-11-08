@@ -8,14 +8,14 @@ MenuItem {
 
     property bool checked: false
 
-    //1.1. only, therefore right aligned instead platformLeftMargin: 2 * platformStyle.paddingMedium + platformStyle.graphicSizeSmall
+    platformLeftMargin: 2 * platformStyle.paddingMedium + platformStyle.graphicSizeSmall
     onClicked: checked = !checked
 
     Image {
         id: checkIcon
 
         anchors {
-            right: parent.right
+            left: parent.left
             leftMargin: platformStyle.paddingMedium
             verticalCenter: parent.verticalCenter
         }
