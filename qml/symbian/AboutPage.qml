@@ -16,7 +16,22 @@ Build date: %3\n\
               "%2",qsTr("Christian Puehringer")).replace(
               "%3",appInfo.buildDate).replace(
               "%4",appInfo.isSelfSigned?qsTr("application is self-signed", "only displayed if application is self-signed"):"")
-}
+    anchors { fill: parent}
+    tools: ToolBarLayout {
+            ToolButton {
+                iconSource: "toolbar-back"
+                onClicked: pageStack.pop()
+            }
+        }
+    onStatusChanged: {
+            if (status == PageStatus.Activating) {
+                //TODO?
+            } else if (status == PageStatus.Deactivating) {
+                toolBar.tools = defaultTools;
+            }
+        }
+    }
+
 
 
 

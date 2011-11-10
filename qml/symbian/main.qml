@@ -5,7 +5,8 @@ import com.nokia.symbian 1.1
 import com.nokia.extras 1.1
 import "settings.js" as Settings
 
-Window {
+
+Window {    
     id: window
     function openZimFile(fileName) {
 
@@ -212,8 +213,8 @@ Window {
                     onOpenZimFile: {
                         window.openZimFile(fileName)
                     }
-                    onShowAboutClicked: pageStack.push(aboutPage)
-                    onDownloadEbookClicked: pageStack.push(helpPage)
+                    onShowAboutClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
+                    onDownloadEbookClicked: pageStack.push(Qt.resolvedUrl("HelpPage.qml"))
                     //onDepthChanged:
                 }
                 ZimFileSelectPage {
@@ -251,47 +252,6 @@ Window {
                     }
                 }
 
-                HelpPage {
-                    id: helpPage
-                    anchors { fill: parent}
-                    tools: backOnlyTools
-
-
-                    onFindEbookClicked: {
-                        //pageStack.pop(); FIXME: works as expected regarding page, but toolbar is cleared :(
-                        pageStack.push(zimFileSelectPage)
-                    }
-                    onOpenExternalLink: {
-                        //TODO perhaps show different.
-                        openExternalLinkQueryDialog.askAndOpenUrlExternally(url);
-                    }
-                    onStatusChanged: {
-                        if (status == PageStatus.Activating) {
-                            toolBar.setTools(backOnlyTools)
-                        } else if (status == PageStatus.Deactivating) {
-                            toolBar.tools = defaultTools
-                        }
-                    }
-                }
-
-
-                AboutPage {
-                    id: aboutPage
-                    anchors { fill: parent}
-                    tools: ToolBarLayout {
-                        ToolButton {
-                            iconSource: "toolbar-back"
-                            onClicked: pageStack.pop()
-                        }
-                    }
-                    onStatusChanged: {
-                        if (status == PageStatus.Activating) {
-                            //TODO?
-                        } else if (status == PageStatus.Deactivating) {
-                            toolBar.tools = defaultTools;
-                        }
-                    }
-                }
 
                 Component.onCompleted: {
                     pageStack.push(libraryPage)
