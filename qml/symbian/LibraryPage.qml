@@ -20,6 +20,18 @@ WikionboardPage {
         id: libraryModel
     }
 
+    function openMenu() {
+        menu.open()
+    }
+
+    Menu {
+        id: menu
+        // define the items in the menu and corresponding actions
+        content: MenuLayout {
+            AboutMenuItem {}
+            ExitMenuItem {}
+        }
+    }
 
     Component {
         id: listHeading
@@ -110,6 +122,7 @@ WikionboardPage {
             }
     }
 
+
     ListView {
         id: libraryListView
         //anchors.horizontalCenter: parent.horizontalCenter
@@ -138,12 +151,6 @@ WikionboardPage {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Download eBook")
             onClicked: downloadEbookClicked()
-        }
-        Button {
-            id: showAboutButton
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("About")
-            onClicked: showAboutClicked()
-        }
+        }        
     }
 }

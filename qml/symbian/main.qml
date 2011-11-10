@@ -6,14 +6,15 @@ import com.nokia.extras 1.1
 import "settings.js" as Settings
 
 
-Window {    
+Window {
     id: window
     function openZimFile(fileName) {
 
         console.log("Open zimfile:"+fileName);
         if (backend.openZimFile(fileName)) {
             Settings.setSetting("lastZimFile",fileName);
-            tabGroup.currentTab = indexPage;
+            tabGroup.currentTab = indexPage;            
+            buttonRow.checkedButton = indexTabButton
         } else {
             var s = "Error opening zim file: "+fileName+" Error: "+backend.errorString()
             banner.showMessage(s)
@@ -40,7 +41,7 @@ Window {
 
     ToolBarLayout {
         id: defaultTools
-        ToolButton {
+        ToolButton {              
             iconSource: "toolbar-back"
             onClicked: pageStack.pop();
         }
@@ -49,7 +50,7 @@ Window {
             TabButton {
                 id: libraryTabButton
                 tab: mainPage
-                iconSource: "toolbar-back" //TODO
+                iconSource: "toolbar-home"
             }
             TabButton {
                 id: indexTabButton
@@ -59,18 +60,21 @@ Window {
             TabButton {
                 id: articleTabButton
                 tab: articlePage
-                iconSource: "toolbar-back"
+                iconSource: visual.documentToolbarIconSource
             }
         }
         ToolButton {
             iconSource: "toolbar-menu"
-            //onClicked:
+            onClicked: {
+                tabGroup.currentTab.openMenu()
+            }
         }
     }
 
     ToolBarLayout {
         id: articlePageTools
         ToolButton {
+            id: backwardButton
             iconSource: "toolbar-back"
             onClicked: articlePage.backward();
         }
@@ -82,11 +86,12 @@ Window {
             }
         }*/
         ButtonRow {
-            id: buttonRow1
+            id: apButtonRow
+            checkedButton: apArticleTabButton
             TabButton {
                 id: apLibraryTabButton
                 tab: mainPage
-                iconSource: "toolbar-back" //TODO
+                iconSource: "toolbar-home"
             }
             TabButton {
                 id: apIndexTabButton
@@ -96,7 +101,7 @@ Window {
             TabButton {
                 id: apArticleTabButton
                 tab: articlePage
-                iconSource: "toolbar-back"
+                iconSource: visual.documentToolbarIconSource
             }
         }
 
@@ -151,6 +156,10 @@ Window {
         Page {
             id: mainPage
             anchors { fill: parent}
+
+            function openMenu() {
+                libraryPage.openMenu()
+            }
 
             PageStack {
                 id: pageStack
@@ -213,7 +222,6 @@ Window {
                     onOpenZimFile: {
                         window.openZimFile(fileName)
                     }
-                    onShowAboutClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"))
                     onDownloadEbookClicked: pageStack.push(Qt.resolvedUrl("HelpPage.qml"))
                     //onDepthChanged:
                 }
@@ -272,6 +280,7 @@ Window {
                 console.log("Item clicked in index list"+articleUrl+ "Open in articlePage")
                 articlePage.openArticle(articleUrl)
                 tabGroup.currentTab = articlePage;
+                buttonRow.checkedButton = articleTabButton
             }
 
         }
@@ -289,15 +298,11 @@ Window {
                 backwardButton.enabled = available;
             }
 
-            onForwardAvailable: {
-                console.log("onForwardAvailable. Set forwardButton enabled to : "+available);
-                forwardButton.enabled = available;
-            }
             onShowImagesChanged: Settings.setSetting("showImages",showImages);
-            tools: articlePageTools
+            tools: defaultTools
             onStatusChanged: {
                 if (status == PageStatus.Activating) {
-                    toolBar.tools = articlePageTools
+                    toolBar.tools = defaultTools
                 } else if (status == PageStatus.Deactivating) {
                     toolBar.tools = defaultTools;
                 }

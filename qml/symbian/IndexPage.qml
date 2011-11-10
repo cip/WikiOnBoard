@@ -20,6 +20,8 @@ WikionboardPage {
             id: articleName
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width
+            onInputMethodHintsChanged: console.log("inputMethodHints:" +inputMethodHints)
+            onFocusChanged: console.log("focus: "+focus)
             onTextChanged: {
                 console.log("TODO:Update search: "+text)
                 indexListQML.searchArticle(text)
@@ -31,6 +33,18 @@ WikionboardPage {
          if (PageStatus.Activating == status) {
              console.log("IndexPage onStatusChanged: PageStatus.Activating")
              indexListQML.searchArticle(articleName.text)
+         }
+     }
+
+     function openMenu() {
+         menu.open()
+     }
+     Menu {
+         id: menu
+         // define the items in the menu and corresponding actions
+         content: MenuLayout {
+             AboutMenuItem {}
+             ExitMenuItem {}
          }
      }
 

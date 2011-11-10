@@ -21,12 +21,12 @@ WikionboardPage {
      }
 
      function openMenu() {
-         articlePageMenu.open()
+         menu.open()
      }
 
 
      Menu {
-             id: articlePageMenu
+             id: menu
              // define the items in the menu and corresponding actions
              content: MenuLayout {
                  ToolButton {
@@ -40,8 +40,11 @@ WikionboardPage {
                      id: showImageMenuItem
                      text: qsTr("Show Images")
                  }
+                 AboutMenuItem {}
+                 ExitMenuItem {}
              }
          }
+
      ArticleViewerQML {
         id: articleViewerQML
         anchors.fill: parent
@@ -84,5 +87,9 @@ WikionboardPage {
          return articleViewerQML.isForwardAvailable();
      }
 
+     onForwardAvailable: {
+         console.log("onForwardAvailable. Set forwardButton enabled to : "+available);
+         forwardButton.enabled = available;
+     }
 
  }
