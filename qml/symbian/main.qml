@@ -41,10 +41,17 @@ Window {
 
     ToolBarLayout {
         id: defaultTools
-        ToolButton {              
+        ToolButton {
+            id: backButton
             iconSource: "toolbar-back"
-            onClicked: pageStack.pop();
+            enabled: false
+            onClicked: {
+                    if (tabGroup.currentTab == articlePage) {
+                        articlePage.backward();
+                    }
+            }
         }
+
         ButtonRow {
             id: buttonRow
             TabButton {
@@ -69,49 +76,6 @@ Window {
                 tabGroup.currentTab.openMenu()
             }
         }
-    }
-
-    ToolBarLayout {
-        id: articlePageTools
-        ToolButton {
-            id: backwardButton
-            iconSource: "toolbar-back"
-            onClicked: articlePage.backward();
-        }
-    /*    ToolButton {
-            id: backwardButton
-            iconSource: "toolbar-previous"
-            onClicked: {
-                articlePage.backward();
-            }
-        }*/
-        ButtonRow {
-            id: apButtonRow
-            checkedButton: apArticleTabButton
-            TabButton {
-                id: apLibraryTabButton
-                tab: mainPage
-                iconSource: "toolbar-home"
-            }
-            TabButton {
-                id: apIndexTabButton
-                tab: indexPage
-                iconSource: "toolbar-search"
-            }
-            TabButton {
-                id: apArticleTabButton
-                tab: articlePage
-                iconSource: visual.documentToolbarIconSource
-            }
-        }
-
-        ToolButton {
-            iconSource: "toolbar-menu"
-            onClicked: articlePage.openMenu()
-            //onClicked:
-        }
-
-
     }
 
     ToolBar {
@@ -241,7 +205,6 @@ Window {
                     }
                     tools: ToolBarLayout {
                         ToolButton {
-                            id: backButton
                             iconSource: "toolbar-back"
                             onClicked: zimFileSelectPage.isDriveSelection?pageStack.pop():zimFileSelectPage.folderUp()
                         }
@@ -295,16 +258,19 @@ Window {
 
             onBackwardAvailable: {
                 console.log("onBackwardAvailable. Set backwardButton enabled to : "+available);
-                backwardButton.enabled = available;
+                backButton.enabled = available;
             }
 
             onShowImagesChanged: Settings.setSetting("showImages",showImages);
             tools: defaultTools
             onStatusChanged: {
                 if (status == PageStatus.Activating) {
-                    toolBar.tools = defaultTools
+                    toolBar.tools = defaultTools;
+                    backButton.enabled = isBackwardAvailable()
                 } else if (status == PageStatus.Deactivating) {
                     toolBar.tools = defaultTools;
+                    //Other pages currently don't have back
+                    backButton.enabled= false;
                 }
             }
         }
