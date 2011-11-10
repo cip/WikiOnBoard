@@ -10,7 +10,7 @@ WikionboardPage {
     signal linkActivated(string link)
     property alias text: txt.text
     function getHtmlLink(caption, url) {
-        return "<a href=\"%1\">%2</a>".replace("%1",url).replace("%2",caption);
+        return "<a href=\"%1\" style=\"color:blue\">%2</a>".replace("%1",url).replace("%2",caption);
     }
     Flickable {
         anchors.fill: parent
@@ -25,7 +25,7 @@ WikionboardPage {
             Text {
                 id: txt
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                font.pixelSize: platformStyle.fontSizeSmall
+                font.pixelSize: platformStyle.fontSizeLarge
                 color: "black"
                 x: 10
                 y: 10
