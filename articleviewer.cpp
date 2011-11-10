@@ -287,12 +287,14 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
          }
 
  void ArticleViewer::onSourceChanged(QUrl url)
-         {
+ {
+     if (!url.isEmpty()) {
          showWaitCursor();
          openArticleByUrl(url);
          emit articleOpened(articleTitle);
          hideWaitCursor();
-         }
+     }
+ }
 
 
  void ArticleViewer::showWaitCursor()
