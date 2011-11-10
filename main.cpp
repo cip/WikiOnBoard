@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     QDeclarativePropertyMap appInfo;
     appInfo.insert(QLatin1String("version"), QVariant(QString::fromLocal8Bit(__APPVERSIONSTRING__)));
     bool isSelfSigned= false;
-    #ifdef __IS_SELFSIGNED__==1
+    #if __IS_SELFSIGNED__==1
         isSelfSigned = true;
     #endif
     appInfo.insert(QLatin1String("isSelfSigned"), QVariant(isSelfSigned));
