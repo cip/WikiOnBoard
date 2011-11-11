@@ -13,6 +13,7 @@ Window {
         console.log("Open zimfile:"+fileName);
         if (backend.openZimFile(fileName)) {
             Settings.setSetting("lastZimFile",fileName);
+            indexTabButton.enabled = true
             tabGroup.currentTab = indexPage;            
             buttonRow.checkedButton = indexTabButton
         } else {
@@ -240,8 +241,10 @@ Window {
             tools: defaultTools
 
             onOpenArticle: {
+                //TODO: make sense to have one general function
                 console.log("Item clicked in index list"+articleUrl+ "Open in articlePage")
                 articlePage.openArticle(articleUrl)
+                articleTabButton.enabled = true
                 tabGroup.currentTab = articlePage;
                 buttonRow.checkedButton = articleTabButton
             }
@@ -284,8 +287,10 @@ Window {
         //Sets zimFileWrapper in this components
         articlePage.init();
         indexPage.init();
-
-        Settings.initialize();
+        //Enabled as soon as as zim file respectively article openend
+        indexTabButton.enabled = false
+        articleTabButton.enabled = false
+        Settings.initialize();        
         var lastZimFile =  Settings.getSetting("lastZimFile");
         if (lastZimFile != "Unknown") {
             console.log("Setting lastZimFile:"+lastZimFile+" open it.")
