@@ -60,54 +60,65 @@ WikionboardPage {
                 return (info !== undefined &&  info != "Not available" && info !== "")
 
             }
-            Column {
-                id: zimFileItem
-                anchors.fill: listItem.paddingItem
-                ListItemText {
-                    function getTitle() {
-                        if (!hasInfo(title)) {
-                            //Show filename (without path) if not title defined
-                            return fileName.split('\\').pop().split('/').pop();
-                        } else {
-                            return title
+            Rectangle {
+                anchors.fill:  parent
+                color: fileName==backend.fileName?"blue":"transparent"
+
+
+                Column {
+                    id: zimFileItem
+
+                    ListItemText {
+                        function getTitle() {
+                            if (!hasInfo(title)) {
+                                //Show filename (without path) if not title defined
+                                return fileName.split('\\').pop().split('/').pop();
+                            } else {
+                                return title
+                            }
                         }
+                        elide: hasInfo(title)?Text.ElideRight:Text.ElideMiddle
+                        width: listItem.paddingItem.width
+                        x: listItem.paddingItem.x
+                        mode: listItem.mode
+                        role: "Title"
+                        text: getTitle()
                     }
-                    elide: hasInfo(title)?Text.ElideRight:Text.ElideMiddle
-                    width: parent.width
-                    mode: listItem.mode
-                    role: "Title"
-                    text: getTitle()
-                }
-                ListItemText {                   
-                    height: hasInfo(language)||hasInfo(date)?implicitHeight:0
-                    mode: listItem.mode
-                    elide: Text.ElideRight
-                    width: parent.width
-                    role: "SubTitle"
-                    text: hasInfo(language)||hasInfo(date)?language+", "+date:""
-                }
-                ListItemText {
-                    mode: listItem.mode
-                    elide: Text.ElideRight
-                    width: parent.width
-                    role: "SubTitle"
-                    height : hasInfo(creator)?implicitHeight:0
-                    text: hasInfo(creator)?creator:""
-                }
-                ListItemText {
-                    mode: listItem.mode
-                    elide: Text.ElideRight
-                    width: parent.width
-                    role: "SubTitle"
-                    height : hasInfo(description)?implicitHeight:0
-                    text: hasInfo(description)?description:""
-                }
-                ListItemText {
-                    mode: listItem.mode
-                    elide: Text.ElideMiddle
-                    width: parent.width
-                    role: "SubTitle"
-                    text: fileName
+                    ListItemText {
+                        height: hasInfo(language)||hasInfo(date)?implicitHeight:0
+                        mode: listItem.mode
+                        elide: Text.ElideRight
+                        width: listItem.paddingItem.width
+                        x: listItem.paddingItem.x
+                        role: "SubTitle"
+                        text: hasInfo(language)||hasInfo(date)?language+", "+date:""
+                    }
+                    ListItemText {
+                        mode: listItem.mode
+                        elide: Text.ElideRight
+                        width: listItem.paddingItem.width
+                        x: listItem.paddingItem.x
+                        role: "SubTitle"
+                        height : hasInfo(creator)?implicitHeight:0
+                        text: hasInfo(creator)?creator:""
+                    }
+                    ListItemText {
+                        mode: listItem.mode
+                        elide: Text.ElideRight
+                        width: listItem.paddingItem.width
+                        x: listItem.paddingItem.x
+                        role: "SubTitle"
+                        height : hasInfo(description)?implicitHeight:0
+                        text: hasInfo(description)?description:""
+                    }
+                    ListItemText {
+                        mode: listItem.mode
+                        elide: Text.ElideMiddle
+                        width: listItem.paddingItem.width
+                        x: listItem.paddingItem.x
+                        role: "SubTitle"
+                        text: fileName
+                    }
                 }
             }
             onClicked: {
@@ -121,35 +132,35 @@ WikionboardPage {
     }
 
     ContextMenu {
-           id: libraryItemMenu
-           property int itemIndex
-           itemIndex: -1
-           MenuLayout {
-               MenuItem {
-                   text: qsTr("About zimfile")
-                   onClicked: library.aboutZimFile(libraryModel.get(libraryItemMenu.itemIndex).fileName)
-               }
-               MenuItem {
-                   text: qsTr("Remove")
-                   onClicked: {
-                       console.log(" Remove item "+libraryItemMenu.itemIndex)
-                       libraryModel.remove(libraryItemMenu.itemIndex)
-                    }
-                }
-               MenuItem {
-                   text: qsTr("Remove All")
-                   onClicked: {
-                       console.log(" Remove all items");
-                       libraryModel.clear();
-                    }
-               }
-           }
-
-           function openMenu(index) {
-                   itemIndex = index
-                   console.log("in openMenu: index "+itemIndex);
-                   open();
+        id: libraryItemMenu
+        property int itemIndex
+        itemIndex: -1
+        MenuLayout {
+            MenuItem {
+                text: qsTr("About zimfile")
+                onClicked: library.aboutZimFile(libraryModel.get(libraryItemMenu.itemIndex).fileName)
             }
+            MenuItem {
+                text: qsTr("Remove")
+                onClicked: {
+                    console.log(" Remove item "+libraryItemMenu.itemIndex)
+                    libraryModel.remove(libraryItemMenu.itemIndex)
+                }
+            }
+            MenuItem {
+                text: qsTr("Remove All")
+                onClicked: {
+                    console.log(" Remove all items");
+                    libraryModel.clear();
+                }
+            }
+        }
+
+        function openMenu(index) {
+            itemIndex = index
+            console.log("in openMenu: index "+itemIndex);
+            open();
+        }
     }
 
 
@@ -181,6 +192,6 @@ WikionboardPage {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Download eBook")
             onClicked: downloadEbookClicked()
-        }        
+        }
     }
 }
