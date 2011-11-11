@@ -33,7 +33,7 @@ TextPage {
 
     onFindEbookClicked: {
         //pageStack.pop(); FIXME: works as expected regarding page, but toolbar is cleared :(
-        pageStack.push(zimFileSelectPage)
+        pageStack.push(Qt.resolvedUrl("ZimFileSelectPage.qml"))
     }
     onOpenExternalLink: {
         //TODO perhaps show different.

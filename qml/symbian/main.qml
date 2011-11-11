@@ -181,7 +181,7 @@ Window {
                         }
                     }
                     onFindEbookClicked: {
-                        pageStack.push(zimFileSelectPage)
+                        pageStack.push(Qt.resolvedUrl("ZimFileSelectPage.qml"))
                     }
 
                     onOpenZimFile: {
@@ -190,40 +190,6 @@ Window {
                     onDownloadEbookClicked: pageStack.push(Qt.resolvedUrl("HelpPage.qml"))
                     //onDepthChanged:
                 }
-                ZimFileSelectPage {
-                    //TODO: Probably makes sense to use loader. (Else list populated on app start)
-                    id: zimFileSelectPage
-                    anchors { fill: parent}
-                    onZimFileSelected: {
-                        console.log("zimFileSelected:"+file)
-                        if (libraryPage.addZimFile(file)) {
-                            pageStack.pop();
-                        } else {
-                            var s = "Error adding zim file: "+file+" Error: "+backend.errorString()
-                            banner.showMessage(s)
-
-                        }
-                    }
-                    tools: ToolBarLayout {
-                        ToolButton {
-                            iconSource: "toolbar-back"
-                            onClicked: zimFileSelectPage.isDriveSelection?pageStack.pop():zimFileSelectPage.folderUp()
-                        }
-                        ToolButton {
-                            iconSource: visual.closeToolbarIconSource
-                            onClicked: pageStack.pop();
-                        }
-
-                    }
-                    onStatusChanged: {
-                        if (status == PageStatus.Activating) {
-                            //TODO?
-                        } else if (status == PageStatus.Deactivating) {
-                            toolBar.tools = defaultTools;
-                        }
-                    }
-                }
-
 
                 Component.onCompleted: {
                     pageStack.push(libraryPage)

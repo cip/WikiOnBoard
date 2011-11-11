@@ -3,6 +3,8 @@ import Qt.labs.folderlistmodel 1.0
 import com.nokia.symbian 1.1
 
 WikionboardPage {    
+    id: zimFileSelectPage
+
     signal zimFileSelected(string file)
 
     function folderUp() {
@@ -10,6 +12,36 @@ WikionboardPage {
     }
     property bool isDriveSelection : true
 
+    anchors { fill: parent}
+    onZimFileSelected: {
+        console.log("zimFileSelected:"+file)
+        if (libraryPage.addZimFile(file)) {
+            pageStack.pop();
+        } else {
+            var s = "Error adding zim file: "+file+" Error: "+backend.errorString()
+            banner.showMessage(s)
+
+        }
+    }
+    tools: ToolBarLayout {
+        ToolButton {
+            iconSource: "toolbar-back"
+            onClicked: zimFileSelectPage.isDriveSelection?pageStack.pop():zimFileSelectPage.folderUp()
+        }
+        ToolButton {
+            iconSource: visual.closeToolbarIconSource
+            onClicked: pageStack.pop();
+        }
+
+    }
+    onStatusChanged: {
+        //TODO: Download->Open zim file->Back/Open No toolbar on library page fix this
+        if (status == PageStatus.Activating) {
+            //TODO?
+        } else if (status == PageStatus.Deactivating) {
+            toolBar.tools = defaultTools;
+        }
+    }
     onIsDriveSelectionChanged: console.log("isDriveSelection:"+isDriveSelection)
     ListView {
         id: folderListView
