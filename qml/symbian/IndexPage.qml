@@ -43,7 +43,6 @@ WikionboardPage {
          id: menu
          // define the items in the menu and corresponding actions
          content: MenuLayout {
-             AboutMenuItem {}
              ExitMenuItem {}
          }
      }

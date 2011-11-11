@@ -40,7 +40,6 @@ WikionboardPage {
                      id: showImageMenuItem
                      text: qsTr("Show Images")
                  }
-                 AboutMenuItem {}
                  ExitMenuItem {}
              }
          }
