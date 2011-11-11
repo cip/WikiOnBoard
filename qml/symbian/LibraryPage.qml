@@ -52,36 +52,58 @@ WikionboardPage {
         //
         ListItem {
             id: listItem
+            //Not sure whether really correct size, but looks fine
+            height: zimFileItem.implicitHeight+platformStyle.borderSizeMedium
             Column {
+                id: zimFileItem
                 anchors.fill: listItem.paddingItem
-
                 ListItemText {
-                    function getTitle() {
+                    function hasTitle() {
                         //FIXME, do this in a better way.
-                        if (title == "Not available" || title == "") {
-                            var s = ""
-                            if (fileName.length>20) {
-                                s = "..."+fileName.substr(fileName.length-20,fileName.length)
-                            } else {
-                                s = fileName
-                            }
-                            return s
+                        return !(title == "Not available" || title == "")
+                    }
+
+                    function getTitle() {
+                        if (!hasTitle()) {
+                            //Show filename (without path) if not title defined
+                            return fileName.split('\\').pop().split('/').pop();
                         } else {
                             return title
                         }
                     }
+                    elide: hasTitle()?Text.ElideRight:Text.ElideMiddle
+                    width: parent.width
                     mode: listItem.mode
                     role: "Title"
                     text: getTitle()
                 }
                 ListItemText {
-                    function getSubTitle() {
-                        return date+" "+language+" "+description
-                    }
-
                     mode: listItem.mode
+                    elide: Text.ElideRight
+                    width: parent.width
                     role: "SubTitle"
-                    text: getSubTitle()
+                    text: {return language+", "+date}
+                }
+                ListItemText {
+                    mode: listItem.mode
+                    elide: Text.ElideRight
+                    width: parent.width
+                    role: "SubTitle"
+                    text: creator
+                }
+                ListItemText {
+                    mode: listItem.mode
+                    elide: Text.ElideRight
+                    width: parent.width
+                    role: "SubTitle"
+                    text: description
+                }
+                ListItemText {
+                    mode: listItem.mode
+                    elide: Text.ElideMiddle
+                    width: parent.width
+                    role: "SubTitle"
+                    text: fileName
                 }
             }
             onClicked: {
