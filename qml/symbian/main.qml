@@ -187,6 +187,11 @@ Window {
                     onOpenZimFile: {
                         window.openZimFile(fileName)
                     }
+                    onAboutZimFile: {
+                        console.log("onAboutZimFile: "+fileName)
+                        pageStack.push(Qt.resolvedUrl("AboutZimFilePage.qml"),{ fileName: fileName })
+                    }
+
                     onDownloadEbookClicked: pageStack.push(Qt.resolvedUrl("HelpPage.qml"))
                     //onDepthChanged:
                 }

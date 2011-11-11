@@ -20,7 +20,8 @@ ListModel {
     }
 
     function addZimFile(fileName) {
-        if (backend.openZimFile(fileName)) { //TODO: This closes currently open zim file if any, which man not be desired
+        var currentZimFile = backend.fileName;
+        if (backend.openZimFile(fileName)) {
             addZimFileEntry(fileName,
                         backend.getMetaDataString("Title"), //TODO: would make sense to handle undefined entries differently.
                         backend.getMetaDataString("Creator"),
@@ -30,6 +31,9 @@ ListModel {
                         backend.getMetaDataString("Language"),
                         backend.getMetaDataString("Relation")
                         )
+            if (!backend.openZimFile(currentZimFile)) {
+                console.log("reopining zimfile "+currentZimFile+ " failed. Either nothing openend before, or bug")
+            }
             return true
         } else {
             console.log("could not add zim file. error: "+ backend.errorString());

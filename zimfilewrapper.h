@@ -35,6 +35,7 @@ private:
     bool valid;
     QString errorStr;
     QDirIterator* dirIterator;
+    QString byteArray2HexQString(const QByteArray &byteArray);
 public:
     explicit ZimFileWrapper(QObject *parent = 0);
     ~ZimFileWrapper();
@@ -51,9 +52,14 @@ Q_INVOKABLE QString getMetaDataString(QString key);
     QString getArticleTitleByUrl(QString articleUrl);
     QString getArticleTextByUrl(QString articleUrl);
     QByteArray getUUID();
+    Q_INVOKABLE QString getUUIDString();
     QString getFilename();
     //TODO: should no expose the zim file iterators, but encapsulate them instead
     zim::File::const_iterator end();
+    //In QML with QChar nameSpace not working, therefore
+    //QString variant added. Old QChar  kept to reduce
+    // risk of problem with non-qml version
+Q_INVOKABLE int getNamespaceCount(QString nameSpace);
     int getNamespaceCount(QChar nameSpace);
     zim::File::const_iterator findByTitle(QChar nameSpace, QString articleTitle);
     std::pair<bool, zim::File::const_iterator> findxByTitle(QChar nameSpace, QString articleTitle);
@@ -62,9 +68,9 @@ Q_INVOKABLE QString getMetaDataString(QString key);
     QString fromUTF8EncodedStdString(std::string s) {
         return QString::fromUtf8(s.data(), int(s.size()));
     }
-
     Q_INVOKABLE void zimFileIterator(QString path, bool recurseSubdirs);
     Q_INVOKABLE QString nextZimFile();
+
 protected:
 
 signals:

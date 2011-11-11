@@ -8,9 +8,9 @@ import "UIConstants.js" as UI
 WikionboardPage {
     id: library
     signal openZimFile(string fileName);
+    signal aboutZimFile(string fileName);
     signal findEbookClicked();
     signal downloadEbookClicked();
-    signal showAboutClicked();
 
     function addZimFile(fileName) {
         return libraryModel.addZimFile(fileName);
@@ -114,7 +114,7 @@ WikionboardPage {
                 library.openZimFile(fileName)
             }
             onPressAndHold: {
-                console.log("in pressAndHold: index "+index)
+                console.log("in pressAndHold: index, "+index)
                 libraryItemMenu.openMenu(index)
             }
         }
@@ -126,14 +126,18 @@ WikionboardPage {
            itemIndex: -1
            MenuLayout {
                MenuItem {
-                   text: "Remove"
+                   text: qsTr("About zimfile")
+                   onClicked: library.aboutZimFile(libraryModel.get(libraryItemMenu.itemIndex).fileName)
+               }
+               MenuItem {
+                   text: qsTr("Remove")
                    onClicked: {
                        console.log(" Remove item "+libraryItemMenu.itemIndex)
                        libraryModel.remove(libraryItemMenu.itemIndex)
                     }
                 }
                MenuItem {
-                   text: "Remove All"
+                   text: qsTr("Remove All")
                    onClicked: {
                        console.log(" Remove all items");
                        libraryModel.clear();

@@ -83,8 +83,13 @@ QString ZimFileWrapper::getFilename() {
         return QFile::decodeName(zimFile->getFilename().c_str());
     } else return QString();
 }
+
 int ZimFileWrapper::getNamespaceCount(QChar nameSpace) {
     return zimFile->getNamespaceCount(nameSpace.toLatin1());
+}
+
+int ZimFileWrapper::getNamespaceCount(QString nameSpace) {
+    return zimFile->getNamespaceCount(nameSpace.at(0).toLatin1());
 }
 
 
@@ -128,6 +133,23 @@ QByteArray ZimFileWrapper::getUUID() {
         uuidBA=QByteArray(zimFile->getFileheader().getUuid().data, zimFile->getFileheader().getUuid().size());
     }
     return uuidBA;
+}
+
+QString ZimFileWrapper::byteArray2HexQString(const QByteArray & byteArray)
+{
+    QString hexString;
+    QTextStream textStream(&hexString);
+    textStream << QLatin1String("0x")
+             << hex << qSetFieldWidth(2) << qSetPadChar(QLatin1Char('0')) << left;
+    for (int i = 0; i < byteArray.size(); i++)
+    {
+        textStream << static_cast<unsigned char>(byteArray.at(i));
+    }
+    return hexString;
+}
+
+QString ZimFileWrapper::getUUIDString() {
+    return byteArray2HexQString(getUUID());
 }
 
 QString ZimFileWrapper::getArticleTitleByUrl(QString articleUrl) {

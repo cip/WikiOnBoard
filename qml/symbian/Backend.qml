@@ -2,8 +2,10 @@ import QtQuick 1.1
 import WikiOnBoardModule 1.0
 
 Item {
-
+    id: backend
     Component.onCompleted: console.log("onCompleted in Backend")
+
+    property string fileName
 
     ZimFileWrapper {
         id:zimFileWrapper
@@ -11,7 +13,13 @@ Item {
 
     function openZimFile(filename) {
         console.log("in backend openZimFile: "+filename);
-        return zimFileWrapper.openZimFile(filename);
+        if (zimFileWrapper.openZimFile(filename)) {
+            //IF open fails, old file stays open
+            backend.fileName = filename
+            return true
+        }
+        return false
+
     }
 
     function errorString() {
@@ -34,5 +42,12 @@ Item {
         return zimFileWrapper.nextZimFile();
     }
 
+    function getNamespaceCount(nameSpace) {
+        return zimFileWrapper.getNamespaceCount(nameSpace);
+    }
+
+    function getUUIDString() {
+        return zimFileWrapper.getUUIDString();
+    }
 
 }
