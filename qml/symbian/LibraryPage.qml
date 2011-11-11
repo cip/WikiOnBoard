@@ -54,49 +54,53 @@ WikionboardPage {
             id: listItem
             //Not sure whether really correct size, but looks fine
             height: zimFileItem.implicitHeight+platformStyle.borderSizeMedium
+
+            function hasInfo(info) {
+                //FIXME, do this in a better way.
+                return (info !== undefined &&  info != "Not available" && info !== "")
+
+            }
             Column {
                 id: zimFileItem
                 anchors.fill: listItem.paddingItem
                 ListItemText {
-                    function hasTitle() {
-                        //FIXME, do this in a better way.
-                        return !(title == "Not available" || title == "")
-                    }
-
                     function getTitle() {
-                        if (!hasTitle()) {
+                        if (!hasInfo(title)) {
                             //Show filename (without path) if not title defined
                             return fileName.split('\\').pop().split('/').pop();
                         } else {
                             return title
                         }
                     }
-                    elide: hasTitle()?Text.ElideRight:Text.ElideMiddle
+                    elide: hasInfo(title)?Text.ElideRight:Text.ElideMiddle
                     width: parent.width
                     mode: listItem.mode
                     role: "Title"
                     text: getTitle()
                 }
-                ListItemText {
+                ListItemText {                   
+                    height: hasInfo(language)||hasInfo(date)?implicitHeight:0
                     mode: listItem.mode
                     elide: Text.ElideRight
                     width: parent.width
                     role: "SubTitle"
-                    text: {return language+", "+date}
+                    text: hasInfo(language)||hasInfo(date)?language+", "+date:""
                 }
                 ListItemText {
                     mode: listItem.mode
                     elide: Text.ElideRight
                     width: parent.width
                     role: "SubTitle"
-                    text: creator
+                    height : hasInfo(creator)?implicitHeight:0
+                    text: hasInfo(creator)?creator:""
                 }
                 ListItemText {
                     mode: listItem.mode
                     elide: Text.ElideRight
                     width: parent.width
                     role: "SubTitle"
-                    text: description
+                    height : hasInfo(description)?implicitHeight:0
+                    text: hasInfo(description)?description:""
                 }
                 ListItemText {
                     mode: listItem.mode
