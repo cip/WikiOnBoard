@@ -9,18 +9,26 @@ import "settings.js" as Settings
 Window {
     id: window
     function openZimFile(fileName) {
-
-        console.log("Open zimfile:"+fileName);
-        if (backend.openZimFile(fileName)) {
-            Settings.setSetting("lastZimFile",fileName);
-            indexTabButton.enabled = true
-            tabGroup.currentTab = indexPage;            
-            buttonRow.checkedButton = indexTabButton
-        } else {
-            var s = "Error opening zim file: "+fileName+" Error: "+backend.errorString()
-            banner.showMessage(s)
-            console.log(s)
+        if (fileName!="") {
+            console.log("Open zimfile:"+fileName);
+            if (backend.openZimFile(fileName)) {
+                Settings.setSetting("lastZimFile",fileName);
+                indexTabButton.enabled = true
+                tabGroup.currentTab = indexPage;
+                buttonRow.checkedButton = indexTabButton
+            } else {
+                var s = "Error opening zim file: "+fileName+" Error: "+backend.errorString()
+                banner.showMessage(s)
+                console.log(s)
+            }
         }
+    }
+
+    function closeZimFile() {
+        backend.closeZimFile();
+        Settings.setSetting("lastZimFile","");
+        indexTabButton.enabled = false;
+        articleTabButton.enabled =  false;
     }
 
     Visual {

@@ -11,6 +11,10 @@ Item {
         id:zimFileWrapper
     }
 
+    function closeZimFile() {
+        fileName = ""
+    }
+
     function openZimFile(filename) {
         console.log("in backend openZimFile: "+filename);
         if (zimFileWrapper.openZimFile(filename)) {

@@ -143,13 +143,22 @@ WikionboardPage {
             MenuItem {
                 text: qsTr("Remove")
                 onClicked: {
+                    if (backend.fileName==libraryModel.get(libraryItemMenu.itemIndex).fileName) {
+                        console.log("Removed currently open zim file. Close it.")
+                        closeZimFile();
+                    }
+
                     console.log(" Remove item "+libraryItemMenu.itemIndex)
                     libraryModel.remove(libraryItemMenu.itemIndex)
+
                 }
             }
             MenuItem {
                 text: qsTr("Remove All")
                 onClicked: {
+                    if (backend.fileName != "") {
+                        closeZimFile();
+                    }
                     console.log(" Remove all items");
                     libraryModel.clear();
                 }
