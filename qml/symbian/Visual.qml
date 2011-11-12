@@ -15,7 +15,9 @@ Item {
     property int defaultItemHeight: 48
 
     property int scrollBarWidth: 8
-    property string removeIconSource: "./gfx/list-icons/remove.svg"
+    property string removeListIconSource: "./gfx/list-icons/remove.svg"
+    property string searchListIconSource: "./gfx/list-icons/search.svg"
+
     property string folderListIconSource: "./gfx/list-icons/folder.svg"
     property string closeToolbarIconSource: "./gfx/toolbar-icons/close_stop.svg"
     property string okToolbarIconSource: "./gfx/toolbar-icons/ok.svg"

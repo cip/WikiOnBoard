@@ -21,19 +21,29 @@ WikionboardPage {
             id: articleName
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width
+            platformLeftMargin: search.width + platformStyle.paddingSmall
             platformRightMargin: clearText.width + platformStyle.paddingMedium * 2
             onInputMethodHintsChanged: console.log("inputMethodHints:" +inputMethodHints)
             onFocusChanged: console.log("focus: "+focus)
             onTextChanged: {
                 console.log("TODO:Update search: "+text)
                 indexListQML.searchArticle(text)
-            }            
+            }
+            Image {
+                    id: search
+                    anchors { top: parent.top; left: parent.left; margins: platformStyle.paddingMedium }
+                    smooth: true
+                    fillMode: Image.PreserveAspectFit
+                    source: visual.searchListIconSource
+                    height: parent.height - platformStyle.paddingMedium * 2
+                    width: parent.height - platformStyle.paddingMedium * 2
+                }
             Image {
                      anchors { top: parent.top; right: parent.right; margins: platformStyle.paddingMedium }
                      id: clearText
                      fillMode: Image.PreserveAspectFit
                      smooth: true; visible: articleName.text
-                     source: visual.removeIconSource
+                     source: visual.removeListIconSource
                      height: parent.height - platformStyle.paddingMedium * 2
                      width: parent.height - platformStyle.paddingMedium * 2
 
