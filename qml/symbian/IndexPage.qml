@@ -34,7 +34,7 @@ WikionboardPage {
                     anchors { top: parent.top; left: parent.left; margins: platformStyle.paddingMedium }
                     smooth: true
                     fillMode: Image.PreserveAspectFit
-                    source: visual.searchListIconSource
+                    source: visual.searchToolbarIconSource
                     height: parent.height - platformStyle.paddingMedium * 2
                     width: parent.height - platformStyle.paddingMedium * 2
                 }
@@ -43,7 +43,7 @@ WikionboardPage {
                      id: clearText
                      fillMode: Image.PreserveAspectFit
                      smooth: true; visible: articleName.text
-                     source: visual.removeListIconSource
+                     source: visual.removeToolbarIconSource
                      height: parent.height - platformStyle.paddingMedium * 2
                      width: parent.height - platformStyle.paddingMedium * 2
 
