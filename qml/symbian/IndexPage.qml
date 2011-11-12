@@ -16,16 +16,37 @@ WikionboardPage {
 
      Rectangle {
          anchors { fill: parent; bottomMargin: parent.height-articleName.height }
+
          TextField {
             id: articleName
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width
+            platformRightMargin: clearText.width + platformStyle.paddingMedium * 2
             onInputMethodHintsChanged: console.log("inputMethodHints:" +inputMethodHints)
             onFocusChanged: console.log("focus: "+focus)
             onTextChanged: {
                 console.log("TODO:Update search: "+text)
                 indexListQML.searchArticle(text)
             }            
+            Image {
+                     anchors { top: parent.top; right: parent.right; margins: platformStyle.paddingMedium }
+                     id: clearText
+                     fillMode: Image.PreserveAspectFit
+                     smooth: true; visible: articleName.text
+                     source: visual.removeIconSource
+                     height: parent.height - platformStyle.paddingMedium * 2
+                     width: parent.height - platformStyle.paddingMedium * 2
+
+                     MouseArea {
+                         id: clear
+                         anchors { horizontalCenter: parent.horizontalCenter; verticalCenter: parent.verticalCenter }
+                         height: articleName.height; width: articleName.height
+                         onClicked: {
+                             articleName.text = ""
+                             articleName.forceActiveFocus()
+                         }
+                     }
+                 }
          }
      }
      onStatusChanged: {
