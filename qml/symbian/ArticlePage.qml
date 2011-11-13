@@ -46,12 +46,12 @@ WikionboardPage {
              MenuItemCheckable {
                  id: verySmall
                  text: qsTr("Very Small")
-                 onClicked: zoomLevel = -3
+                 onClicked: zoomLevel = -2
              }
              MenuItemCheckable {
                  id: small
                  text: qsTr("Small")
-                 onClicked: zoomLevel = -2
+                 onClicked: zoomLevel = -1
              }
              MenuItemCheckable {
                  id: normal
@@ -62,12 +62,12 @@ WikionboardPage {
              MenuItemCheckable {
                  id: large
                  text: qsTr("Large")
-                 onClicked: zoomLevel = 2
+                 onClicked: zoomLevel = 1
              }
              MenuItemCheckable {
                  id: veryLarge
                  text: qsTr("Very Large")
-                 onClicked: zoomLevel = 3
+                 onClicked: zoomLevel = 2
              }
          }
 
@@ -76,10 +76,10 @@ WikionboardPage {
                 // in all MenuItemCheckables,but this didn't work (no unselection done)
                 if (status==DialogStatus.Opening) {
                     normal.checked =  (zoomLevel ==0);
-                    large.checked =  (zoomLevel == 2);
-                    veryLarge.checked = (zoomLevel == 3)
-                    small.checked =  (zoomLevel == -2);
-                    verySmall.checked = (zoomLevel == -3);
+                    large.checked =  (zoomLevel == 1);
+                    veryLarge.checked = (zoomLevel == 2)
+                    small.checked =  (zoomLevel == -1);
+                    verySmall.checked = (zoomLevel == -2);
 
                     //Other: (should not happen as always set here)
                     //     Nothing selected.
