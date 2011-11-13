@@ -145,39 +145,6 @@ Window {
                 LibraryPage {
                     id: libraryPage
                     anchors { fill: parent}
-                    function findZimFiles(path, recurseSubdirs) {
-                        console.log("sendMessage")
-                        //searchZimFileWorker.sendMessage({'action': 'appendCurrentTime', 'model': libraryModel});
-                        //FIXME
-                        backend.zimFileIterator(path, recurseSubdirs);
-                        var zimFile;
-
-                        //This does not work yet (not time to redraw..)
-                        libraryPageBusyIndicator.visible = true
-                        libraryPageBusyIndicator.running = true
-                        while ((zimFile = backend.nextZimFile()) !== "" ) {
-                            console.log("zimfile found:"+zimFile)
-                            libraryPage.addZimFile(zimFile);
-                            libraryPageBusyIndicator.running = true
-                        }
-                        console.log("finished adding zimfiles");
-                        libraryPageBusyIndicator.running = false
-                        libraryPageBusyIndicator.visible = false
-                    }
-
-                    WorkerScript {
-                        id: searchZimFileWorker
-                        source: "searchzimfiles.js"
-                        //onMessage: {console.log("message received"+message)}
-                    }
-
-                    BusyIndicator {
-                        anchors.centerIn: parent
-                        id: libraryPageBusyIndicator
-                        running: false
-                        visible: false
-                    }
-
 
                     tools: defaultTools
 

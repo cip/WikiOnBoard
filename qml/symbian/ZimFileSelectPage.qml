@@ -66,8 +66,6 @@ WikionboardPage {
 
                 Image {
                     id: folderIcon
-                    //height: parent.height*2/3
-                    //width: parent.height*2/3
                     anchors { left: parent.left; verticalCenter: parent.verticalCenter }
                     source: visual.folderListIconSource
                     visible: folderModel.isFolder(index)

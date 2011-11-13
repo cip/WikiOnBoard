@@ -4,7 +4,7 @@
 <context>
     <name>AboutMenuItem</name>
     <message>
-        <location filename="qml/symbian/AboutMenuItem.qml" line="12"/>
+        <location filename="qml/symbian/AboutMenuItem.qml" line="8"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
@@ -108,7 +108,7 @@ Relation: %7
 <context>
     <name>ExitMenuItem</name>
     <message>
-        <location filename="qml/symbian/ExitMenuItem.qml" line="12"/>
+        <location filename="qml/symbian/ExitMenuItem.qml" line="8"/>
         <source>Exit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -162,12 +162,12 @@ recommended to download the eBooks with your PC and not directly with your mobil
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/symbian/LibraryPage.qml" line="196"/>
+        <location filename="qml/symbian/LibraryPage.qml" line="195"/>
         <source>Find eBook on Phone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/symbian/LibraryPage.qml" line="202"/>
+        <location filename="qml/symbian/LibraryPage.qml" line="201"/>
         <source>Download eBook</source>
         <translation type="unfinished"></translation>
     </message>

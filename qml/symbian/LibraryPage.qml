@@ -175,7 +175,6 @@ WikionboardPage {
 
     ListView {
         id: libraryListView
-        //anchors.horizontalCenter: parent.horizontalCenter
         anchors { fill: parent; bottomMargin: parent.height*1/5}
         clip: true
         delegate: listDelegate

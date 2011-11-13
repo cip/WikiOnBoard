@@ -42,19 +42,7 @@ ListModel {
 
     }
 
-
-    function initDev() {
-        addZimFile("C:\\Users\\Christian\\Downloads\\wikipedia_de_all_10_2010_beta1.zim");
-        addZimFile("C:\\Users\\Christian\\Downloads\\wikipedia_en_wp1_0.8_45000+_12_2010.zimaa");
-        addZimFile("C:\\Users\\Christian\\Downloads\\Graz.zim");
-        addZimFile("f:\\wikipedia_de_all_10_2010_beta1\\wikipedia_de_all_10_2010_beta1.zimaa");
-        addZimFile("f:\\graz.zim");
-        addZimFile("e:\\wikipedia-de.zim");
-        addZimFile("e:\\wikipedia_en_wp1_0.8_45000+_12_2010.zimaa");
-    }
-
     Component.onCompleted: {
-        //initDev()
         Settings.restore(model);
 
     }
