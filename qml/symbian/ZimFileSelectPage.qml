@@ -60,6 +60,16 @@ WikionboardPage {
         Component {
             id: fileDelegate
             ListItem {
+                function isSystemDrive() {
+                    //Sysmbian specific, TODO change for meego.(D, Z are internal drives)
+                    return isDriveSelection && (fileName == "D:/" || fileName == "Z:/")
+
+                }
+                visible:!isSystemDrive()
+                height: {
+                    return isSystemDrive()?0:Math.max(file.implicitHeight, folderIcon.implicitHeight);
+                }
+
                 Image {
                     id: folderIcon
                     //height: parent.height*2/3
@@ -70,6 +80,7 @@ WikionboardPage {
                 }
 
                 Text {
+                    id: file
                     anchors {
                         left: folderIcon.right
                         right: parent.right
