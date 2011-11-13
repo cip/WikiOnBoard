@@ -37,6 +37,42 @@ WikionboardPage {
          }
      }
 
+
+     ContextMenu {
+         id: textSizeMenu
+
+
+         MenuLayout {
+             MenuItemCheckable {
+                 id: small
+                 text: qsTr("Small")
+                 onClicked: zoomLevel = -3                 
+             }
+             MenuItemCheckable {
+                 id: normal
+                 text: qsTr("Normal")
+                 onClicked: zoomLevel = 0
+
+             }
+             MenuItemCheckable {
+                 id: large
+                 text: qsTr("Large")
+                 onClicked: zoomLevel = 3
+             }
+         }
+
+         onStatusChanged: {
+                // Note: also tried having "checked: (zoomLevel==<level>)"
+                // in all MenuItemCheckables,but this didn't work (no unselection done)
+                if (status==DialogStatus.Opening) {
+                    normal.checked =  (zoomLevel ==0);
+                    large.checked =  (zoomLevel == 3);
+                    small.checked =  (zoomLevel == -3);
+                    //Other: (should not happen as always set here)
+                    //     Nothing selected.
+                }
+         }
+     }
      Menu {
              id: menu
              // define the items in the menu and corresponding actions
@@ -48,19 +84,10 @@ WikionboardPage {
                          articlePage.forward();
                      }
                  }
-
                  MenuItem {
-                     text: qsTr("Zoom in")
-                     onClicked: {
-                         article.zoomLevel++;
-                     }
-                 }
-
-                 MenuItem {
-                     text: qsTr("Zoom out")
-                     onClicked: {
-                         article.zoomLevel--;
-                     }
+                     text: qsTr("Text size")
+                     platformSubItemIndicator: true
+                     onClicked: textSizeMenu.open()
                  }
 
                  MenuItemCheckable {
