@@ -22,14 +22,7 @@ Build date: %3\n\
                 iconSource: "toolbar-back"
                 onClicked: pageStack.pop()
             }
-        }
-    onStatusChanged: {
-            if (status == PageStatus.Activating) {
-                //TODO?
-            } else if (status == PageStatus.Deactivating) {
-                toolBar.tools = defaultTools;
-            }
-        }
+        }    
     }
 
 

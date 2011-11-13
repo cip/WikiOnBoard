@@ -88,8 +88,7 @@ Window {
     }
 
     ToolBar {
-        id: toolBar
-
+        id: sharedToolBar
         anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
     }
 
@@ -123,7 +122,7 @@ Window {
 
     TabGroup {
         id: tabGroup
-        anchors { fill: parent; topMargin: statusBar.height; bottomMargin: toolBar.height }
+        anchors { fill: parent; topMargin: statusBar.height; bottomMargin: sharedToolBar.height }
 
 
         Page {
@@ -138,7 +137,10 @@ Window {
                 id: pageStack
 
                 anchors.fill: parent
-                toolBar: toolBar
+
+                //Appearantly not working as expected, see workaround
+                //in onDepthChanged
+                toolBar: sharedToolBar
 
                 LibraryPage {
                     id: libraryPage
@@ -200,14 +202,25 @@ Window {
                         pageStack.push(Qt.resolvedUrl("AboutZimFilePage.qml"),{ fileName: fileName })
                     }
 
-                    onDownloadEbookClicked: pageStack.push(Qt.resolvedUrl("HelpPage.qml"))
-                    //onDepthChanged:
+                    onDownloadEbookClicked: {
+                        pageStack.push(Qt.resolvedUrl("HelpPage.qml"))
+                    }
+
+                }
+                onDepthChanged: {
+                    if (depth==1) {
+                        //Necessary, as else when returning to library
+                        // page from subpage (like help page) toolbar
+                        // is empty. (Unclear why, because setting "tools"
+                        // property in libraryPage should handle this)
+                       sharedToolBar.setTools(defaultTools)
+                    }
+
                 }
 
                 Component.onCompleted: {
                     pageStack.push(libraryPage)
                 }
-
             }
 
 
@@ -217,6 +230,8 @@ Window {
         IndexPage {
             id: indexPage
             anchors { fill: parent}
+            //Note: Setting tools here propbably does  not really have an effect.
+            // (Seems to be because its not a pagestack but a TabGroup)
             tools: defaultTools
 
             onOpenArticle: {
@@ -244,13 +259,13 @@ Window {
             }
 
             onShowImagesChanged: Settings.setSetting("showImages",showImages);
+            //Note: Setting tools here propbably does  not really have an effect.
+            // (Seems to be because its not a pagestack but a TabGroup)
             tools: defaultTools
             onStatusChanged: {
                 if (status == PageStatus.Activating) {
-                    toolBar.tools = defaultTools;
                     backButton.enabled = isBackwardAvailable()
                 } else if (status == PageStatus.Deactivating) {
-                    toolBar.tools = defaultTools;
                     //Other pages currently don't have back
                     backButton.enabled= false;
                 }

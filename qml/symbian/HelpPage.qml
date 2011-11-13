@@ -39,13 +39,7 @@ TextPage {
         //TODO perhaps show different.
         openExternalLinkQueryDialog.askAndOpenUrlExternally(url);
     }
-    onStatusChanged: {
-        if (status == PageStatus.Activating) {
-            toolBar.setTools(backOnlyTools)
-        } else if (status == PageStatus.Deactivating) {
-            toolBar.tools = defaultTools
-        }
-    }
+
 
 
 }

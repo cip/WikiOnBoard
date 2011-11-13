@@ -59,8 +59,6 @@ Error: %2".replace(
                                                        "%2",backend.errorString()))
                   }
 
-            } else if (status == PageStatus.Deactivating) {
-                toolBar.tools = defaultTools;
             }
         }
     }

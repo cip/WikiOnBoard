@@ -34,14 +34,7 @@ WikionboardPage {
         }
 
     }
-    onStatusChanged: {
-        //TODO: Download->Open zim file->Back/Open No toolbar on library page fix this
-        if (status == PageStatus.Activating) {
-            //TODO?
-        } else if (status == PageStatus.Deactivating) {
-            toolBar.tools = defaultTools;
-        }
-    }
+
     onIsDriveSelectionChanged: console.log("isDriveSelection:"+isDriveSelection)
     ListView {
         id: folderListView
