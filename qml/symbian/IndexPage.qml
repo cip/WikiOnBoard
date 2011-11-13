@@ -60,7 +60,6 @@ WikionboardPage {
          }
      }
      onStatusChanged: {
-         console.log("IndexPage onStatusChanged: status"+status)
          if (PageStatus.Activating == status) {
              console.log("IndexPage onStatusChanged: PageStatus.Activating")
              indexListQML.searchArticle(articleName.text)
