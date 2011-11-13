@@ -259,6 +259,8 @@ Window {
             }
 
             onShowImagesChanged: Settings.setSetting("showImages",showImages);
+            onZoomLevelChanged: Settings.setSetting("zoomLevel", zoomLevel);
+
             //Note: Setting tools here propbably does  not really have an effect.
             // (Seems to be because its not a pagestack but a TabGroup)
             tools: defaultTools
@@ -297,6 +299,14 @@ Window {
         } else {
             articlePage.showImages = true;
         }
+        var zoomLevel = Settings.getSetting("zoomLevel");
+        if (zoomLevel != "Unknown") {
+            console.log("Setting zoomLevel is "+zoomLevel+". set articlePage zoomLevel accordingly")
+            articlePage.zoomLevel = zoomLevel;
+        } else {
+            articlePage.zoomLevel = 0;
+        }
+
 
     }
 }

@@ -121,6 +121,7 @@ class ArticleViewerQML : public QGraphicsProxyWidget
 {
     Q_OBJECT
     Q_PROPERTY(bool showImages READ showImages WRITE setShowImages NOTIFY showImagesChanged)
+    Q_PROPERTY(int zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
 
 public:
 
@@ -147,8 +148,21 @@ public:
         }
     }
 
+    int zoomLevel() const
+    {
+        return widget->zoomLevel();
+    }
+
+    void setZoomLevel(const int zoomLevel) {
+        if (zoomLevel != widget->zoomLevel()) {
+            widget->setZoomLevel(zoomLevel);
+            emit zoomLevelChanged(zoomLevel);
+        }
+    }
+
 Q_SIGNALS:
      void showImagesChanged(bool showImages);
+     void zoomLevelChanged(int zoomLevel);
      void backwardAvailable ( bool available);
      void forwardAvailable ( bool available);
      void openExternalLink( QUrl url);
@@ -185,6 +199,10 @@ public slots:
     bool isForwardAvailable() {
         qDebug() << "ArticleViewerQML.isForwardAvailable()";
         return widget->isForwardAvailable();
+    }
+
+    void zoom(int zoomDelta) {
+        return widget->zoom(zoomDelta);
     }
 
 private:

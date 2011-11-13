@@ -47,11 +47,12 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
     defaultStyleSheetDocument->setDefaultStyleSheet(QLatin1String("a:link{color: blue}"));
     setDocument(defaultStyleSheetDocument);
 
+    m_zoomLevel = 0;
+
     QSettings settings;
     settings.beginGroup(QLatin1String("UISettings"));
     int zoomInit = settings.value(QLatin1String("zoomLevel"), -1).toInt();
     settings.endGroup();
-    zoomLevel = 0;
     zoom(zoomInit);
     //  LeftMouseButtonGesture used, as use of TouchGesture together
     // with mouse click events (like link clicked) problematic.
@@ -145,8 +146,22 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
      reload();
  }
 
+ void ArticleViewer::setZoomLevel(int zoomLevel) {
+     if (m_zoomLevel != zoomLevel) {
+         int delta =  zoomLevel-m_zoomLevel;
+         m_zoomLevel = zoomLevel;
+         if (delta<0) {
+             zoomOut(abs(delta));
+         } else {
+             zoomIn(delta);
+         }
+     }
+ }
 
- void ArticleViewer::zoom(int zoomDelta)
+ // Deprecated, kept for compatibility with
+ // wikionboard 1.x. For QML versions zoomLevel property used
+ // instead
+ void ArticleViewer::zoom(int zoomDelta) 
          {
          //Limit zoom to allow fixing  an incorrect inifile entry
          // manually by just zooming in or out manually.
@@ -156,7 +171,7 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
                  zoomDelta = 5;
          if (zoomDelta < -5)
                  zoomDelta = -5;
-         if (abs(zoomLevel + zoomDelta) > 5)
+         if (abs(m_zoomLevel + zoomDelta) > 5)
                  {
                  return;
                  }
@@ -168,13 +183,13 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
                  {
                  zoomIn(zoomDelta);
                  }
-         zoomLevel += zoomDelta;
+         m_zoomLevel += zoomDelta;
          QSettings settings;
          settings.beginGroup(QLatin1String("UISettings"));
          if ((!settings.contains(QLatin1String("zoomLevel")))
-                         || (settings.value(QLatin1String("zoomLevel")).toInt() != zoomLevel))
+                         || (settings.value(QLatin1String("zoomLevel")).toInt() != m_zoomLevel))
                  {
-                 settings.setValue(QLatin1String("zoomLevel"), zoomLevel);
+                 settings.setValue(QLatin1String("zoomLevel"), m_zoomLevel);
                  }
          settings.endGroup();
          }

@@ -12,7 +12,11 @@ WikionboardPage {
      // (Change of setting in C++ would not visible here.)
      // Note that it is not possible to bind the other way around (or bidirectionally)
      // because showImages is set from javascript to load settings, which clears any binding)
-     property alias showImages: showImageMenuItem.checked
+     property alias showImages: showImageMenuItem.checked     
+     //zoomLevel property. Same as for showImages, C++ ArticleViewerQML bound to this
+     property int zoomLevel
+     zoomLevel: 0
+
      signal backwardAvailable(bool available)
      signal forwardAvailable(bool available)
      signal openExternalLink(url url)
@@ -36,6 +40,21 @@ WikionboardPage {
                          articlePage.forward();
                      }
                  }
+
+                 MenuItem {
+                     text: qsTr("Zoom in")
+                     onClicked: {
+                         article.zoomLevel++;
+                     }
+                 }
+
+                 MenuItem {
+                     text: qsTr("Zoom out")
+                     onClicked: {
+                         article.zoomLevel--;
+                     }
+                 }
+
                  MenuItemCheckable {
                      id: showImageMenuItem
                      text: qsTr("Show Images")
@@ -48,6 +67,7 @@ WikionboardPage {
         id: articleViewerQML
         anchors.fill: parent
         showImages: article.showImages
+        zoomLevel: article.zoomLevel
         onBackwardAvailable: {
                console.log("onBackwardAvailable:"+available);
                article.backwardAvailable(available);

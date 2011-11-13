@@ -23,6 +23,7 @@ class ArticleViewer : public QTextBrowser
 {
     Q_OBJECT
     Q_PROPERTY(bool showImages READ showImages WRITE setShowImages)
+    Q_PROPERTY(int m_zoomLevel READ zoomLevel WRITE setZoomLevel)
 public:   
     ArticleViewer(QWidget* parent = 0, ZimFileWrapper* zimFileWrapper = 0, bool hasTouchScreen = true);
     void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {
@@ -40,8 +41,14 @@ public:
             reload();
         }
      }
+
     bool showImages() const
         { return m_showImages; }
+
+    void setZoomLevel(int zoomLevel);
+
+    int zoomLevel() const
+        { return m_zoomLevel;}
 
 protected:
     void hideWaitCursor();
@@ -50,7 +57,7 @@ private:
     ZimFileWrapper* zimFileWrapper;
     QString articleTitle;
     bool hasTouchScreen;    
-    int zoomLevel;
+    int m_zoomLevel;
     QString welcomePage;
     bool m_showImages;
 signals:
@@ -61,6 +68,7 @@ public slots:
     void onSourceChanged (QUrl url );
 
     void toggleImageDisplay(bool checked);
+    // use zoomlevel in qml.
     void zoom(int zoomDelta);
     void zoomOutOneStep();
     void zoomInOneStep();
