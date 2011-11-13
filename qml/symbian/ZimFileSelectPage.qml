@@ -46,6 +46,7 @@ WikionboardPage {
     ListView {
         id: folderListView
         anchors { fill: parent}
+        clip: true
         FolderListModel {
             id: folderModel
             // Not very useful, because not displayed at  drive (like c:) level
@@ -93,7 +94,7 @@ WikionboardPage {
                     color: visual.defaultFontColor
                     text: fileName
                 }
-
+                //TODO: Could use onClicked directly here. For now kept as anyway meego porting necessary
                 MouseArea {
                     anchors.fill: parent
 
