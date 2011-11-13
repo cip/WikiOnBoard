@@ -29,6 +29,10 @@ WikionboardPage {
                 console.log("TODO:Update search: "+text)
                 indexListQML.searchArticle(text)
             }
+            //Symbian Workaround for always-upperercase after once clicked on article ListElement
+            // If length > 0 force autouppercase off
+            // (Issue 67)
+            inputMethodHints:(text.length===0)?0:Qt.ImhNoAutoUppercase
             Image {
                     id: search
                     anchors { top: parent.top; left: parent.left; margins: platformStyle.paddingMedium }
