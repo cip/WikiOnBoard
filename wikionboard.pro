@@ -13,12 +13,13 @@ TEMPLATE = app
 
 QT += core \
     gui
-HEADERS += wikionboard.h \
+HEADERS += \
     zimfilewrapper.h \
     articleviewer.h \
-    indexlist.h
+    indexlist.h \
+    articleviewerqml.h \
+    indexlistqml.h
 SOURCES += main.cpp \
-    wikionboard.cpp \
     zimfilewrapper.cpp \
     articleviewer.cpp \
     indexlist.cpp
@@ -274,6 +275,10 @@ symbian {
     # Required for S^3 SDK, else linking fails
     LIBS += -lusrt2_2.lib
 }
+
+
+
+
 
 
 

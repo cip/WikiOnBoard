@@ -17,7 +17,8 @@
 #include <QtGui/QApplication>
 #include <qdeclarative.h>
 #include "qmlapplicationviewer.h"
-#include "wikionboard.h"
+#include "articleviewerqml.h"
+#include "indexlistqml.h"
 #include <QTranslator>
 #include <QDeclarativeContext>
 #include <QDeclarativeEngine>
