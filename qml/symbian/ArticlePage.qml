@@ -28,6 +28,14 @@ WikionboardPage {
          menu.open()
      }
 
+     onZoomLevelChanged: {
+         //Limit max/min zoom levels
+         if (zoomLevel>5) {
+             zoomLevel=5;
+         } else if (zoomLevel<-5) {
+             zoomLevel=-5;
+         }
+     }
 
      Menu {
              id: menu
