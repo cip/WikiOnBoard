@@ -201,10 +201,6 @@ public slots:
         return widget->isForwardAvailable();
     }
 
-    void zoom(int zoomDelta) {
-        return widget->zoom(zoomDelta);
-    }
-
 private:
    // WikiOnBoard *wikionboard;
    // QPushButton *widget;

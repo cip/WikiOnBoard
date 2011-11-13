@@ -66,13 +66,6 @@ signals:
 public slots:
     void onAnchorClicked (QUrl url);
     void onSourceChanged (QUrl url );
-
-    void toggleImageDisplay(bool checked);
-    // use zoomlevel in qml.
-    void zoom(int zoomDelta);
-    void zoomOutOneStep();
-    void zoomInOneStep();
-
 };
 
 

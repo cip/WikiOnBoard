@@ -16,7 +16,6 @@
 
 #include "articleviewer.h"
 #include <QDebug>
-#include <QSettings>
 #include <QTime>
 #include <QTextBlock>
 #include <QtScroller>
@@ -27,6 +26,7 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
     : QTextBrowser(parent),zimFileWrapper(zimFileWrapper),hasTouchScreen(hasTouchScreen), welcomeUrl(QUrl(QLatin1String("wikionboard://welcome")))
  {
     m_showImages=false;
+    m_zoomLevel=0;
     articleTitle = QString();
     welcomePage = QString();
     //QTextBrowser settings
@@ -47,13 +47,6 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
     defaultStyleSheetDocument->setDefaultStyleSheet(QLatin1String("a:link{color: blue}"));
     setDocument(defaultStyleSheetDocument);
 
-    m_zoomLevel = 0;
-
-    QSettings settings;
-    settings.beginGroup(QLatin1String("UISettings"));
-    int zoomInit = settings.value(QLatin1String("zoomLevel"), -1).toInt();
-    settings.endGroup();
-    zoom(zoomInit);
     //  LeftMouseButtonGesture used, as use of TouchGesture together
     // with mouse click events (like link clicked) problematic.
     #ifndef Q_WS_SIMULATOR
@@ -132,20 +125,6 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
        return QVariant();
  }
 
- void ArticleViewer::toggleImageDisplay(bool checked) {
-
-     m_showImages = checked;
-     QSettings settings;
-     settings.beginGroup(QLatin1String("UISettings"));
-     if ((!settings.contains(QLatin1String("m_showImages"))) || (settings.value(QLatin1String("m_showImages"),
-                     true).toBool() != m_showImages))
-             {
-             settings.setValue(QLatin1String("m_showImages"), m_showImages);
-             }
-     settings.endGroup();
-     reload();
- }
-
  void ArticleViewer::setZoomLevel(int zoomLevel) {
      if (m_zoomLevel != zoomLevel) {
          int delta =  zoomLevel-m_zoomLevel;
@@ -157,52 +136,6 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
          }
      }
  }
-
- // Deprecated, kept for compatibility with
- // wikionboard 1.x. For QML versions zoomLevel property used
- // instead
- void ArticleViewer::zoom(int zoomDelta) 
-         {
-         //Limit zoom to allow fixing  an incorrect inifile entry
-         // manually by just zooming in or out manually.
-         // (In particular as zoom does not saturate, but
-         // just do nothing when zoomDelta is out of range.)
-         if (zoomDelta > 5)
-                 zoomDelta = 5;
-         if (zoomDelta < -5)
-                 zoomDelta = -5;
-         if (abs(m_zoomLevel + zoomDelta) > 5)
-                 {
-                 return;
-                 }
-         if (zoomDelta < 0)
-                 {
-                 zoomOut(abs(zoomDelta));
-                 }
-         else
-                 {
-                 zoomIn(zoomDelta);
-                 }
-         m_zoomLevel += zoomDelta;
-         QSettings settings;
-         settings.beginGroup(QLatin1String("UISettings"));
-         if ((!settings.contains(QLatin1String("zoomLevel")))
-                         || (settings.value(QLatin1String("zoomLevel")).toInt() != m_zoomLevel))
-                 {
-                 settings.setValue(QLatin1String("zoomLevel"), m_zoomLevel);
-                 }
-         settings.endGroup();
-         }
-
- void ArticleViewer::zoomOutOneStep()
-         {
-         zoom(-1);
-         }
-
- void ArticleViewer::zoomInOneStep()
-         {
-         zoom(1);
-         }
 
  void ArticleViewer::moveTextBrowserTextCursorToVisibleArea()
          {
