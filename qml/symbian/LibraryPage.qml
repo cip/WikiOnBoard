@@ -175,7 +175,13 @@ WikionboardPage {
 
     ListView {
         id: libraryListView
-        anchors { fill: parent; bottomMargin: parent.height*1/5}
+        anchors {
+            right: parent.right
+            left: parent.left
+            top: parent.top
+            bottom: buttons.top
+            bottomMargin: UI.LISTVIEW_MARGIN
+            }
         clip: true
         delegate: listDelegate
         model: libraryModel
@@ -183,12 +189,11 @@ WikionboardPage {
     }
 
     Column {
-        anchors.top: libraryListView.bottom
-        anchors.topMargin: UI.MARGIN_XLARGE
+        id: buttons
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right:  parent.right
-
+        anchors.bottomMargin: UI.LISTVIEW_MARGIN
         Button {
             id: addEBookButton
             anchors.horizontalCenter: parent.horizontalCenter
