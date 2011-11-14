@@ -40,6 +40,16 @@ Window {
         anchors { top: parent.top; left: parent.left; right: parent.right }
     }
 
+    // Create an info banner with no icon
+    InfoBanner {
+        id: banner
+        text: ""
+        function showMessage(msg) {
+            text = msg
+            open()
+        }
+    }
+
     ToolBarLayout {
         id: backOnlyTools
         ToolButton {
@@ -148,15 +158,6 @@ Window {
 
                     tools: defaultTools
 
-                    // Create an info banner with no icon
-                    InfoBanner {
-                        id: banner
-                        text: ""
-                        function showMessage(msg) {
-                            text = msg
-                            open()
-                        }
-                    }
                     onFindEbookClicked: {
                         pageStack.push(Qt.resolvedUrl("ZimFileSelectPage.qml"))
                     }
