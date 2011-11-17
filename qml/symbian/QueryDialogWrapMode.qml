@@ -39,7 +39,9 @@
 ****************************************************************************/
 
 import QtQuick 1.1
-import com.nokia.symbian 1.1
+
+import com.nokia.meego 1.0
+//import com.nokia.symbian 1.1
 
 Dialog {
     id: root
@@ -112,6 +114,7 @@ Dialog {
                     anchors { right: parent.right; rightMargin: privateStyle.scrollBarThickness }
                 }
             }
+            /* FIXME not in meego
 
             ScrollBar {
                 id: vertical
@@ -121,7 +124,7 @@ Dialog {
                 interactive: false
                 orientation: Qt.Vertical
             }
-
+*/
             anchors {
                 top: parent.top; topMargin: platformStyle.paddingLarge
                 bottom: parent.bottom; bottomMargin: platformStyle.paddingLarge
