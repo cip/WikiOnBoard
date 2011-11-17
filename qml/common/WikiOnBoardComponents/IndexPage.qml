@@ -21,8 +21,8 @@ WikionboardPage {
             id: articleName
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width
-            platformLeftMargin: search.width + platformStyle.paddingSmall
-            platformRightMargin: clearText.width + platformStyle.paddingMedium * 2
+            //FIXME: not on meego platformLeftMargin: search.width + platformStyle.paddingSmall
+            //FIXME: not on meego platformRightMargin: clearText.width + platformStyle.paddingMedium * 2
             onInputMethodHintsChanged: console.log("inputMethodHints:" +inputMethodHints)
             onFocusChanged: console.log("focus: "+focus)
             onTextChanged: {

@@ -10,7 +10,7 @@ MenuItem {
 
     property bool checked: false
 
-    platformLeftMargin: 2 * platformStyle.paddingMedium + platformStyle.graphicSizeSmall
+    //FIXME: not on meego platformLeftMargin: 2 * platformStyle.paddingMedium + platformStyle.graphicSizeSmall
     onClicked: checked = !checked
 
     Image {

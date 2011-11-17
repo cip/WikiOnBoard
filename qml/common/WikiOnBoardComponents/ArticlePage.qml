@@ -99,7 +99,7 @@ WikionboardPage {
                  }
                  MenuItem {
                      text: qsTr("Text size")
-                     platformSubItemIndicator: true
+                     //FIXME: not on meego platformSubItemIndicator: true
                      onClicked: textSizeMenu.open()
                  }
 
