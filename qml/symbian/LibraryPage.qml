@@ -183,6 +183,8 @@ WikionboardPage {
             bottomMargin: UI.LISTVIEW_MARGIN
             }
         clip: true
+        //Focus: true enables keyboard navigation
+        focus: true
         delegate: listDelegate
         model: libraryModel
         header: listHeading
