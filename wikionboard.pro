@@ -28,9 +28,13 @@ FORMS +=
 #Attention: Ensure that kinetic scroller has been built with this option as well.
 CONFIG +=no-webkit
 
-RESOURCES +=
-include(../kineticscroller/qtscroller.pri)
-
+simulator {
+    INCLUDEPATH *= ../kineticscroller/include
+    LIBS *= -L../simulatorlibs -lQtScroller
+} else {
+    RESOURCES +=
+    include(../kineticscroller/qtscroller.pri)
+}
 TRANSLATIONS = wikionboard_en.ts \
                wikionboard_de.ts \
                wikionboard_es.ts \
@@ -55,6 +59,10 @@ symbian: {
 #    LIBS += -l:libzimlib.a
  #   LIBS += -L../xz
   #  LIBS += -l:libliblzma.lib.a
+} else:simulator {
+   #Libs need to be copied to ../simulatorlibs manually
+    LIBS *= -L../simulatorlibs -lzimlib
+    LIBS *= -L../simulatorlibs -lliblzma
 }
 else {    
     LIBS *= -L../zimlib -lzimlib
