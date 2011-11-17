@@ -183,12 +183,6 @@ OTHER_FILES += \
     debian/README \
     debian/rules \
     WikiOnBoard.desktop \
-    qtc_packaging/debian_harmattan/rules \
-    qtc_packaging/debian_harmattan/README \
-    qtc_packaging/debian_harmattan/copyright \
-    qtc_packaging/debian_harmattan/control \
-    qtc_packaging/debian_harmattan/compat \
-    qtc_packaging/debian_harmattan/changelog \
     android/AndroidManifest.xml \
     android/res/drawable-hdpi/icon.png \
     android/res/drawable-ldpi/icon.png \
@@ -226,7 +220,21 @@ OTHER_FILES += \
     android/src/eu/licentia/necessitas/mobile/QtLocation.java \
     android/src/eu/licentia/necessitas/mobile/QtMediaPlayer.java \
     android/src/eu/licentia/necessitas/mobile/QtSensors.java \
-    android/src/eu/licentia/necessitas/mobile/QtSystemInfo.java
+    android/src/eu/licentia/necessitas/mobile/QtSystemInfo.java \
+    qtc_packaging/debian_harmattan/rules \
+    qtc_packaging/debian_harmattan/README \
+    qtc_packaging/debian_harmattan/manifest.aegis \
+    qtc_packaging/debian_harmattan/copyright \
+    qtc_packaging/debian_harmattan/control \
+    qtc_packaging/debian_harmattan/compat \
+    qtc_packaging/debian_harmattan/changelog \
+    qtc_packaging/debian_harmattan/rules \
+    qtc_packaging/debian_harmattan/README \
+    qtc_packaging/debian_harmattan/manifest.aegis \
+    qtc_packaging/debian_harmattan/copyright \
+    qtc_packaging/debian_harmattan/control \
+    qtc_packaging/debian_harmattan/compat \
+    qtc_packaging/debian_harmattan/changelog
 
 unix:!symbian {
     maemo5 {
@@ -249,11 +257,25 @@ unix:!symbian {
 message(QT Variable: $$QT)
 message(Libs Variable: $$LIBS)
 
+#QML (Common)
+common_qml.source = qml/common
+common_qml.target = qml
+
+symbian {
 # QML (Symbian components) related
-# Add more folders to ship with the application, here
-folder_01.source = qml/symbian
-folder_01.target = qml
-DEPLOYMENTFOLDERS = folder_01
+platform_qml.source = qml/symbian
+platform_qml.target = qml
+} else:simulator {
+platform_qml.source = qml/symbian
+platform_qml.target = qml
+} else {
+message("neither symbian nor simulator, assume meego")
+platform_qml.source = qml/meego
+platform_qml.target = qml
+}
+DEPLOYMENTFOLDERS = common_qml platform_qml
+message(DEPLOYMENTFOLDERS: $$DEPLOYMENTFOLDERS)
+message(platform_qml.source: $$platform_qml.source)
 
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
@@ -275,6 +297,9 @@ symbian {
     # Required for S^3 SDK, else linking fails
     LIBS += -lusrt2_2.lib
 }
+
+
+
 
 
 
