@@ -114,7 +114,6 @@ Dialog {
                     anchors { right: parent.right; rightMargin: privateStyle.scrollBarThickness }
                 }
             }
-            /* FIXME not in meego
 
             ScrollBar {
                 id: vertical
@@ -124,7 +123,7 @@ Dialog {
                 interactive: false
                 orientation: Qt.Vertical
             }
-*/
+
             anchors {
                 top: parent.top; topMargin: platformStyle.paddingLarge
                 bottom: parent.bottom; bottomMargin: platformStyle.paddingLarge

@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
     context->setContextProperty(QLatin1String("appInfo"), &appInfo);
 
-    viewer.setMainQmlFile(QLatin1String("qml/symbian/main.qml"));
+    viewer.setMainQmlFile(QLatin1String("qml/WikiOnBoardComponents/main.qml"));
     viewer.showExpanded();
 
     return app.exec();

@@ -258,19 +258,19 @@ message(QT Variable: $$QT)
 message(Libs Variable: $$LIBS)
 
 #QML (Common)
-common_qml.source = qml/common
+common_qml.source = qml/common/WikiOnBoardComponents
 common_qml.target = qml
 
 symbian {
 # QML (Symbian components) related
-platform_qml.source = qml/symbian
+platform_qml.source = qml/symbian/WikiOnBoardComponents
 platform_qml.target = qml
 } else:simulator {
-platform_qml.source = qml/symbian
+platform_qml.source = qml/symbian/WikiOnBoardComponents
 platform_qml.target = qml
 } else {
 message("neither symbian nor simulator, assume meego")
-platform_qml.source = qml/meego
+platform_qml.source = qml/meego/WikiOnBoardComponents
 platform_qml.target = qml
 }
 DEPLOYMENTFOLDERS = common_qml platform_qml
