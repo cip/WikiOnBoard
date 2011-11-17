@@ -6,11 +6,12 @@ ListModel {
     id: model
 
 
-    function addZimFileEntry(fileName, title, creator, date, source, description, language, relation) {
+    function addZimFileEntry(fileName, title, creator, publisher, date, source, description, language, relation) {
         console.log("addZimFile: "+fileName+" "+title+" "+" "+creator+" "+date+" "+source+" "+description+" "+language+" "+relation)
         model.append({"fileName": fileName,
                      "title": title,
                      "creator": creator,
+                     "publisher": publisher,
                      "date": date,
                      "source": source,
                      "description": description,
@@ -25,6 +26,7 @@ ListModel {
             addZimFileEntry(fileName,
                         backend.getMetaDataString("Title"), //TODO: would make sense to handle undefined entries differently.
                         backend.getMetaDataString("Creator"),
+                        backend.getMetaDataString("Publisher"),
                         backend.getMetaDataString("Date"),
                         backend.getMetaDataString("Source"),
                         backend.getMetaDataString("Description"),

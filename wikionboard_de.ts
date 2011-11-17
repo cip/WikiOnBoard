@@ -40,6 +40,25 @@ Build date: %3
 <context>
     <name>AboutZimFilePage</name>
     <message>
+        <source>Title: %1
+Creator: %2
+Date: %3
+Source: %4
+Description: %5
+Language: %6
+Relation: %7
+</source>
+        <comment>Add newline after Text</comment>
+        <translation type="obsolete">Titel: %1
+Erstellt von: %2
+Datum: %3
+Quelle: %4
+Beschreibung: %5
+Sprache: %6
+Relation: %7
+</translation>
+    </message>
+    <message>
         <location filename="qml/symbian/AboutZimFilePage.qml" line="21"/>
         <source>%1
 Articles : %2, Images: %3, Categories: %4
@@ -51,6 +70,7 @@ Articles : %2, Images: %3, Categories: %4
         <location filename="qml/symbian/AboutZimFilePage.qml" line="28"/>
         <source>Title: %1
 Creator: %2
+Publisher: %8
 Date: %3
 Source: %4
 Description: %5
@@ -58,17 +78,10 @@ Language: %6
 Relation: %7
 </source>
         <comment>Add newline after Text</comment>
-        <translation type="unfinished">Titel: %1
-Erstellt von: %2
-Datum: %3
-Quelle: %4
-Beschreibung: %5
-Sprache: %6
-Relation: %7
-</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/symbian/AboutZimFilePage.qml" line="42"/>
+        <location filename="qml/symbian/AboutZimFilePage.qml" line="45"/>
         <source>UUID: %1
 </source>
         <translation type="unfinished"></translation>
@@ -174,12 +187,12 @@ empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem M
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/symbian/LibraryPage.qml" line="195"/>
+        <location filename="qml/symbian/LibraryPage.qml" line="202"/>
         <source>Find eBook on Phone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/symbian/LibraryPage.qml" line="201"/>
+        <location filename="qml/symbian/LibraryPage.qml" line="208"/>
         <source>Download eBook</source>
         <translation type="unfinished"></translation>
     </message>
@@ -517,35 +530,35 @@ Version vom: %3
 <context>
     <name>main</name>
     <message>
-        <location filename="qml/symbian/main.qml" line="101"/>
+        <location filename="qml/symbian/main.qml" line="111"/>
         <source>Open link in browser</source>
         <translation type="unfinished">Link in Browser öffnen</translation>
     </message>
     <message>
-        <location filename="qml/symbian/main.qml" line="106"/>
+        <location filename="qml/symbian/main.qml" line="116"/>
         <source>[TRANSLATOR] Explain that link &quot;%1&quot; clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/symbian/main.qml" line="108"/>
+        <location filename="qml/symbian/main.qml" line="118"/>
         <source>[TRANLATOR]Explain that may not work if browser running.</source>
         <comment>only displayed if self_signed</comment>
         <translation type="unfinished">Achtung: In der aktuellen Konfiguration lassen sich Artikel wahrscheinlich nur öffnen wenn der Internet-Browser nicht geöffnet ist. 
 Wenn sich der Artikel nicht öffnen lässt, schließe den Internet-Browser und versuche es erneut.</translation>
     </message>
     <message>
-        <location filename="qml/symbian/main.qml" line="109"/>
+        <location filename="qml/symbian/main.qml" line="119"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/symbian/main.qml" line="110"/>
+        <location filename="qml/symbian/main.qml" line="120"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/symbian/main.qml" line="114"/>
+        <location filename="qml/symbian/main.qml" line="124"/>
         <source>Opening link &quot;%1&quot; in system web browser failed.</source>
         <translation type="unfinished"></translation>
     </message>

@@ -27,6 +27,7 @@ Articles : %2, Images: %3, Categories: %4\n",
                                     "%4",backend.getNamespaceCount('U'));
         aboutZimFilePage.text+= qsTr("Title: %1\n\
 Creator: %2\n\
+Publisher: %8\n\
 Date: %3\n\
 Source: %4\n\
 Description: %5\n\
@@ -38,7 +39,9 @@ Relation: %7\n", "Add newline after Text").replace(
                     "%4", backend.getMetaDataString("Source")).replace(
                     "%5", backend.getMetaDataString("Description")).replace(
                     "%6", backend.getMetaDataString("Language")).replace(
-                    "%7", backend.getMetaDataString("Relation"));
+                    "%7", backend.getMetaDataString("Relation")).replace(
+                    "%8", backend.getMetaDataString("Publisher"));
+
         aboutZimFilePage.text+= qsTr("UUID: %1\n"
                                      ).replace(
                     "%1",backend.getUUIDString());
