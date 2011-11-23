@@ -274,7 +274,7 @@ symbian {
 platform_qml.source = qml/symbian/WikiOnBoardComponents
 platform_qml.target = qml
 } else:simulator {
-platform_qml.source = qml/symbian/WikiOnBoardComponents
+platform_qml.source = qml/meego/WikiOnBoardComponents
 platform_qml.target = qml
 } else {
 message("neither symbian nor simulator, assume meego")
@@ -285,7 +285,7 @@ DEPLOYMENTFOLDERS = common_qml platform_qml
 message(DEPLOYMENTFOLDERS: $$DEPLOYMENTFOLDERS)
 message(platform_qml.source: $$platform_qml.source)
 
-# Additional import path used to resolve QML modules in Creator's code model
+# Additional import path ussed to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 CONFIG += qt-components
 # Please do not modify the following two lines. Required for deployment.
