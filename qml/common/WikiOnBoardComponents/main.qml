@@ -106,8 +106,8 @@ Window {
    //FIXME: No toolbar displayed without tools. (try removal if lib page added, else keep in symbian as well)
         tools: defaultTools
     }
-//FIXME Using QueryDialogWrapMode causes "Virtual Keyboard  is not available" (and nothing else displayed)
-    QueryDialog {
+
+    QueryDialogWrapMode {
         //TODO should probably be handled by loader. (Or directly dynamically)
         id: openExternalLinkQueryDialog
         property url url
@@ -115,7 +115,7 @@ Window {
         titleText: qsTr("Open link in browser")
         //To ensure url is wrappd. QueryDialogWrapMode is just a copy of the symbian component,
         // but with message wrapMode exposed.
-        //FIXME messageWrapMode: Text.WrapAtWordBoundaryOrAnywhere
+        messageWrapMode: Text.WrapAtWordBoundaryOrAnywhere
         //TODO: Would be nice if the self-signed string can be displayed as well
         message: qsTr("[TRANSLATOR] Explain that link \"%1\" clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.\n%2").replace(
                      "%1", url).replace(
