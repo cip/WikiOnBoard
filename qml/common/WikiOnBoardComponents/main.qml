@@ -10,7 +10,7 @@ import "settings.js" as Settings
 
 Window {
     id: window
-/*    function openZimFile(fileName) {
+    function openZimFile(fileName) {
         if (fileName!="") {
             console.log("Open zimfile:"+fileName);
             if (backend.openZimFile(fileName)) {
@@ -25,7 +25,7 @@ Window {
             }
         }
     }
-*/
+
     function closeZimFile() {
         backend.closeZimFile();
         Settings.setSetting("lastZimFile","");
@@ -52,10 +52,11 @@ Window {
         }
     }
 
+//FIXME: Displayed in middle of screen instead of toolbar...
     ToolBarLayout {
         id: backOnlyTools
-        ToolButton {
-            text: "toolbar-back"
+        ToolIcon {
+            iconId: "toolbar-back";
             onClicked: pageStack.pop()
         }
     }
@@ -104,16 +105,16 @@ Window {
         anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
         tools: defaultTools
     }
-/*
-    QueryDialogWrapMode {
+//FIXME Using QueryDialogWrapMode causes "Virtual Keyboard  is not available" (and nothing else displayed)
+    QueryDialog {
         //TODO should probably be handled by loader. (Or directly dynamically)
         id: openExternalLinkQueryDialog
         property url url
-        icon: visual.internetToolbartext
+        icon: visual.internetToolbarIconSource
         titleText: qsTr("Open link in browser")
         //To ensure url is wrappd. QueryDialogWrapMode is just a copy of the symbian component,
         // but with message wrapMode exposed.
-        messageWrapMode: Text.WrapAtWordBoundaryOrAnywhere
+        //FIXME messageWrapMode: Text.WrapAtWordBoundaryOrAnywhere
         //TODO: Would be nice if the self-signed string can be displayed as well
         message: qsTr("[TRANSLATOR] Explain that link \"%1\" clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.\n%2").replace(
                      "%1", url).replace(
@@ -131,7 +132,7 @@ Window {
             open();
         }
     }
-*/
+
     TabGroup {
         id: tabGroup
         anchors {
@@ -208,16 +209,7 @@ Window {
 
         }*/
 
-        Page {
-            id: indexPage
-            anchors { fill: parent}
-            Rectangle {
-                anchors {fill: parent}
-                color: "green"
-            }
-        }
-/*
-        IndexPage {
+         IndexPage {
             id: indexPage
             anchors { fill: parent}
             //Note: Setting tools here propbably does  not really have an effect.
@@ -233,7 +225,7 @@ Window {
                 buttonRow.checkedButton = articleTabButton
             }
 
-        }*/
+        }
         Page {
                    id: articlePage
                     anchors { fill: parent}
@@ -267,26 +259,26 @@ Window {
             }
         }*/
     }
-/*
+
     Backend {
         id: backend
     }
-*/
+
     Component.onCompleted: {
         //Sets zimFileWrapper in this components
         //FIXME articlePage.init();
-        //FIXME indexPage.init();
+        indexPage.init();
         //Enabled as soon as as zim file respectively article openend
-        /*indexTabButton.enabled = false
+        indexTabButton.enabled = false
         articleTabButton.enabled = false
         Settings.initialize();        
         var lastZimFile =  Settings.getSetting("lastZimFile");
         if (lastZimFile != "Unknown") {
             console.log("Setting lastZimFile:"+lastZimFile+" open it.")
             window.openZimFile(lastZimFile)
-        }*/
-        /*FIXME var showImages = Settings.getSetting("showImages");
-        if (showImages != "Unknown") {
+        }
+        var showImages = Settings.getSetting("showImages");
+        /*FIXME if (showImages != "Unknown") {
             console.log("Setting showImages is "+showImages+". set articlePage showImages accordingly")
             articlePage.showImages = showImages;
         } else {
@@ -298,8 +290,7 @@ Window {
             articlePage.zoomLevel = zoomLevel;
         } else {
             articlePage.zoomLevel = 0;
-        }
-        FIXME */
+        }      */
         tabGroup.currentTab = indexPage;
 
     }
