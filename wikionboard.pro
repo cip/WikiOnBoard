@@ -280,6 +280,8 @@ platform_qml.target = qml
 message("neither symbian nor simulator, assume meego")
 platform_qml.source = qml/meego/WikiOnBoardComponents
 platform_qml.target = qml
+# Speed up launching on MeeGo/Harmattan when using applauncherd daemon
+CONFIG += qdeclarative-boostable
 }
 DEPLOYMENTFOLDERS = common_qml platform_qml
 message(DEPLOYMENTFOLDERS: $$DEPLOYMENTFOLDERS)
@@ -297,15 +299,6 @@ symbian {
     # Required for S^3 SDK, else linking fails
     LIBS += -lusrt2_2.lib
 }
-
-
-
-symbian {
-    # Copied from QTCREATORBUG-5589
-    # Required for S^3 SDK, else linking fails
-    LIBS += -lusrt2_2.lib
-}
-
 
 
 
