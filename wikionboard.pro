@@ -184,12 +184,6 @@ symbian: {
 INCLUDEPATH += ../zimlib/include ../xz
 
 OTHER_FILES += \
-    debian/changelog \
-    debian/compat \
-    debian/control \
-    debian/copyright \
-    debian/README \
-    debian/rules \
     WikiOnBoard.desktop \
     android/AndroidManifest.xml \
     android/res/drawable-hdpi/icon.png \
@@ -236,13 +230,7 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/control \
     qtc_packaging/debian_harmattan/compat \
     qtc_packaging/debian_harmattan/changelog \
-    qtc_packaging/debian_harmattan/rules \
-    qtc_packaging/debian_harmattan/README \
-    qtc_packaging/debian_harmattan/manifest.aegis \
-    qtc_packaging/debian_harmattan/copyright \
-    qtc_packaging/debian_harmattan/control \
-    qtc_packaging/debian_harmattan/compat \
-    qtc_packaging/debian_harmattan/changelog
+
 
 unix:!symbian {
     maemo5 {
