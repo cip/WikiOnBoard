@@ -103,6 +103,7 @@ Window {
     ToolBar {
         id: sharedToolBar
         anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+   //FIXME: No toolbar displayed without tools. (try removal if lib page added, else keep in symbian as well)
         tools: defaultTools
     }
 //FIXME Using QueryDialogWrapMode causes "Virtual Keyboard  is not available" (and nothing else displayed)
@@ -145,12 +146,6 @@ Window {
         }
 
         Page {
-                    id: mainPage
-
-
-                    anchors { fill: parent}
-        }
-        /*Page {
             id: mainPage
             anchors { fill: parent}
 
@@ -167,6 +162,12 @@ Window {
                 //in onDepthChanged
                 toolBar: sharedToolBar
 
+                Page {
+                    id: libraryPage
+                    anchors { fill: parent}
+
+                    tools: defaultTools
+                } /*
                 LibraryPage {
                     id: libraryPage
                     anchors { fill: parent}
@@ -189,7 +190,7 @@ Window {
                         pageStack.push(Qt.resolvedUrl("HelpPage.qml"))
                     }
 
-                }
+                }*/
                 onDepthChanged: {
                     if (depth==1) {
                         //Necessary, as else when returning to library
@@ -207,7 +208,7 @@ Window {
             }
 
 
-        }*/
+        }
 
          IndexPage {
             id: indexPage
