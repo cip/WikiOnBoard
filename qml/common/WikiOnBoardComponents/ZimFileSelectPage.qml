@@ -84,7 +84,7 @@ WikionboardPage {
                     elide: Text.ElideRight
                     font.pixelSize: visual.defaultFontSize
                     font.letterSpacing: -1
-                    color: visual.defaultFontColor
+                 //   FIXME color: visual.defaultFontColor
                     text: fileName
                 }
                 //TODO: Could use onClicked directly here. For now kept as anyway meego porting necessary
