@@ -282,8 +282,6 @@ Window {
         } else {
             articlePage.zoomLevel = 0;
         }
-        tabGroup.currentTab = indexPage;
-
     }
 }
 
