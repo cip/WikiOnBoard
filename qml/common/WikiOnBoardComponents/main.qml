@@ -226,11 +226,8 @@ Window {
             }
 
         }
-        Page {
-                   id: articlePage
-                    anchors { fill: parent}
-        }
-        /*ArticlePage {
+
+        ArticlePage {
             id: articlePage
             anchors { fill: parent}
             onOpenExternalLink: {
@@ -257,7 +254,7 @@ Window {
                     backButton.enabled= false;
                 }
             }
-        }*/
+        }
     }
 
     Backend {
@@ -266,7 +263,7 @@ Window {
 
     Component.onCompleted: {
         //Sets zimFileWrapper in this components
-        //FIXME articlePage.init();
+        articlePage.init();
         indexPage.init();
         //Enabled as soon as as zim file respectively article openend
         indexTabButton.enabled = false
@@ -278,7 +275,7 @@ Window {
             window.openZimFile(lastZimFile)
         }
         var showImages = Settings.getSetting("showImages");
-        /*FIXME if (showImages != "Unknown") {
+        if (showImages != "Unknown") {
             console.log("Setting showImages is "+showImages+". set articlePage showImages accordingly")
             articlePage.showImages = showImages;
         } else {
@@ -290,7 +287,7 @@ Window {
             articlePage.zoomLevel = zoomLevel;
         } else {
             articlePage.zoomLevel = 0;
-        }      */
+        }
         tabGroup.currentTab = indexPage;
 
     }
