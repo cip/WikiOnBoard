@@ -103,8 +103,10 @@ WikionboardPage {
                         } else {
                             var file = folderModel.folder + "/" + fileName
                             console.log("ZImFileSelect file selected:"+file)
-
-                            file = file.split("file:///")[1]; //FIXME: hardly a reliabe solution
+                            //Symbian
+                            //file = file.split("file:///")[1]; //FIXME: hardly a reliabe solution
+                            //FIXME: Meego: leave one '/'
+                            file = file.split("file://")[1]; //FIXME: hardly a reliabe solution
                             console.log("ZImFileSelect file selected: (After file:// removal)"+file)
                             zimFileSelected(file)
                         }
