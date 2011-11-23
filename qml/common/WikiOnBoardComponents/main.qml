@@ -10,7 +10,7 @@ import "settings.js" as Settings
 
 Window {
     id: window
-    function openZimFile(fileName) {
+/*    function openZimFile(fileName) {
         if (fileName!="") {
             console.log("Open zimfile:"+fileName);
             if (backend.openZimFile(fileName)) {
@@ -25,7 +25,7 @@ Window {
             }
         }
     }
-
+*/
     function closeZimFile() {
         backend.closeZimFile();
         Settings.setSetting("lastZimFile","");
@@ -55,16 +55,16 @@ Window {
     ToolBarLayout {
         id: backOnlyTools
         ToolButton {
-            iconSource: "toolbar-back"
+            text: "toolbar-back"
             onClicked: pageStack.pop()
         }
     }
 
     ToolBarLayout {
         id: defaultTools
-        ToolButton {
+        ToolIcon {
             id: backButton
-            iconSource: "toolbar-back"
+            iconId: "toolbar-back";
             enabled: false
             onClicked: {
                     if (tabGroup.currentTab == articlePage) {
@@ -78,21 +78,21 @@ Window {
             TabButton {
                 id: libraryTabButton
                 tab: mainPage
-                iconSource: "toolbar-home"
+                text: "home"
             }
             TabButton {
                 id: indexTabButton
                 tab: indexPage
-                iconSource: "toolbar-search"
+                text: "search"
             }
             TabButton {
                 id: articleTabButton
                 tab: articlePage
-                iconSource: visual.documentToolbarIconSource
+                text: "article"
             }
         }
-        ToolButton {
-            iconSource: "toolbar-menu"
+        ToolIcon {
+            iconId: "toolbar-view-menu";
             onClicked: {
                 tabGroup.currentTab.openMenu()
             }
@@ -102,14 +102,14 @@ Window {
     ToolBar {
         id: sharedToolBar
         anchors { bottom: parent.bottom; left: parent.left; right: parent.right }
+        tools: defaultTools
     }
-
-
+/*
     QueryDialogWrapMode {
         //TODO should probably be handled by loader. (Or directly dynamically)
         id: openExternalLinkQueryDialog
         property url url
-        icon: visual.internetToolbarIconSource
+        icon: visual.internetToolbartext
         titleText: qsTr("Open link in browser")
         //To ensure url is wrappd. QueryDialogWrapMode is just a copy of the symbian component,
         // but with message wrapMode exposed.
@@ -131,13 +131,25 @@ Window {
             open();
         }
     }
-
+*/
     TabGroup {
         id: tabGroup
-        anchors { fill: parent; topMargin: statusBar.height; bottomMargin: sharedToolBar.height }
-
+        anchors {
+            //fill: parent; topMargin: statusBar.height; bottomMargin: sharedToolBar.height
+            //Should be equivalent, but as trial...
+            left: parent.left;
+            right: parent.right;
+            top: statusBar.bottom;
+            bottom: sharedToolBar.top
+        }
 
         Page {
+                    id: mainPage
+
+
+                    anchors { fill: parent}
+        }
+        /*Page {
             id: mainPage
             anchors { fill: parent}
 
@@ -194,9 +206,17 @@ Window {
             }
 
 
+        }*/
+
+        Page {
+            id: indexPage
+            anchors { fill: parent}
+            Rectangle {
+                anchors {fill: parent}
+                color: "green"
+            }
         }
-
-
+/*
         IndexPage {
             id: indexPage
             anchors { fill: parent}
@@ -213,9 +233,12 @@ Window {
                 buttonRow.checkedButton = articleTabButton
             }
 
+        }*/
+        Page {
+                   id: articlePage
+                    anchors { fill: parent}
         }
-
-        ArticlePage {
+        /*ArticlePage {
             id: articlePage
             anchors { fill: parent}
             onOpenExternalLink: {
@@ -242,27 +265,27 @@ Window {
                     backButton.enabled= false;
                 }
             }
-        }
+        }*/
     }
-
+/*
     Backend {
         id: backend
     }
-
+*/
     Component.onCompleted: {
         //Sets zimFileWrapper in this components
-        articlePage.init();
-        indexPage.init();
+        //FIXME articlePage.init();
+        //FIXME indexPage.init();
         //Enabled as soon as as zim file respectively article openend
-        indexTabButton.enabled = false
+        /*indexTabButton.enabled = false
         articleTabButton.enabled = false
         Settings.initialize();        
         var lastZimFile =  Settings.getSetting("lastZimFile");
         if (lastZimFile != "Unknown") {
             console.log("Setting lastZimFile:"+lastZimFile+" open it.")
             window.openZimFile(lastZimFile)
-        }
-        var showImages = Settings.getSetting("showImages");
+        }*/
+        /*FIXME var showImages = Settings.getSetting("showImages");
         if (showImages != "Unknown") {
             console.log("Setting showImages is "+showImages+". set articlePage showImages accordingly")
             articlePage.showImages = showImages;
@@ -276,7 +299,8 @@ Window {
         } else {
             articlePage.zoomLevel = 0;
         }
-
+        FIXME */
+        tabGroup.currentTab = indexPage;
 
     }
 }
