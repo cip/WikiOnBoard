@@ -52,7 +52,6 @@ Window {
         }
     }
 
-//FIXME: Displayed in middle of screen instead of toolbar...
     ToolBarLayout {
         id: backOnlyTools
         ToolIcon {
@@ -162,12 +161,6 @@ Window {
                 //in onDepthChanged
                 toolBar: sharedToolBar
 
-                Page {
-                    id: libraryPage
-                    anchors { fill: parent}
-
-                    tools: defaultTools
-                } /*
                 LibraryPage {
                     id: libraryPage
                     anchors { fill: parent}
@@ -190,7 +183,7 @@ Window {
                         pageStack.push(Qt.resolvedUrl("HelpPage.qml"))
                     }
 
-                }*/
+                }
                 onDepthChanged: {
                     if (depth==1) {
                         //Necessary, as else when returning to library

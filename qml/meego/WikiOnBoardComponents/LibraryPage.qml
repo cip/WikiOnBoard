@@ -1,7 +1,6 @@
 import QtQuick 1.1
 
-//import com.nokia.meego 1.0
-import com.nokia.symbian 1.1
+import com.nokia.meego 1.0
 
 import "UIConstants.js" as UI
 
@@ -32,10 +31,9 @@ WikionboardPage {
             ExitMenuItem {}
         }
     }
-
     Component {
-        id: listHeading
-        ListHeading {
+       id: listHeading
+       ListHeading {
             width: parent.width
             ListItemText {
                 anchors.fill: parent.paddingItem
@@ -46,14 +44,10 @@ WikionboardPage {
     }
     Component {
         id: listDelegate
-
-
-
-        //
         ListItem {
             id: listItem
             //Not sure whether really correct size, but looks fine
-            height: zimFileItem.implicitHeight+platformStyle.borderSizeMedium
+            height: zimFileItem.implicitHeight+visual.borderSizeMedium
 
             function hasInfo(info) {
                 //FIXME, do this in a better way.
