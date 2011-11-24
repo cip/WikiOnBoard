@@ -68,7 +68,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     QScopedPointer<QmlApplicationViewer>
           viewer(QmlApplicationViewer::create());
-    QDeclarativeContext *context = viewer->engine()->rootContext();
+    QDeclarativeContext *context = viewer->rootContext();
     QDeclarativePropertyMap appInfo;
     appInfo.insert(QLatin1String("version"), QVariant(QString::fromLocal8Bit(__APPVERSIONSTRING__)));
     bool isSelfSigned= false;

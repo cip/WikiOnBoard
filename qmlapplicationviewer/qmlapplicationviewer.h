@@ -23,6 +23,9 @@ public:
         ScreenOrientationLockLandscape,
         ScreenOrientationAuto
     };
+    //Workaround according to:
+    //http://meegoharmattandev.blogspot.com/2011/11/qmlapplicationviewer-and.html
+    QDeclarativeContext *rootContext();
 
     explicit QmlApplicationViewer(QWidget *parent = 0);
     virtual ~QmlApplicationViewer();
@@ -36,6 +39,7 @@ public:
     void setOrientation(ScreenOrientation orientation);
 
     void showExpanded();
+
 
 private:
     explicit QmlApplicationViewer(QDeclarativeView *view, QWidget *parent);

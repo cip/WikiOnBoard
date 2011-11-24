@@ -114,6 +114,13 @@ QmlApplicationViewer::~QmlApplicationViewer()
     delete d;
 }
 
+QDeclarativeContext *QmlApplicationViewer::rootContext()
+{
+    //Workaround according to:
+    //http://meegoharmattandev.blogspot.com/2011/11/qmlapplicationviewer-and.html
+    return d->view->rootContext();
+}
+
 QmlApplicationViewer *QmlApplicationViewer::create()
 {
 #ifdef HARMATTAN_BOOSTER
