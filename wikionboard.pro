@@ -289,10 +289,8 @@ symbian {
 }
 
 
-
-
-
-
-
-
-
+contains(MEEGO_EDITION,harmattan) {
+    desktopfile.files = wikionboard.desktop
+    desktopfile.path = /usr/share/applications
+    INSTALLS += desktopfile
+}
