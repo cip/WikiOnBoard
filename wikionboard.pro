@@ -184,7 +184,6 @@ symbian: {
 INCLUDEPATH += ../zimlib/include ../xz
 
 OTHER_FILES += \
-    WikiOnBoard.desktop \
     android/AndroidManifest.xml \
     android/res/drawable-hdpi/icon.png \
     android/res/drawable-ldpi/icon.png \
@@ -230,6 +229,7 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/control \
     qtc_packaging/debian_harmattan/compat \
     qtc_packaging/debian_harmattan/changelog \
+    WikiOnBoard_harmattan.desktop
 
 
 unix:!symbian {
@@ -286,11 +286,4 @@ symbian {
     # Copied from QTCREATORBUG-5589
     # Required for S^3 SDK, else linking fails
     LIBS += -lusrt2_2.lib
-}
-
-
-contains(MEEGO_EDITION,harmattan) {
-    desktopfile.files = wikionboard.desktop
-    desktopfile.path = /usr/share/applications
-    INSTALLS += desktopfile
 }
