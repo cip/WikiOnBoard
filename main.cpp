@@ -29,9 +29,10 @@
 #define __VERM__(x) __VER1M__(x)
 #define __APPVERSIONSTRING__ __VERM__(__APPVERSION__)
 
-int main(int argc, char *argv[])
+Q_DECL_EXPORT int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QScopedPointer<QApplication>
+           app(createApplication(argc, argv));
     //Load translation
     QTranslator translatorDefault;
     QTranslator translatorLocale;
@@ -45,7 +46,7 @@ int main(int argc, char *argv[])
     //First load english tranlsations. (replaces translation from source code, to separate text and code more)
     if (translatorDefault.load(QLatin1String("wikionboard_en"), translationsDir)) {
         qDebug() <<"Installing translator for english. (Replaces (some) texts from source code)";
-        app.installTranslator(&translatorDefault);
+        app->installTranslator(&translatorDefault);
     } else {
         qWarning() << "Loading translation file for english failed. Will use text from source code instead, which may be less complete/polished";
     }
@@ -57,7 +58,7 @@ int main(int argc, char *argv[])
     // not have a negative impact.
     if (translatorLocale.load(QLatin1String("wikionboard_") + locale, translationsDir)) {
         qDebug() << "Installing transloator for locale: "<<locale;
-        app.installTranslator(&translatorLocale);
+        app->installTranslator(&translatorLocale);
     } else {
         qDebug() << "Loading translation file for locale " << locale << " failed. (english translator is used instead)";
     }
@@ -65,8 +66,9 @@ int main(int argc, char *argv[])
     qmlRegisterType<ArticleViewerQML>("WikiOnBoardModule", 1, 0, "ArticleViewerQML");
     qmlRegisterType<IndexListQML>("WikiOnBoardModule", 1, 0, "IndexListQML");
 
-    QmlApplicationViewer viewer;    
-    QDeclarativeContext *context = viewer.engine()->rootContext();
+    QScopedPointer<QmlApplicationViewer>
+          viewer(QmlApplicationViewer::create());
+    QDeclarativeContext *context = viewer->engine()->rootContext();
     QDeclarativePropertyMap appInfo;
     appInfo.insert(QLatin1String("version"), QVariant(QString::fromLocal8Bit(__APPVERSIONSTRING__)));
     bool isSelfSigned= false;
@@ -78,8 +80,8 @@ int main(int argc, char *argv[])
 
     context->setContextProperty(QLatin1String("appInfo"), &appInfo);
 
-    viewer.setMainQmlFile(QLatin1String("qml/WikiOnBoardComponents/main.qml"));
-    viewer.showExpanded();
+    viewer->setMainQmlFile(QLatin1String("qml/WikiOnBoardComponents/main.qml"));
+    viewer->showExpanded();
 
-    return app.exec();
+    return app->exec();
 }
