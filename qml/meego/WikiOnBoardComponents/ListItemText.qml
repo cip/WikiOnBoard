@@ -47,11 +47,11 @@ Text {
     property bool platformInverted: false
 
     // Also role "Heading" taken into account although not explicitely used in evaluations below
-    /*font {
+    font {
        // family: platformStyle.fontFamilyRegular
-       //     pixelSize: (role == "Title" || role == "SelectionTitle") ? platformStyle.fontSizeLarge : platformStyle.fontSizeSmall
-       // weight: (role == "SubTitle" || role == "SelectionSubTitle") ? Font.Light : Font.Normal
-    }*/
+           pixelSize: (role == "Title" || role == "SelectionTitle") ? 28 : 22
+           weight: (role == "SubTitle" || role == "SelectionSubTitle") ? Font.Light : Font.Normal
+    }
     //color: internal.normalColor
     elide: Text.ElideRight
     horizontalAlignment: root.role != "Heading" ? Text.AlignLeft : Text.AlignRight
