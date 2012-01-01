@@ -35,7 +35,7 @@ public:
         widget = new IndexList(0, 0);
         widget->setAttribute(Qt::WA_NoSystemBackground);
         //TODO: Do only on meego, use constant.
-        widget->setFont(QFont(QLatin1String(""),22));
+        widget->setFont(QFont(QLatin1String(""),20));
         setWidget(widget);
         QObject::connect(widget, SIGNAL(itemClicked(QListWidgetItem*)), this,
                         SLOT(itemClicked(QListWidgetItem *)));

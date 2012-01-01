@@ -34,6 +34,8 @@ public:
         : QGraphicsProxyWidget(parent)
     {
         widget = new ArticleViewer(0,0);
+        //TODO: Do only on meego, use constant.
+        widget->zoomIn(8);
         setWidget(widget);
         QObject::connect(widget, SIGNAL(backwardAvailable(bool)), this, SIGNAL(backwardAvailable(bool)));
         QObject::connect(widget, SIGNAL(forwardAvailable(bool)), this, SIGNAL(forwardAvailable(bool)));
