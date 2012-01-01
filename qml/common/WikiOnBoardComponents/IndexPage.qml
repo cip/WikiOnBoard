@@ -14,21 +14,6 @@ WikionboardPage {
         indexListQML.setZimFileWrapper(backend.getZimFileWrapper())
     }
 
-    //Workaround for meego VKB problem
-    // http://www.developer.nokia.com/Community/Wiki/Workaround_To_Hide_VKB_in_QML_Apps
-    focus: true
-    MouseArea {
-        anchors.fill: parent
-        onPressed: {
-            // Let the mousePress events go to below items
-            mouse.accepted = false;
-            // Clicked item below the MouseArea gets the focus
-            var selectedItem = root.childAt(mouse.x, mouse.y);
-            if (!selectedItem) selectedItem = root;
-            selectedItem.focus = true;
-        }
-    }
-
     Rectangle {
         anchors { fill: parent; bottomMargin: parent.height-articleName.height }
 
@@ -43,10 +28,6 @@ WikionboardPage {
             onTextChanged: {
                 console.log("TODO:Update search: "+text)
                 indexListQML.searchArticle(text)
-            }
-            //part of VKB workaround
-            onActiveFocusChanged: {
-                               if (!articleName.activeFocus) articleName.closeSoftwareInputPanel();
             }
             //Symbian Workaround for always-upperercase after once clicked on article ListElement
             // If length > 0 force autouppercase off
