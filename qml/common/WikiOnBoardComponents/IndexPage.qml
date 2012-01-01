@@ -32,7 +32,9 @@ WikionboardPage {
             //Symbian Workaround for always-upperercase after once clicked on article ListElement
             // If length > 0 force autouppercase off
             // (Issue 67)
-            inputMethodHints:(text.length===0)?0:Qt.ImhNoAutoUppercase
+            //In addition disable Predictive Text. (Else at least on harmattan article
+            // list not updated before complete word is entered)
+            inputMethodHints:(text.length===0)?Qt.ImhNoPredictiveText:Qt.ImhNoAutoUppercase|Qt.ImhNoPredictiveText
             Image {
                 id: search
                 anchors { top: parent.top; left: parent.left; margins: platformStyle.paddingMedium }
