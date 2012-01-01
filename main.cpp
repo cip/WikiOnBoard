@@ -24,10 +24,25 @@
 #include <QDeclarativeEngine>
 #include <QDeclarativePropertyMap>
 
+#include <QNetworkAccessManager>
+#include <QDeclarativeNetworkAccessManagerFactory>
+
 //Get VERSION from qmake .pro file as string
 #define __VER1M__(x) #x
 #define __VERM__(x) __VER1M__(x)
 #define __APPVERSIONSTRING__ __VERM__(__APPVERSION__)
+
+class MyNetworkAccessManagerFactory : public QDeclarativeNetworkAccessManagerFactory
+ {
+ public:
+     virtual QNetworkAccessManager *create(QObject *parent);
+ };
+
+QNetworkAccessManager *MyNetworkAccessManagerFactory::create(QObject *parent)
+ {
+     QNetworkAccessManager *nam = new QNetworkAccessManager(parent);
+     return nam;
+ }
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
@@ -79,6 +94,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     appInfo.insert(QLatin1String("buildDate"), QVariant(QString::fromLocal8Bit(__DATE__)));
 
     context->setContextProperty(QLatin1String("appInfo"), &appInfo);
+
+    viewer->engine()->setNetworkAccessManagerFactory(new MyNetworkAccessManagerFactory);
 
     viewer->setMainQmlFile(QLatin1String("qml/WikiOnBoardComponents/main.qml"));
     viewer->showExpanded();

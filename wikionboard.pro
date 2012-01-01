@@ -12,7 +12,9 @@ DEFINES += "__APPVERSION__=$$VERSION"
 TEMPLATE = app
 
 QT += core \
-    gui
+    gui \
+    network
+
 HEADERS += \
     zimfilewrapper.h \
     articleviewer.h \
@@ -121,7 +123,9 @@ symbian: {
  		#Required to let browser load page and switch to foreground if browser already open
    		# on QDesktopServices::openUrl call
     	#Note that capability not available for self-signed apps. 
- 	 	TARGET.CAPABILITY+= SwEvent
+                TARGET.CAPABILITY+= SwEvent
+                #For QML Webview based implementation
+                TARGET.CAPABILITY+= NetworkServices
                 # WikionBoard instead of WikiOnBoard_<UID> sis package name. (See above)
                 pkgname.pkg_prerules = "$${LITERAL_HASH}{\"WikiOnBoard\"},($$TARGET.UID3),$$version_string_pkg"
                 # Use correct UID for wrapper (wikionboard_installer.sis) package.
