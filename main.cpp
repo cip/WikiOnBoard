@@ -44,7 +44,11 @@ public:
 
     virtual QNetworkReply *createRequest(Operation op, const QNetworkRequest &request, QIODevice *outgoingData)
     {
-        if (op != GetOperation || request.url().scheme() != QLatin1String("qt-render") || request.url().host() != QLatin1String("button"))
+        qDebug() << "In ZimNetworkAccessManager::createRequest. Operation : " << op << " request.url():" << request.url();
+
+        //if (op != GetOperation || request.url().scheme() != QLatin1String("qt-render") || request.url().host() != QLatin1String("button"))
+        //TODO external links?
+        if (op != GetOperation )
             return QNetworkAccessManager::createRequest(op, request, outgoingData);
         return new ZimReply(this, request);
     }

@@ -13,10 +13,10 @@ public:
     ZimReply(QObject* object, const QNetworkRequest& request)
         : QNetworkReply(object)
         , position(0)
-    {
+    {        
         setRequest(request);
         setOperation(QNetworkAccessManager::GetOperation);
-        setHeader(QNetworkRequest::ContentTypeHeader,QVariant(QLatin1String("image/png")));
+        setHeader(QNetworkRequest::ContentTypeHeader,QVariant(QLatin1String("text/html")));
         open(ReadOnly|Unbuffered);
         setUrl(request.url());
         QString pattern = request.url().queryItemValue(QLatin1String("pattern"));
@@ -81,6 +81,7 @@ public:
 
     static QByteArray generate(const QSize& size, const Qt::BrushStyle style, int radius, const QColor& color)
     {
+        /*
         QImage image(size, QImage::Format_ARGB32_Premultiplied);
         image.fill(0);
         QPainter painter(&image);
@@ -90,13 +91,18 @@ public:
         QByteArray saveData;
         QBuffer b(&saveData);
         image.save(&b, "PNG");
+        return saveData;*/
+        QString s = QLatin1String("<html><head></head><body>Hello world</body></html>");
+
+
+        QByteArray saveData=s.toUtf8();
         return saveData;
     }
 
 public slots:
     void generateDone()
     {
-        setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("image/png"));
+        setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("text/html"));
         position = 0;
         buffer = watcher.result();
         emit readyRead();

@@ -112,15 +112,21 @@ WikionboardPage {
              }
          }
 
+     Flickable {
+         id: flickable
+         anchors.fill: parent
+         contentWidth: Math.max(parent.width,articleViewer.width)
+         contentHeight: Math.max(parent.height,articleViewer.height)
      WebView {
           id: articleViewer
           url: "http://www.nokia.com"
-          anchors.fill: parent
-          preferredWidth: parent.width
-          preferredHeight: parent.height
-          scale: 0.5
+          preferredWidth: flickable.width
+          preferredHeight: flickable.height
+          contentsScale: 1
           smooth: false
       }
+     }
+
 /*
      ArticleViewerQML {
         id: articleViewerQML
