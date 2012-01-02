@@ -25,6 +25,7 @@
 #include <QPixmap>
 #include <QFile>
 #include <QDirIterator>
+#include <QMutex>
 
 //TODO define implictly shared class?
 class ZimFileWrapper : public QObject
@@ -36,6 +37,7 @@ private:
     QString errorStr;
     QDirIterator* dirIterator;
     QString byteArray2HexQString(const QByteArray &byteArray);
+    mutable QMutex mutex;
 public:
     explicit ZimFileWrapper(QObject *parent = 0);
     ~ZimFileWrapper();

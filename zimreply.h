@@ -46,8 +46,8 @@ public:
         size.setHeight(heightString.toInt(&ok));
         if (!ok)
             size.setHeight(100);
-        connect(&watcher, SIGNAL(finished()), SLOT(generateDone()));
-        QFuture<QByteArray> future = QtConcurrent::run<QByteArray>(generate, size, brushStyle, radius, color);
+        connect(&watcher, SIGNAL(finished()), SLOT(readFromZimFileDone()));
+        QFuture<QByteArray> future = QtConcurrent::run<QByteArray>(readFromZimFile, request.url());
         watcher.setFuture(future);
     }
 
@@ -82,7 +82,8 @@ public:
         return buffer.size();
     }
 
-    static QByteArray generate(const QSize& size, const Qt::BrushStyle style, int radius, const QColor& color)
+
+    static QByteArray readFromZimFile(const QUrl& url)
     {
         /*
         QImage image(size, QImage::Format_ARGB32_Premultiplied);
@@ -98,7 +99,8 @@ public:
 
         QString text;
         if (ZimReply::zimFileWrapper->isValid()) {
-            text = ZimReply::zimFileWrapper->getArticleTextByUrl(QLatin1String("A/Graz"));
+            //TODO: path probably not correct
+            text = ZimReply::zimFileWrapper->getArticleTextByUrl(url.path());
         } else {
             qDebug() << "Warning: Attempt to open article while no zim file open. Article URL: TODO";
             text = QLatin1String("<html><head></head><body>No zim file open</body></html>");
@@ -116,7 +118,7 @@ public:
     }
 
 public slots:
-    void generateDone()
+    void readFromZimFileDone()
     {
         setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("text/html"));
         position = 0;

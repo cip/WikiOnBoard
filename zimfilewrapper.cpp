@@ -41,6 +41,7 @@ ZimFileWrapper::~ZimFileWrapper(){
 
 bool ZimFileWrapper::openZimFile(QString zimFileName)
 {
+    QMutexLocker locker(&mutex);
     std::string zimfilename;
     try
     {
@@ -167,6 +168,7 @@ QString ZimFileWrapper::getArticleTitleByUrl(QString articleUrl) {
 // this for decoded URL (as in zim file index)
 QString ZimFileWrapper::getArticleTextByUrl(QString articleUrl)
 {
+    QMutexLocker locker(&mutex);
     QString articleText = QLatin1String("ERROR");
     zim::Blob blob;
     try
@@ -203,6 +205,7 @@ QString ZimFileWrapper::getArticleTextByUrl(QString articleUrl)
 // this for decoded URL (as in zim file index)
 QPixmap ZimFileWrapper::getImageByUrl(QString imageUrl, QSize newSize)
 {
+    QMutexLocker locker(&mutex);
     QTime timer;
     QTime subTimer;
 
@@ -298,6 +301,7 @@ QPixmap ZimFileWrapper::getImageByUrl(QString imageUrl, QSize newSize)
 
 QString ZimFileWrapper::getArticleTextByTitle(QString articleTitle)
 {
+    QMutexLocker locker(&mutex);
     QString articleText = QLatin1String("ERROR");
     zim::Blob blob;
     try
