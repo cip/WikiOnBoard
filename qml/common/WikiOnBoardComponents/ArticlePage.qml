@@ -1,4 +1,5 @@
 import QtQuick 1.1
+import QtWebKit 1.0
 
 import com.nokia.meego 1.0
 //import com.nokia.symbian 1.1
@@ -21,7 +22,7 @@ WikionboardPage {
      signal forwardAvailable(bool available)
      signal openExternalLink(url url)
      function init() {
-        articleViewerQML.setZimFileWrapper(backend.getZimFileWrapper())
+     //   articleViewerQML.setZimFileWrapper(backend.getZimFileWrapper())
      }
 
      function openMenu() {
@@ -111,6 +112,16 @@ WikionboardPage {
              }
          }
 
+     WebView {
+          id: articleViewer
+          url: "http://www.nokia.com"
+          anchors.fill: parent
+          preferredWidth: parent.width
+          preferredHeight: parent.height
+          scale: 0.5
+          smooth: false
+      }
+/*
      ArticleViewerQML {
         id: articleViewerQML
         anchors.fill: parent
@@ -120,7 +131,6 @@ WikionboardPage {
                console.log("onBackwardAvailable:"+available);
                article.backwardAvailable(available);
         }
-
         onForwardAvailable: {
                console.log("onForwardAvailable:"+available);
                article.forwardAvailable(available);
@@ -130,28 +140,31 @@ WikionboardPage {
             article.openExternalLink(url);
         }
      }
+*/
 
      function openArticle(articleUrl) {
          console.log("in ArticlePage openArticle. Url:"+articleUrl)
-         articleViewerQML.openArticle(articleUrl)
+         articleViewer.url=articleUrl;
      }
 
      function backward() {
          console.log("in ArticlePage backward")
-         articleViewerQML.backward()
+         articleViewer.backward()
      }
 
      function forward() {
          console.log("in ArticlePage forward")
-         articleViewerQML.forward()
+         articleViewer.forward()
      }
 
      function isBackwardAvailable() {
-         return articleViewerQML.isBackwardAvailable();
+         return false;
+     //    return articleViewer.isBackwardAvailable();
      }
 
      function isForwardAvailable() {
-         return articleViewerQML.isForwardAvailable();
+          return false;
+       //  return articleViewer.isForwardAvailable();
      }
 
      onForwardAvailable: {
