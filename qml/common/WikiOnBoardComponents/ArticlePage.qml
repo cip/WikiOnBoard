@@ -119,7 +119,7 @@ WikionboardPage {
          contentHeight: Math.max(parent.height,articleViewer.height)
      WebView {
           id: articleViewer
-          url: "http://www.nokia.com"
+          url: ""
           preferredWidth: flickable.width
           preferredHeight: flickable.height
           contentsScale: 1
@@ -150,7 +150,11 @@ WikionboardPage {
 
      function openArticle(articleUrl) {
          console.log("in ArticlePage openArticle. Url:"+articleUrl)
-         articleViewer.url=articleUrl;
+         //TODO: appending file:/// to article url seems to work, but
+         // not really understood why, and may not work  in all cases.
+         // (Just using articleUrl does not work, because it adds absolute path)
+         var fileUrl = "file:///"+articleUrl;
+         articleViewer.url=fileUrl;
      }
 
      function backward() {
