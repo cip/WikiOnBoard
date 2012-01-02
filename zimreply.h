@@ -1,3 +1,4 @@
+#include <zimfilewrapper.h>
 #include <QNetworkReply>
 #include <QBuffer>
 #include <QtConcurrentRun>
@@ -9,6 +10,8 @@
 class ZimReply : public QNetworkReply
 {
     Q_OBJECT
+private:
+    static ZimFileWrapper* zimFileWrapper;
 public:
     ZimReply(QObject* object, const QNetworkRequest& request)
         : QNetworkReply(object)
@@ -92,11 +95,24 @@ public:
         QBuffer b(&saveData);
         image.save(&b, "PNG");
         return saveData;*/
-        QString s = QLatin1String("<html><head></head><body>Hello world</body></html>");
 
-
-        QByteArray saveData=s.toUtf8();
+        QString text;
+        if (ZimReply::zimFileWrapper->isValid()) {
+            text = ZimReply::zimFileWrapper->getArticleTextByUrl(QLatin1String("A/Graz"));
+        } else {
+            qDebug() << "Warning: Attempt to open article while no zim file open. Article URL: TODO";
+            text = QLatin1String("<html><head></head><body>No zim file open</body></html>");
+        }
+        QByteArray saveData=text.toUtf8();
         return saveData;
+    }
+
+    static void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {
+        ZimReply::zimFileWrapper = zimFileWrapper;
+    }
+
+    static ZimFileWrapper* getZimFileWrapper() {
+        return zimFileWrapper;
     }
 
 public slots:
@@ -118,4 +134,7 @@ private:
     QFutureWatcher<QByteArray> watcher;
     QByteArray buffer;
     int position;
+
+
 };
+

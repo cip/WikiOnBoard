@@ -25,7 +25,8 @@ HEADERS += \
 SOURCES += main.cpp \
     zimfilewrapper.cpp \
     articleviewer.cpp \
-    indexlist.cpp
+    indexlist.cpp \
+    zimreply.cpp
 
 FORMS +=
 #Wikionboard should not depend on webkit.

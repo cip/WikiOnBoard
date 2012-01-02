@@ -14,7 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 
+
 #include "zimfilewrapper.h"
+#include <zimreply.h>
 #include <QDebug>
 #include <QStringBuilder>
 #include <QBuffer>
@@ -29,6 +31,8 @@ ZimFileWrapper::ZimFileWrapper(QObject *parent) :
     zimFile = 0;
     valid = false;
     errorStr = QString();    
+    //TODO: consider replacing with cleaner solution
+    ZimReply::setZimFileWrapper(this);
 }
 ZimFileWrapper::~ZimFileWrapper(){
     delete zimFile;
