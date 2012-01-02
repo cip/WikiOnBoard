@@ -110,7 +110,12 @@ WikionboardPage {
                  ExitMenuItem {}
              }
          }
-
+    Flickable {
+        anchors.fill: parent
+        contentWidth: parent.width
+        contentHeight: 20000 //articleViewerQML.height*2
+        interactive: true
+        clip: true
      ArticleViewerQML {
         id: articleViewerQML
         anchors.fill: parent
@@ -130,6 +135,7 @@ WikionboardPage {
             article.openExternalLink(url);
         }
      }
+    }
 
      function openArticle(articleUrl) {
          console.log("in ArticlePage openArticle. Url:"+articleUrl)

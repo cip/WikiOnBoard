@@ -18,7 +18,6 @@
 #include <QDebug>
 #include <QTime>
 #include <QTextBlock>
-#include <QtScroller>
 #include <QKeyEvent>
 #include <QApplication>
 
@@ -47,12 +46,6 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
     defaultStyleSheetDocument->setDefaultStyleSheet(QLatin1String("a:link{color: blue}"));
     setDocument(defaultStyleSheetDocument);
 
-    //  LeftMouseButtonGesture used, as use of TouchGesture together
-    // with mouse click events (like link clicked) problematic.
-    #ifndef Q_WS_SIMULATOR
-        //Crashes on simulator.
-        QtScroller::grabGesture(viewport(), QtScroller::LeftMouseButtonGesture);
-    #endif
     if (connect(this,SIGNAL(sourceChanged(QUrl)),this, SLOT(onSourceChanged(QUrl)))) {
         qDebug() << "Connected sourceChanged";
     } else {
