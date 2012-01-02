@@ -111,14 +111,19 @@ WikionboardPage {
              }
          }
     Flickable {
+        id: flickable
         anchors.fill: parent
         contentWidth: parent.width
-        contentHeight: 20000 //articleViewerQML.height*2
+        //contentHeight: 20000 //articleViewerQML.height*2
+        contentHeight: articleViewerQML.height
+        //contentHeight: articleViewerQML.contentHeight
         interactive: true
         clip: true
      ArticleViewerQML {
         id: articleViewerQML
-        anchors.fill: parent
+        width: parent.width
+        height: contentHeight
+
         showImages: article.showImages
         zoomLevel: article.zoomLevel
         onBackwardAvailable: {
@@ -136,6 +141,21 @@ WikionboardPage {
         }
      }
     }
+
+/* App. not available on meego. For now use decorator instead.
+  Drawback: no interaction
+  consider using scrollbar on symbian, and perhaps also on meego
+    ScrollBar {
+          id: scrolldecorator
+          flickableItem: flickable
+          anchors {right: flickable.right; top: flickable.top}
+    }*/
+
+    ScrollDecorator {
+          id: scrolldecorator
+          flickableItem: flickable
+    }
+
 
      function openArticle(articleUrl) {
          console.log("in ArticlePage openArticle. Url:"+articleUrl)

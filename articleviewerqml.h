@@ -18,6 +18,7 @@
 #define ARTICLEVIEWERQML_H
 
 #include <QtGui/QGraphicsProxyWidget>
+#include <QScrollBar>
 #include <qdebug>
 #include "zimfilewrapper.h"
 #include "articleviewer.h"
@@ -27,7 +28,7 @@ class ArticleViewerQML : public QGraphicsProxyWidget
     Q_OBJECT
     Q_PROPERTY(bool showImages READ showImages WRITE setShowImages NOTIFY showImagesChanged)
     Q_PROPERTY(int zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
-
+    Q_PROPERTY(int contentHeight READ contentHeight NOTIFY contentHeightChanged)
 public:
 
     ArticleViewerQML(QGraphicsItem* parent = 0)
@@ -44,6 +45,8 @@ public:
         QObject::connect(widget, SIGNAL(backwardAvailable(bool)), this, SIGNAL(backwardAvailable(bool)));
         QObject::connect(widget, SIGNAL(forwardAvailable(bool)), this, SIGNAL(forwardAvailable(bool)));
         QObject::connect(widget, SIGNAL(openExternalLink(QUrl)), this, SIGNAL(openExternalLink(QUrl)));
+        QScrollBar *vBar = widget->verticalScrollBar();
+        QObject::connect(vBar, SIGNAL(rangeChanged(int,int)), this, SLOT(verticalScrollBarRangeChanged(int,int)));
     }
 
     bool showImages() const
@@ -71,12 +74,22 @@ public:
         }
     }
 
+
+    int contentHeight() const
+    {
+        qDebug() << "in contentHeight()";
+        int cH = qMax(widget->verticalScrollBar()->maximum(), widget->height());
+        qDebug() << "qMax(widget->verticalScrollBar()->maximum(), widget->height()); = qMax("<<widget->verticalScrollBar()->maximum()<<","<<widget->height();
+        return cH;
+    }
+
 Q_SIGNALS:
      void showImagesChanged(bool showImages);
      void zoomLevelChanged(int zoomLevel);
      void backwardAvailable ( bool available);
      void forwardAvailable ( bool available);
      void openExternalLink( QUrl url);
+     void contentHeightChanged(int contentHeight);
 
 public slots:
     void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {
@@ -110,6 +123,13 @@ public slots:
     bool isForwardAvailable() {
         qDebug() << "ArticleViewerQML.isForwardAvailable()";
         return widget->isForwardAvailable();
+    }
+
+    void verticalScrollBarRangeChanged(int min, int max) {
+        qDebug() << "In verticalScrollBarRangeChanged("<<min<<","<<max<<").";
+        qDebug() << "Emit contentheightchanged. : " << contentHeight();
+
+        emit contentHeightChanged(contentHeight());
     }
 
 private:
