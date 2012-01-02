@@ -34,8 +34,12 @@ public:
         : QGraphicsProxyWidget(parent)
     {
         widget = new ArticleViewer(0,0);
+        //Scrollbar implemented in QML
+        widget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        widget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
         //TODO: Do only on meego, use constant.
-        widget->zoomIn(8);
+        widget->zoomIn(8);        
         setWidget(widget);
         QObject::connect(widget, SIGNAL(backwardAvailable(bool)), this, SIGNAL(backwardAvailable(bool)));
         QObject::connect(widget, SIGNAL(forwardAvailable(bool)), this, SIGNAL(forwardAvailable(bool)));
