@@ -18,11 +18,13 @@ HEADERS += \
     articleviewer.h \
     indexlist.h \
     articleviewerqml.h \
-    indexlistqml.h
+    indexlistqml.h \
+    QsKineticScroller.h
 SOURCES += main.cpp \
     zimfilewrapper.cpp \
     articleviewer.cpp \
-    indexlist.cpp
+    indexlist.cpp \
+    QsKineticScroller.cpp
 FORMS +=
 #Wikionboard should not depend on webkit.
 #Attention: Ensure that kinetic scroller has been built with this option as well.

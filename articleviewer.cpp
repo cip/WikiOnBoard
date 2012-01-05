@@ -22,6 +22,8 @@
 #include <QKeyEvent>
 #include <QApplication>
 
+#include "QsKineticScroller.h"
+
 ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bool hasTouchScreen)
     : QTextBrowser(parent),zimFileWrapper(zimFileWrapper),hasTouchScreen(hasTouchScreen), welcomeUrl(QUrl(QLatin1String("wikionboard://welcome")))
  {
@@ -49,10 +51,13 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
 
     //  LeftMouseButtonGesture used, as use of TouchGesture together
     // with mouse click events (like link clicked) problematic.
-    #ifndef Q_WS_SIMULATOR
-        //Crashes on simulator.
+    #ifdef Q_OS_SYMBIAN
+        //Crashes on simulator, not working correctly on meego
         QtScroller::grabGesture(viewport(), QtScroller::LeftMouseButtonGesture);
     #endif
+    QsKineticScroller *scroller = new QsKineticScroller(this);
+    scroller->enableKineticScrollFor(this);
+
     if (connect(this,SIGNAL(sourceChanged(QUrl)),this, SLOT(onSourceChanged(QUrl)))) {
         qDebug() << "Connected sourceChanged";
     } else {
