@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 
+#include "flickcharm.h"
 #include "articleviewer.h"
 #include <QDebug>
 #include <QTime>
@@ -51,7 +52,9 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
     // with mouse click events (like link clicked) problematic.
     #ifndef Q_WS_SIMULATOR
         //Crashes on simulator.
-        QtScroller::grabGesture(viewport(), QtScroller::LeftMouseButtonGesture);
+        ///QtScroller::grabGesture(viewport(), QtScroller::LeftMouseButtonGesture);
+        FlickCharm *flickCharm = new FlickCharm(this);
+        flickCharm->activateOn(this);
     #endif
     if (connect(this,SIGNAL(sourceChanged(QUrl)),this, SLOT(onSourceChanged(QUrl)))) {
         qDebug() << "Connected sourceChanged";
