@@ -19,6 +19,8 @@ Item {
     property int defaultItemHeight: 48
 
     property int scrollBarWidth: 8
+    property string launcherIconSource: "./gfx/wikionboard.svg"
+
     property string removeToolbarIconSource: "./gfx/toolbar-icons/remove.svg"
     property string searchToolbarIconSource: "./gfx/toolbar-icons/search.svg"
 
