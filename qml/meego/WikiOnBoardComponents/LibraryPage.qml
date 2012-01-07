@@ -1,8 +1,7 @@
-//HARMATTAN_SPECIFIC_FILE Todo check difference
 
 import QtQuick 1.1
 
-
+//HARMATTAN_SPECIFIC. For symbian use: import com.nokia.symbian 1.1
 import com.nokia.meego 1.0
 
 import "UIConstants.js" as UI
@@ -50,6 +49,7 @@ WikionboardPage {
         ListItem {
             id: listItem
             //Not sure whether really correct size, but looks fine
+            // HARMATTAN_SPECIFIC On symbian use "+ platformStyle.borderSizeMedium" instead 
             height: zimFileItem.implicitHeight+visual.borderSizeMedium
 
             function hasInfo(info) {

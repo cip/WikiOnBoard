@@ -1,8 +1,7 @@
+
 import QtQuick 1.1
 
-//SYMBIAN_SPECIFIC_FILE (may differ significantly from harmattan version)
-//TODO check whether really the case here.
-
+//SYMBIAN_SPECIFIC. For harmattan use: import com.nokia.meego 1.0
 import com.nokia.symbian 1.1
 
 import "UIConstants.js" as UI
@@ -34,10 +33,9 @@ WikionboardPage {
             ExitMenuItem {}
         }
     }
-
     Component {
-        id: listHeading
-        ListHeading {
+       id: listHeading
+       ListHeading {
             width: parent.width
             ListItemText {
                 anchors.fill: parent.paddingItem
@@ -48,13 +46,10 @@ WikionboardPage {
     }
     Component {
         id: listDelegate
-
-
-
-        //
         ListItem {
             id: listItem
             //Not sure whether really correct size, but looks fine
+            // SYMBIAN_SPECIFIC On harmattan use "+ visual.borderSizeMedium" instead 
             height: zimFileItem.implicitHeight+platformStyle.borderSizeMedium
 
             function hasInfo(info) {
