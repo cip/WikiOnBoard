@@ -9,7 +9,11 @@ import "settings.js" as Settings
 
 
 Window {
+
+
     id: window
+
+
     function openZimFile(fileName) {
         if (fileName!="") {
             console.log("Open zimfile:"+fileName);
@@ -36,6 +40,16 @@ Window {
     Visual {
         id: visual
     }
+
+    SplashScreen{
+            id:splashScreen
+            imageSource: visual.launcherIconSource
+            anchors.fill: parent
+            onSplashScreenCompleted: {
+                console.log("Splash Screen Loaded");
+            }
+        }
+
 
     StatusBar {
         id: statusBar
