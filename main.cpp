@@ -31,7 +31,7 @@
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
-    #ifdef defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
     #else
       //On harmattan default rendered (should be "meego") slow for
       // articles with images. (see https://github.com/cip/WikiOnBoard/issues/72)

@@ -34,8 +34,13 @@ public:
         : QGraphicsProxyWidget(parent)
     {
         widget = new ArticleViewer(0,0);
-        //TODO: Do only on meego, use constant.
-        widget->zoomIn(8);
+
+        #if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
+        #else
+            //On harmattan article font size way to small,
+            // therefore increase zoomlevel
+            widget->zoomIn(8);
+        #endif
         setWidget(widget);
         QObject::connect(widget, SIGNAL(backwardAvailable(bool)), this, SIGNAL(backwardAvailable(bool)));
         QObject::connect(widget, SIGNAL(forwardAvailable(bool)), this, SIGNAL(forwardAvailable(bool)));
