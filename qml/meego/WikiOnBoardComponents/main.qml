@@ -82,17 +82,25 @@ Window {
             TabButton {
                 id: libraryTabButton
                 tab: mainPage
+                //HARMATTAN_SPECIFIC:
+                // On symbian instead
+                // of text iconSource: "toolbar-home"
+                //TODO: Also use icon for harmattan
                 text: "home"
             }
             TabButton {
                 id: indexTabButton
                 tab: indexPage
+                //HARMATTAN_SPECIFIC:
+                // On symbian instead
+                // of text iconSource: "toolbar-search"
+                //TODO: Also use icon for harmattan
                 text: "search"
             }
             TabButton {
                 id: articleTabButton
                 tab: articlePage
-                text: "article"
+                iconSource: visual.documentToolbarIconSource
             }
         }
         //HARMATTAN_SPECIFIC On symbian use ToolButton instead

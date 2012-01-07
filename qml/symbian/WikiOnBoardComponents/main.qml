@@ -82,11 +82,13 @@ Window {
             TabButton {
                 id: libraryTabButton
                 tab: mainPage
+                //SYMBIAN_SPECIFIC On harmattan no such pre-defined icon available.
                 iconSource: "toolbar-home"
             }
             TabButton {
                 id: indexTabButton
                 tab: indexPage
+                //SYMBIAN_SPECIFIC On harmattan no such pre-defined icon available.
                 iconSource: "toolbar-search"
             }
             TabButton {
