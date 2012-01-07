@@ -22,7 +22,9 @@
 #include <QKeyEvent>
 #include <QApplication>
 
+#ifndef Q_OS_SYMBIAN
 #include "QsKineticScroller.h"
+#endif
 
 ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bool hasTouchScreen)
     : QTextBrowser(parent),zimFileWrapper(zimFileWrapper),hasTouchScreen(hasTouchScreen), welcomeUrl(QUrl(QLatin1String("wikionboard://welcome")))
@@ -49,14 +51,15 @@ ArticleViewer::ArticleViewer(QWidget* parent, ZimFileWrapper* zimFileWrapper, bo
     defaultStyleSheetDocument->setDefaultStyleSheet(QLatin1String("a:link{color: blue}"));
     setDocument(defaultStyleSheetDocument);
 
-    //  LeftMouseButtonGesture used, as use of TouchGesture together
-    // with mouse click events (like link clicked) problematic.
     #ifdef Q_OS_SYMBIAN
-        //Crashes on simulator, not working correctly on meego
+        // Crashes on simulator, not working correctly on meego (see issue 71)
+        // LeftMouseButtonGesture used, as use of TouchGesture together
+        // with mouse click events (like link clicked) problematic.
         QtScroller::grabGesture(viewport(), QtScroller::LeftMouseButtonGesture);
+    #else
+        QsKineticScroller *scroller = new QsKineticScroller(this);
+        scroller->enableKineticScrollFor(this);
     #endif
-    QsKineticScroller *scroller = new QsKineticScroller(this);
-    scroller->enableKineticScrollFor(this);
 
     if (connect(this,SIGNAL(sourceChanged(QUrl)),this, SLOT(onSourceChanged(QUrl)))) {
         qDebug() << "Connected sourceChanged";
