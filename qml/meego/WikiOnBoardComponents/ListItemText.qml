@@ -37,6 +37,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+//HARMATTAN_ONLY_FILE Not required in symbian version
+//  (part of symbian components)
 
 import QtQuick 1.1
 

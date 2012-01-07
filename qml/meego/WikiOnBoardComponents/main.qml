@@ -1,8 +1,8 @@
 
 import QtQuick 1.1
 
+//HARMATTAN_SPECIFIC. For symbian use: import com.nokia.symbian 1.1
 import com.nokia.meego 1.0
-//import com.nokia.symbian 1.1
 
 import com.nokia.extras 1.1
 import "settings.js" as Settings
@@ -54,6 +54,8 @@ Window {
 
     ToolBarLayout {
         id: backOnlyTools
+        //HARMATTAN_SPECIFIC On symbian use ToolButton instead
+                    //(with iconSource instead of iconId)
         ToolIcon {
             iconId: "toolbar-back";
             onClicked: pageStack.pop()
@@ -62,6 +64,8 @@ Window {
 
     ToolBarLayout {
         id: defaultTools
+        //HARMATTAN_SPECIFIC On symbian use ToolButton instead
+                    //(with iconSource instead of iconId)
         ToolIcon {
             id: backButton
             iconId: "toolbar-back";
@@ -91,6 +95,8 @@ Window {
                 text: "article"
             }
         }
+        //HARMATTAN_SPECIFIC On symbian use ToolButton instead
+                    //(with iconSource instead of iconId)
         ToolIcon {
             iconId: "toolbar-view-menu";
             onClicked: {

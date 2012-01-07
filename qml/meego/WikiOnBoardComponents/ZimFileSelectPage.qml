@@ -1,8 +1,8 @@
 import QtQuick 1.1
 import Qt.labs.folderlistmodel 1.0
 
+//HARMATTAN_SPECIFIC. For symbian use: import com.nokia.symbian 1.1
 import com.nokia.meego 1.0
-//import com.nokia.symbian 1.1
 
 WikionboardPage {    
     id: zimFileSelectPage

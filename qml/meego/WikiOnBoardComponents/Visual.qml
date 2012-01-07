@@ -1,3 +1,5 @@
+//HARMATTAN_SPECIFIC_FILE (may differ significantly from symbian version)
+
 // Visual style for Symbian
 import QtQuick 1.1
 
