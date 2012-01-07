@@ -38,8 +38,9 @@
 **
 ****************************************************************************/
 
-import QtQuick 1.1
+//SYMBIAN_SPECIFIC_FILE (may differ significantly from harmattan version)
 
+import QtQuick 1.1
 import com.nokia.symbian 1.1
 
 Dialog {

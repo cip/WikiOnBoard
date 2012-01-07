@@ -1,8 +1,8 @@
 import QtQuick 1.1
 import Qt.labs.folderlistmodel 1.0
 
-import com.nokia.meego 1.0
-//import com.nokia.symbian 1.1
+//SYMBIAN_SPECIFIC. For harmattan use: import com.nokia.meego 1.0
+import com.nokia.symbian 1.1
 
 WikionboardPage {    
     id: zimFileSelectPage
@@ -84,7 +84,8 @@ WikionboardPage {
                     elide: Text.ElideRight
                     font.pixelSize: visual.defaultFontSize
                     font.letterSpacing: -1
-                 //   FIXME color: visual.defaultFontColor
+                    //SYMBIAN_ONLY
+                    color: visual.defaultFontColor
                     text: fileName
                 }
                 //TODO: Could use onClicked directly here. For now kept as anyway meego porting necessary
@@ -103,10 +104,12 @@ WikionboardPage {
                         } else {
                             var file = folderModel.folder + "/" + fileName
                             console.log("ZImFileSelect file selected:"+file)
-                            //Symbian
-                            //file = file.split("file:///")[1]; //FIXME: hardly a reliabe solution
-                            //FIXME: Meego: leave one '/'
-                            file = file.split("file://")[1]; //FIXME: hardly a reliabe solution
+                            //SYMBIAN_SPECIFIC
+                            // For harmattan use
+                            //      Meego: leave one '/'
+                            //      file = file.split("file://")[1]; //FIXME: hardly a reliabe solution
+                            file = file.split("file:///")[1]; //FIXME: hardly a reliabe solution
+
                             console.log("ZImFileSelect file selected: (After file:// removal)"+file)
                             zimFileSelected(file)
                         }

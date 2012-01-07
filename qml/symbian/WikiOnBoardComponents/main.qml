@@ -1,8 +1,8 @@
 
 import QtQuick 1.1
 
-import com.nokia.meego 1.0
-//import com.nokia.symbian 1.1
+//SYMBIAN_SPECIFIC. For harmattan use: import com.nokia.meego 1.0
+import com.nokia.symbian 1.1
 
 import com.nokia.extras 1.1
 import "settings.js" as Settings
@@ -54,17 +54,21 @@ Window {
 
     ToolBarLayout {
         id: backOnlyTools
-        ToolIcon {
-            iconId: "toolbar-back";
+        //SYMBIAN_SPECIFIC On harmattan use ToolIcon instead
+            //(with iconId instead of iconSource)
+        ToolButton {
+            iconSource: "toolbar-back";
             onClicked: pageStack.pop()
         }
     }
 
     ToolBarLayout {
         id: defaultTools
-        ToolIcon {
+        //SYMBIAN_SPECIFIC On harmattan use ToolIcon instead
+            //(with iconId instead of iconSource)
+        ToolButton {
             id: backButton
-            iconId: "toolbar-back";
+            iconSource: "toolbar-back";
             enabled: false
             onClicked: {
                     if (tabGroup.currentTab == articlePage) {
@@ -78,21 +82,23 @@ Window {
             TabButton {
                 id: libraryTabButton
                 tab: mainPage
-                text: "home"
+                iconSource: "toolbar-home"
             }
             TabButton {
                 id: indexTabButton
                 tab: indexPage
-                text: "search"
+                iconSource: "toolbar-search"
             }
             TabButton {
                 id: articleTabButton
                 tab: articlePage
-                text: "article"
+                iconSource: visual.documentToolbarIconSource
             }
         }
-        ToolIcon {
-            iconId: "toolbar-view-menu";
+        //SYMBIAN_SPECIFIC On harmattan use ToolIcon instead
+        //(with iconId instead of iconSource)
+        ToolButton {
+            iconSource: "toolbar-view-menu";
             onClicked: {
                 tabGroup.currentTab.openMenu()
             }
@@ -121,7 +127,8 @@ Window {
                      "%2", appInfo.isSelfSigned?qsTr("[TRANLATOR]Explain that may not work if browser running.","only displayed if self_signed"):"")
         acceptButtonText: qsTr("Open")
         rejectButtonText: qsTr("Cancel")
-        //FIXME: symbian only onClickedOutside: reject()
+        //SYMBIAN_ONLY
+        onClickedOutside: reject()
         onAccepted:  {
             if (!Qt.openUrlExternally(url)) {
                 banner.showMessage(qsTr("Opening link \"%1\" in system web browser failed.").replace("%1",url));

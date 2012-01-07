@@ -1,7 +1,7 @@
 import QtQuick 1.0
 
-import com.nokia.meego 1.0
-//import com.nokia.symbian 1.1
+//SYMBIAN_SPECIFIC. For harmattan use: import com.nokia.meego 1.0
+import com.nokia.symbian 1.1
 
 import "UIConstants.js" as UI
 import WikiOnBoardModule 1.0
@@ -21,8 +21,10 @@ WikionboardPage {
             id: articleName
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width
-            //FIXME: not on meego platformLeftMargin: search.width + platformStyle.paddingSmall
-            //FIXME: not on meego platformRightMargin: clearText.width + platformStyle.paddingMedium * 2
+            //SYMBIAN_ONLY
+            platformLeftMargin: search.width + platformStyle.paddingSmall
+            //SYMBIAN_ONLY
+            platformRightMargin: clearText.width + platformStyle.paddingMedium * 2
             onInputMethodHintsChanged: console.log("inputMethodHints:" +inputMethodHints)
             onFocusChanged: console.log("focus: "+focus)
             onTextChanged: {
