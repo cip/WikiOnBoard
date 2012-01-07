@@ -57,7 +57,7 @@ Window {
         //SYMBIAN_SPECIFIC On harmattan use ToolIcon instead
             //(with iconId instead of iconSource)
         ToolButton {
-            iconSource: "toolbar-back";
+            iconSource: "toolbar-back"
             onClicked: pageStack.pop()
         }
     }
@@ -68,7 +68,7 @@ Window {
             //(with iconId instead of iconSource)
         ToolButton {
             id: backButton
-            iconSource: "toolbar-back";
+            iconSource: "toolbar-back"
             enabled: false
             onClicked: {
                     if (tabGroup.currentTab == articlePage) {
