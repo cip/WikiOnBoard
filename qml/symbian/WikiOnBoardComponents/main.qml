@@ -1,8 +1,9 @@
 //SYMBIAN_SPECIFIC_FILE
 
 import QtQuick 1.1
+import com.nokia.symbian 1.1
 
-Rectangle {
+Window {
     anchors.fill: parent
 
     Visual {
@@ -17,7 +18,7 @@ Rectangle {
         function done() {
             // Done is called by SplashScreen after
             // splashscreen has been displayed
-            pageLoader.source = "MainPage.qml";
+            wikionboardLoader.source = "WikiOnBoard.qml";
         }
 
 
@@ -25,10 +26,10 @@ Rectangle {
 
 
     Loader {
-        id: pageLoader
+        id: wikionboardLoader
         anchors.fill: parent
         onLoaded: {
-            console.log("pageLoader loaded, unload splashscreen");
+            console.log("wikiOnboard loaded, unload splashscreen");
             splashScreenLoader.source = "";
         }
     }

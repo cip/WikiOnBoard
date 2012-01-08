@@ -3,7 +3,7 @@ import QtQuick 1.1
 // is appearantly a different (better, but not yet implemented) way to do this
 
 
-Item {
+Rectangle {
     id: splashScreenContainer
     anchors.fill: parent
     //Probably not really necessary
@@ -11,7 +11,9 @@ Item {
 
     // image source is kept as an property
     property string imageSource : visual.launcherIconSource
-
+    // Actually anyway black background, but without
+    // this a small 3g is displayed on top left on device.
+    color: "black"
     // signal emits when splashscreen animation completes
     signal splashScreenCompleted()
     Image {
@@ -21,10 +23,12 @@ Item {
         // display size
         sourceSize.width: width
         sourceSize.height: height
-        anchors.left: splashScreenContainer.left
-        anchors.right: splashScreenContainer.right
-        anchors.verticalCenter: splashScreenContainer.verticalCenter
+        //Works for both landscape and portrait. Note
+        // that switching between landscape and portrait
+        // while splashscreen is shown does not work correctly.
+        width: Math.min(parent.width,parent.height)
         height: width
+        anchors.centerIn: parent
     }
     // Basically just to get event for loading
     // application after splash screen has been painted
