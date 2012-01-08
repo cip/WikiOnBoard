@@ -104,6 +104,9 @@ Window {
             id: backButton
             iconSource: "toolbar-back"
             enabled: false
+            // Hide button completely if not on articlePage
+            // (I.p. as On Symbian disabled buttons not grayed out)
+            visible: tabGroup.currentTab == articlePage
             onClicked: {
                     if (tabGroup.currentTab == articlePage) {
                         articlePage.backward();
