@@ -9,6 +9,9 @@
 #include <QScrollBar>
 #include <QUrl>
 
+//Uncomment for indexlist debug output
+//#define DEBUG_INDEXLIST 1
+
 //To update article list during scrolling.
     bool ArticleListFilter::eventFilter(QObject *o, QEvent *e)
         {
@@ -17,7 +20,9 @@
                 case QtScrollPrepareEvent::ScrollPrepare:
                         {
                         QtScrollPrepareEvent *se = static_cast<QtScrollPrepareEvent *> (e);
+                        #ifdef DEBUG_INDEXLIST
                         qDebug() << " ScrollPrepare: " << se->startPos();
+                        #endif
                         QWidget *w = static_cast<QWidget *> (o);
                         return false;
                         }
@@ -38,14 +43,17 @@
                                                                                                                         lw->item(0)).height();
 
                                                 if (se->scrollState()==QtScrollEvent::ScrollStarted) {
+                                                        #ifdef DEBUG_INDEXLIST
                                                         qDebug() << "New Scrolling activity started. ";
                                                         qDebug() << " Scroller final position: " << QtScroller::scroller(w)->finalPosition();
                                                         qDebug() << "delta: " <<delta;
+                                                        #endif
                                                 }
                                                 if (se->contentPos().y() > lw->verticalScrollBar()->maximum() -delta)
                                         //	if (QtScroller::scroller(w)->finalPosition().y()==lw->verticalScrollBar()->maximum())
                                                 {
                                                         if (QtScroller::scroller(w)->velocity().y() > 0.0) {
+                                                                #ifdef DEBUG_INDEXLIST
                                                                 qDebug() << " Scroller final position: " << QtScroller::scroller(w)->finalPosition();
                                                                 qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
                                                                                                 << " contentPos: " << se->contentPos();
@@ -54,7 +62,7 @@
 
                                                                 qDebug() << "ArticleList: vmaximum "
                                                                                                                                 << lw->verticalScrollBar()->maximum();
-
+                                                                #endif
                                                                 QtScroller::scroller(w)->stop();
 
                                                             approachingEndOfList(false);
@@ -67,13 +75,16 @@
 
                                                         {
                                                         if (QtScroller::scroller(w)->velocity().y() < 0.0) {
-                                                                qDebug() << " Scroller final position: " << QtScroller::scroller(w)->finalPosition();
-                                                                qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
+                                                            #ifdef DEBUG_INDEXLIST
+
+                                                            qDebug() << " Scroller final position: " << QtScroller::scroller(w)->finalPosition();
+                                                            qDebug() << " ScrollEvent. ScrollState: " << se->scrollState()
                                                                                                 << " contentPos: " << se->contentPos();
                                                             qDebug() << " Velocity " << QtScroller::scroller(w)->velocity();
-                                                                qDebug() << "ArticleList: vminimum "	<< lw->verticalScrollBar()->minimum();
+                                                            qDebug() << "ArticleList: vminimum "	<< lw->verticalScrollBar()->minimum();
                                                             qDebug() << "ArticleList: vmaximum "
-                                                                                                                        << lw->verticalScrollBar()->maximum();
+                                                                                                                        << lw->verticalScrollBar()->maximum();                                                            
+                                                            #endif
                                                             QtScroller::scroller(w)->stop();
                                                             //TODO: Overshoot. Trial not working: if not items added return false (event further processed for overhoot)
                                                             emit approachingEndOfList(true);
@@ -153,7 +164,9 @@ QString IndexList::articleListItemToString(QListWidgetItem* item) {
 std::pair <bool, QListWidgetItem*> IndexList::getArticleListItem(zim::File::const_iterator it) {
     QListWidgetItem* articleItem = new QListWidgetItem();
     if (it==zimFileWrapper->end()) {
+        #ifdef DEBUG_INDEXLIST
         qDebug() << "getArticleListItem iterator points is end of article list. ";
+        #endif
         return std::pair<bool, QListWidgetItem*> (false, articleItem);
     }
     QString articleTitle = zimFileWrapper->fromUTF8EncodedStdString(it->getTitle());
@@ -161,10 +174,12 @@ std::pair <bool, QListWidgetItem*> IndexList::getArticleListItem(zim::File::cons
     QString articleIdx = QString::number(it->getIndex());
     if (it->getNamespace() != 'A')
     {
+        #ifdef DEBUG_INDEXLIST
         qDebug()
                 << " Index entry to be added is not in article namespace. Stop adding titles. \n\tArticle Title: ["
                 << articleIdx << "] " << articleTitle
                 << "\n\tArticle Namespace: " << it->getNamespace();
+        #endif
         return std::pair<bool, QListWidgetItem*> (false, articleItem);
     }
     articleItem->setText(articleTitle);
@@ -181,9 +196,11 @@ void IndexList::populateArticleList(QString articleName) {
 void IndexList::populateArticleList(QString articleName, int ignoreFirstN,
                 bool direction_up, bool noDelete)
         {
+        #ifdef DEBUG_INDEXLIST
         qDebug() << "in populateArticleList. articleName:  " << articleName
                         << ". ignoreFirstN: " << ignoreFirstN << ". direction_up:"
                         << direction_up << ".noDelete: " << noDelete;
+        #endif
         if (zimFileWrapper->isValid())
                 {
                 try
@@ -193,9 +210,13 @@ void IndexList::populateArticleList(QString articleName, int ignoreFirstN,
                         zim::File::const_iterator it = zimFileWrapper->findByTitle(QLatin1Char('A'),
                                         articleName);
                         if (((it==zimFileWrapper->end()) || (it->getNamespace() != 'A') )) {
+                            #ifdef DEBUG_INDEXLIST
                             qDebug() << " No valid article >= \"" << articleName << "\" found. Try using previous entry in zim file instead";
+                            #endif
                             if (it==zimFileWrapper->begin()) {
+                                    #ifdef DEBUG_INDEXLIST
                                     qDebug() << " zim file contains no entries. Add nothing to list";
+                                    #endif
                                     return;
                             }
                             --it;
@@ -289,18 +310,19 @@ void IndexList::populateArticleList(QString articleName, int ignoreFirstN,
 
                             //Add some items before found item (For smoother scrolling up)
                             int addedItemsCount = addItemsToArticleList(true,20);
-
+                            #ifdef DEBUG_INDEXLIST
                             qDebug() << " Added " << addedItemsCount << " items before searched item. select searched item and scroll it to top of screen";
-
+                            #endif
                             //Select found item. (i.p. useful for phones which have a keypad as well, and if not enough items left below found item to fill list)
                             setCurrentRow(addedItemsCount);
                             //Scroll to found item. (addItemsToArticleList scrolled to first added item, which is one too early)
                             scrollToItem (currentItem() , QAbstractItemView::PositionAtTop );
 
 
-
+                            #ifdef DEBUG_INDEXLIST
                             qDebug() << "First item of list (after add)" << articleListItemToString(item(0));
                             qDebug() << "Last item of list (after add)" << articleListItemToString(item(count()-1));
+                            #endif
                           } else {
                             //Non-touchscreen
                             setCurrentRow(0); //Select first found item
@@ -328,8 +350,10 @@ void IndexList::articleListSelectPreviousEntry()
                         {
                             if (hasTouchScreen) {
                                 //To basically same thing if scrolled.
+                                #ifdef DEBUG_INDEXLIST
                                 qDebug() << "up key while first entry selected. Add items.";
-                                  addItemsToArticleList(true);
+                                #endif
+                                addItemsToArticleList(true);
                             } else {
                                 //Old behavior. (TODO: May make sense to change to similar scheme as
                                 // used with touchscreen devices)
@@ -363,7 +387,9 @@ void IndexList::articleListSelectNextEntry()
                         {
                          if (hasTouchScreen) {
                             //To basically same thing if scrolled.
+                            #ifdef DEBUG_INDEXLIST
                             qDebug() << "down key while last entry selected. Add items.";
+                            #endif
                             addItemsToArticleList(false);
                          } else {
                             //TODO check outof bounds
@@ -388,7 +414,9 @@ void IndexList::articleListSelectNextEntry()
 //from added item for each item added
 int IndexList::addItemsToArticleList(bool up, int addCount, int maxCount)
         {
+    #ifdef DEBUG_INDEXLIST
     qDebug() << "WikiOnBoard::addItemsToArticleList (up:"<<up<<" addCount: "<<addCount <<" maxCount: "<<maxCount;
+    #endif
     if (zimFileWrapper->isValid())
                 {
                 try
@@ -400,17 +428,18 @@ int IndexList::addItemsToArticleList(bool up, int addCount, int maxCount)
 
                         if (up)
                                 {
+                                #ifdef DEBUG_INDEXLIST
                                 qDebug()
                                                 << "AddItems to beginning of list";
-
+                                #endif
                                 QListWidgetItem * firstArticleInCurrentList = item(0);
                                 QString
                                                 titleFirstArticleInCurrentList =
                                                                 firstArticleInCurrentList->data(
                                                                                 ArticleTitleRole).toString();
-
+                                #ifdef DEBUG_INDEXLIST
                                 qDebug() << " First article in current list is: "<< articleListItemToString(firstArticleInCurrentList);
-
+                                #endif
                                 std::pair<bool, zim::File::const_iterator> r =
                                                 zimFileWrapper->findxByTitle(QLatin1Char('A'), titleFirstArticleInCurrentList);
                                 if (!r.first)
@@ -421,8 +450,10 @@ int IndexList::addItemsToArticleList(bool up, int addCount, int maxCount)
                                 zim::File::const_iterator it = r.second;
                                 if (it == zimFileWrapper->beginByTitle())
                                         {
-                                        qDebug()
+                                         #ifdef DEBUG_INDEXLIST
+                                         qDebug()
                                                         << " Current entry is first entry in index => Do nothing";
+                                         #endif
                                         return 0;
                                         }
 
@@ -448,36 +479,43 @@ int IndexList::addItemsToArticleList(bool up, int addCount, int maxCount)
                                         //order is different
                                         if (it == zimFileWrapper->beginByTitle())
                                                 {
+                                                #ifdef DEBUG_INDEXLIST
                                                 qDebug()
                                                                 << "Beginning of title index reached. Stop adding titles. Last added title :"<< articleListItemToString(articleItemPair.second);
+                                                #endif
                                                 break;
                                                 }
                                         } //End while
                                 if (insertedItemsCount>0) {
                                         QListWidgetItem *firstNewItem = item(insertedItemsCount-1);
+                                        #ifdef DEBUG_INDEXLIST
                                         qDebug() << insertedItemsCount
                                                 << " items inserted at beginning of list. Scroll so that firstly newly added article is at bottom of list. Firstly new added article: "<<articleListItemToString(firstNewItem);
-
+                                        #endif
                                         scrollToItem(firstNewItem,QAbstractItemView::PositionAtTop);
                                         return insertedItemsCount;
                                 }	else {
+                                        #ifdef DEBUG_INDEXLIST
                                         qDebug() << "No items inserted";
+                                        #endif
                                         return 0;
                                 }
                                 }
                         else
                                 {// end  (if up()). => up=false
+                                #ifdef DEBUG_INDEXLIST
                                 qDebug()
                                                 << "AddItems to end of list";
+                                #endif
                                 QListWidgetItem* lastArticleInCurrentList = item(
                                             count() - 1);
                                 QString titleLastArticleInCurrentList =
                                                 lastArticleInCurrentList->data(
                                                                 ArticleTitleRole).toString();
-
+                                #ifdef DEBUG_INDEXLIST
                                 qDebug() << " Last article in current list is: " << articleListItemToString(item(
-                                                                                                                count() - 1));
-
+                                                                                                            count() - 1));
+                                #endif
                                 std::pair<bool, zim::File::const_iterator> r =
                                                 zimFileWrapper->findxByTitle(QLatin1Char('A'), titleLastArticleInCurrentList);
                                 if (!r.first)
@@ -488,8 +526,10 @@ int IndexList::addItemsToArticleList(bool up, int addCount, int maxCount)
                                 zim::File::const_iterator it = r.second;
                                 if (it == zimFileWrapper->end())
                                         {
+                                        #ifdef DEBUG_INDEXLIST
                                         qDebug()
                                                         << " Current entry is last entry in index => Do nothing";
+                                        #endif
                                         return 0;
                                         }
                                 int insertedItemsCount = 0;
@@ -511,8 +551,10 @@ int IndexList::addItemsToArticleList(bool up, int addCount, int maxCount)
                                         insertedItemsCount++;
                                         if (it == zimFileWrapper->end())
                                                 {
+                                                #ifdef DEBUG_INDEXLIST
                                                 qDebug()
                                                                 << "End of title index reached. Stop adding titles. Last added title: "<< articleListItemToString(articleItemPair.second);
+                                                #endif
                                                 break;
                                                 }
                                         } //End while
@@ -522,13 +564,17 @@ int IndexList::addItemsToArticleList(bool up, int addCount, int maxCount)
                                         {
                                                 QListWidgetItem *firstNewItem = item(
                                                         indexFirstNewItem);
+                                                #ifdef DEBUG_INDEXLIST
                                                 qDebug() << insertedItemsCount
                                                         << " items appended to end of list. Scroll so that firstly newly added article is at bottom of list. Firstly new added article: "<<articleListItemToString(firstNewItem);
+                                                #endif
                                                 scrollToItem(firstNewItem,
                                                         QAbstractItemView::PositionAtBottom);
                                                 return insertedItemsCount;
                                         }	else {
+                                                #ifdef DEBUG_INDEXLIST
                                                 qDebug() << "No items inserted";
+                                                #endif
                                                 return 0;
                                         }
                                 } // End else (up=false)
@@ -556,10 +602,12 @@ QUrl IndexList::currentItemUrl() {
 
 void IndexList::resizeEvent(QResizeEvent * event)
 {
+    #ifdef DEBUG_INDEXLIST
     qDebug() << "resizeEvent:\n "
                 "New size: width: " << event->size().width() <<" height: " << event->size().height() << ""
                 "Old size: width: " << event->oldSize().width() <<" height: " << event->oldSize().height();
     qDebug() << "  indexList: width: " << this->width() << " height:" << this->height();
+    #endif DEBUG_INDEXLIST
     if (count() > 0)
     {
         //Current item (if none first) is new first item of list.
