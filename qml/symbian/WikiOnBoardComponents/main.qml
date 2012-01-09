@@ -10,7 +10,6 @@ Window {
         id: visual
     }
 
-
     Loader {
         id: splashScreenLoader
         anchors.fill: parent
@@ -20,17 +19,16 @@ Window {
             // splashscreen has been displayed
             wikionboardLoader.source = "WikiOnBoard.qml";
         }
-
-
     }
-
 
     Loader {
         id: wikionboardLoader
         anchors.fill: parent
+        visible: false
         onLoaded: {
-            console.log("wikiOnboard loaded, unload splashscreen");
+            console.log("wikiOnboard loaded, unload splashscreen, show wikiOnBoardLoader");
             splashScreenLoader.source = "";
+            wikionboardLoader.visible = true;
         }
     }
 }
