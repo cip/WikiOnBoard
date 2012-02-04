@@ -7,24 +7,35 @@ h1. Overview
 
 WikiOnBoard is a mobile phone app which allows reading the Wikipedia without internet connection.
 
+h2. Screenshots 
+
+h3. WikiOnBoard 2
+
 |!images/screenshot_2_library_w180.png!|!images/screenshot_2_index_w180.png!|!images/screenshot_2_article_w180.png!|
+
+h3. WikiOnBoard 1
+
+|!images/screenshot_index.png!|!images/screenshot_article.png!|
 
 h1. Getting started
 
 h2. Supported devices
 
 Currently only Symbian based mobile phone are supported. Most touch and non-touch devices which are based
- on S60rd FP1  or later versions are supported. This includes mobile phones like Nokia N95, N82, N97,5800 or N8.
-
-It is planned to add support for Maemo, Linux and Windows in the future.
-
+ on S60 3rd FP1, Symbian^1 and Symbian^3 are supported. This includes mobile phones like Nokia N8, C7, 5800, or N95.
+ Note, that WikiOnBoard 2 is only available for Symbian^3 devices. Furthermore, the WikiOnBoard version S60 3rd FP1 
+ has less features than even WikiOnBoard 1. 
+ 
 h2. Install
 
 h3. Symbian^1 and Symbian^3 mobile phones (For example Nokia N8, C7, 5800, N97)
 
-WikiOnBoard 1.0 is now availabe in ovi store. Please download it using the Ovi Store App on your mobile or download it on your PC from "here":http://store.ovi.com/content/148305.
+WikiOnBoard is now availabe in Nokia store. Please download it using the Nokia Store App on your mobile or download it on your PC from "here":http://store.ovi.com/content/148305.
 
-Note, that the ovi store version is slightly newer than the versions in the download section of this site. 
+Note, that on Symbian^3 devices WikiOnBoard 2 is downloaded (Note: Not released yet), while on Symbian^1 devices WikiOnBoard 1 is downloaded.
+
+Note, that the Nokia store version is much newer than the versions in the download section of this site. 
+
 
 h3. S60 3rd edition, feature pack 1 or later (For example N82, E75)
 
@@ -39,7 +50,17 @@ See "Get-eBooks":Get-eBooks.html where to download the Wikipedia or other eBooks
 
 h2. Open and use WikiOnBoard
 
+h3. WikiOnBoard 2
+
+After installation you can find WikiOnBoard in you mobile phone's application menu. Use the "Find eBook on Phone" to add a file you have downloaded in the last step. If you stored it on the memory card, you can typicall find it on drive e or f.
+
+When you have managed to do all this, it should be pretty self-explaining how to use it. Somethings to keep in mind:
+* Search is case sensitive. In the wikipedia all articles start with a capital letter, so if you cannot find anything useful it may be because your search term does not. The search input per default  switches automatically to capital letter for the first letter
+
+h3. WikiOnBoard 1 
+
 After installation you can find WikiOnBoard in you mobile phone's application menu. 
+
 After opening it you will see a pretty empty screen. Use "Options/Open Zimfile" to open the file you have downloaded in the last step. If you stored it on the memory card, you can typicall find it on drive e. In particular on non-touch devices this  step is pretty awkward, but fortunately you won't have to this frequently, as the last opened file is opened automatically next time you start WikiOnBoard.
 
 When you have managed to do all this, it should be pretty self-explaining how to use it. Somethings to keep in mind:
