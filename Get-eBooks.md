@@ -1,3 +1,8 @@
+---
+layout: page
+title: Get-eBooks
+---
+
 WikiOnBoard is a viewer for [zim files](http://openzim.org), a file format for wiki content supported by the Wikimedia 
 foundation. 
 
