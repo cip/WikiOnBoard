@@ -15,7 +15,7 @@ Places where you can find the zim-Files, including the Wikipedia, for download
 
 * In the wikipedia you can use "Print/export", "Create a Book" to generate an eBook of selected pages. For use with WikiOnBoard you have to select "openZim" as format. See http://en.wikipedia.org/wiki/Help:Books for more information.
 
-You can download zim files directly on your phone, but as these are very large it is strongly recommend to download them on the your desktop PC and copy  them to the phone´s memory card using the phones USB connection or using a memory card reader.
+You can download zim files directly on your phone, but as these are very large it is strongly recommend to download them on the your desktop PC and copy  them to the phone's memory card using the phones USB connection or using a memory card reader.
 
 # Handling of files larger than 2GB 
 

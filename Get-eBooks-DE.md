@@ -3,7 +3,7 @@ layout: page
 title: Get-eBooks-DE
 ---
 
-Tut uns leid, die deutsche Übersetzung dieser Seite ist noch nicht fertig.
+Tut uns leid, die deutsche Ãœbersetzung dieser Seite ist noch nicht fertig.
 
 Bis dahin bitte die englische Version [Get-eBooks](Get-eBooks.html) lesen.
 
