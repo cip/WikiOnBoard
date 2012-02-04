@@ -7,7 +7,7 @@ h1. Overview
 
 WikiOnBoard is a mobile phone app which allows reading the Wikipedia without internet connection.
 
-|!/images/screenshot_index.png!|!/images/screenshot_article.png!|
+|!images/screenshot_index.png!|!images/screenshot_article.png!|
 
 h1. Getting started
 
