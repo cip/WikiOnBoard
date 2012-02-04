@@ -2,6 +2,7 @@
 layout: page
 title: WikiOnBoard
 ---
+{% include JB/setup %}
 
 # Overview
 
