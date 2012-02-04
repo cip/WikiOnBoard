@@ -34,7 +34,7 @@ Note, that the Qt installer requires an internet connections to download a signi
 
 h2. Download Wikipedia (or other zim-file)
 
-See "Get-eBooks":/Get-eBooks.html where to download the Wikipedia or other eBooks in zim-format and how to it them on your mobile.
+See "Get-eBooks":Get-eBooks.html where to download the Wikipedia or other eBooks in zim-format and how to it them on your mobile.
 
 
 h2. Open and use WikiOnBoard
