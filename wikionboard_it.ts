@@ -117,6 +117,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="wikionboard.cpp" line="312"/>
+        <source>http://cip.github.com/WikiOnBoard/Get-eBooks.html</source>
+        <comment>Change link to page with localized zim files. (e.g http://cip.github.com/WikiOnBoard/Get-eBooks-DE.html</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="wikionboard.cpp" line="347"/>
         <source>Error on opening zim file</source>
         <translation type="unfinished"></translation>
@@ -174,15 +180,10 @@ Error message:%2
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="312"/>
-        <source>https://github.com/cip/WikiOnBoard/wiki/Get-eBooks</source>
-        <comment>Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="wikionboard.cpp" line="500"/>
-        <source>http://wiki.github.com/cip/WikiOnBoard</source>
-        <translation></translation>
+        <source>http://cip.github.com/WikiOnBoard/</source>
+        <oldsource>http://wiki.github.com/cip/WikiOnBoard</oldsource>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="wikionboard.cpp" line="502"/>
@@ -285,7 +286,7 @@ Build date: %3
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="zimfilewrapper.cpp" line="379"/>
+        <location filename="zimfilewrapper.cpp" line="389"/>
         <source>Not available</source>
         <translation type="unfinished"></translation>
     </message>

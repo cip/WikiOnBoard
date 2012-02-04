@@ -125,6 +125,12 @@
         <translation>Opciones</translation>
     </message>
     <message>
+        <location filename="wikionboard.cpp" line="312"/>
+        <source>http://cip.github.com/WikiOnBoard/Get-eBooks.html</source>
+        <comment>Change link to page with localized zim files. (e.g http://cip.github.com/WikiOnBoard/Get-eBooks-DE.html</comment>
+        <translation>http://cip.github.com/WikiOnBoard/Get-eBooks-ES.html</translation>
+    </message>
+    <message>
         <location filename="wikionboard.cpp" line="347"/>
         <source>Error on opening zim file</source>
         <translation>Error al abrir el libro electrónico</translation>
@@ -190,10 +196,9 @@ Si no se puede abrir el articulo, cierra el navegador e intentalo de nuevo.</tra
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="312"/>
         <source>https://github.com/cip/WikiOnBoard/wiki/Get-eBooks</source>
         <comment>Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE</comment>
-        <translation>https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-ES</translation>
+        <translation type="obsolete">https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-ES</translation>
     </message>
     <message>
         <source>Download zimfile</source>
@@ -202,7 +207,8 @@ Si no se puede abrir el articulo, cierra el navegador e intentalo de nuevo.</tra
     </message>
     <message>
         <location filename="wikionboard.cpp" line="500"/>
-        <source>http://wiki.github.com/cip/WikiOnBoard</source>
+        <source>http://cip.github.com/WikiOnBoard/</source>
+        <oldsource>http://wiki.github.com/cip/WikiOnBoard</oldsource>
         <translation></translation>
     </message>
     <message>
@@ -420,7 +426,7 @@ Fecha de compilacion: %3</translation>
         <translation>Error: Artículo no encontrado (URL: %1)</translation>
     </message>
     <message>
-        <location filename="zimfilewrapper.cpp" line="379"/>
+        <location filename="zimfilewrapper.cpp" line="389"/>
         <source>Not available</source>
         <translation>No disponible</translation>
     </message>

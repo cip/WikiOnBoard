@@ -121,6 +121,12 @@
         <translation>Options</translation>
     </message>
     <message>
+        <location filename="wikionboard.cpp" line="312"/>
+        <source>http://cip.github.com/WikiOnBoard/Get-eBooks.html</source>
+        <comment>Change link to page with localized zim files. (e.g http://cip.github.com/WikiOnBoard/Get-eBooks-DE.html</comment>
+        <translation></translation>
+    </message>
+    <message>
         <location filename="wikionboard.cpp" line="347"/>
         <source>Error on opening zim file</source>
         <translation>Error: Can not open eBook</translation>
@@ -198,7 +204,8 @@ recommended to download the eBooks with your PC and not directly with your mobil
     </message>
     <message>
         <location filename="wikionboard.cpp" line="500"/>
-        <source>http://wiki.github.com/cip/WikiOnBoard</source>
+        <source>http://cip.github.com/WikiOnBoard/</source>
+        <oldsource>http://wiki.github.com/cip/WikiOnBoard</oldsource>
         <translation></translation>
     </message>
     <message>
@@ -282,12 +289,6 @@ If the link does not open after pressing the OK button, try to close the interne
         <translation></translation>
     </message>
     <message>
-        <location filename="wikionboard.cpp" line="312"/>
-        <source>https://github.com/cip/WikiOnBoard/wiki/Get-eBooks</source>
-        <comment>Change link to page with localized zim files. (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE</comment>
-        <translation></translation>
-    </message>
-    <message>
         <source>Download ZIM file</source>
         <translation type="obsolete">Get eBooks</translation>
     </message>
@@ -364,7 +365,7 @@ Articles : %2, Images: %3, Categories: %4
         <translation></translation>
     </message>
     <message>
-        <location filename="zimfilewrapper.cpp" line="379"/>
+        <location filename="zimfilewrapper.cpp" line="389"/>
         <source>Not available</source>
         <translation></translation>
     </message>
