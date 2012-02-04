@@ -69,6 +69,14 @@ When you have managed to do all this, it should be pretty self-explaining how to
 * Search is case sensitive. In the wikipedia all articles start with a capital letter, so if you cannot find anything useful it may be because your search term does not. The search input per default  switches automatically to capital letter for the first letter
 * Keys 8 and 2 can be used to scroll through an article. This is in particularly useful if there are lot of links in the current section of the article, for example in the table of content.
  
-## Troubleshooting and Feedback
+# Troubleshooting and Feedback
 
 If you encounter problems, or have any suggestions I'd be happy if you let me know, either by using the [issue tracker](http://github.com/cip/WikiOnBoard/issues) or by sending a e-mail to cip@gmx.at.
+
+# News
+
+<ul class="posts">
+  {% for post in site.posts %}
+    <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
+  {% endfor %}
+</ul>
