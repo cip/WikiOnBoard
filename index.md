@@ -4,6 +4,14 @@ title: WikiOnBoard
 ---
 {% include JB/setup %}
 
+# News
+
+<ul class="posts">
+  {% for post in site.posts limit:4 %}
+    <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
+  {% endfor %}
+</ul>
+
 # Overview
 
 WikiOnBoard is a mobile phone app which allows reading the Wikipedia without internet connection.
@@ -73,11 +81,3 @@ When you have managed to do all this, it should be pretty self-explaining how to
 # Troubleshooting and Feedback
 
 If you encounter problems, or have any suggestions I'd be happy if you let me know, either by using the [issue tracker](http://github.com/cip/WikiOnBoard/issues) or by sending a e-mail to cip@gmx.at.
-
-# News
-
-<ul class="posts">
-  {% for post in site.posts %}
-    <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
-  {% endfor %}
-</ul>
