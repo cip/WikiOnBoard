@@ -1,13 +1,13 @@
 #Set to 1 or 0. Changes UID used, and SwEvent Capability requested only if not selfsigned.
-IS_SELFSIGNED = 1
-#IS_SELFSIGNED = 0
+#IS_SELFSIGNED = 1
+IS_SELFSIGNED = 0
 DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
 #Set to 1 or 0. Set to 1 to enable split screen keyboard support (Symbian^3)
 # Note that feature should not be used for released version (see https://github.com/cip/WikiOnBoard/issues/51 )
 ENABLE_SPLITSCREENKEYBOARD = 0
 DEFINES += "__ENABLE_SPLITSCREENKEYBOARD__=$$ENABLE_SPLITSCREENKEYBOARD"
 
-VERSION = 1.2.8
+VERSION = 1.2.9
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 
