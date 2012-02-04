@@ -5,7 +5,7 @@
     <name>AboutMenuItem</name>
     <message>
         <source>About</source>
-        <translation type="obsolete">Acerca de</translation>
+        <translation type="unfinished">Acerca de</translation>
     </message>
 </context>
 <context>
@@ -17,7 +17,7 @@ Uses zimlib (openzim.org) and liblzma.
 Build date: %3
 %4
 </source>
-        <translation type="obsolete">WikiOnBoard %1
+        <translation type="unfinished">WikiOnBoard %1
 Autor: %2
 Está usando zimlib (openzim.org) and liblzma.
 Fecha de compilacion: %3 {1
@@ -28,12 +28,12 @@ Fecha de compilacion: %3 {1
     </message>
     <message>
         <source>Christian Puehringer</source>
-        <translation type="obsolete">Christian Pühringer</translation>
+        <translation type="unfinished">Christian Pühringer</translation>
     </message>
     <message>
         <source>application is self-signed</source>
         <comment>only displayed if application is self-signed</comment>
-        <translation type="obsolete">Aplicación está self-signed</translation>
+        <translation type="unfinished">Aplicación está self-signed</translation>
     </message>
     <message>
         <source>application is self-signed</source>
@@ -61,19 +61,68 @@ Idioma: %6
 Relación: %7
 </translation>
     </message>
+    <message>
+        <source>%1
+Articles : %2, Images: %3, Categories: %4
+</source>
+        <comment>Add new line after text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title: %1
+Creator: %2
+Publisher: %8
+Date: %3
+Source: %4
+Description: %5
+Language: %6
+Relation: %7
+</source>
+        <comment>Add newline after Text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UUID: %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ArticlePage</name>
     <message>
         <source>Show Images</source>
-        <translation type="obsolete">Mostrar imágenes</translation>
+        <translation type="unfinished">Mostrar imágenes</translation>
+    </message>
+    <message>
+        <source>Very Small</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Very Large</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text size</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ExitMenuItem</name>
     <message>
         <source>Exit</source>
-        <translation type="obsolete">Salir</translation>
+        <translation type="unfinished">Salir</translation>
     </message>
 </context>
 <context>
@@ -91,12 +140,61 @@ Aviso: &quot;%1&quot; abre la página web &quot;%3&quot; en el navegador. Como l
         <source>https://github.com/cip/WikiOnBoard/wiki/Get-eBooks</source>
         <translation type="obsolete">https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-ES</translation>
     </message>
+    <message>
+        <source>http://cip.github.com/WikiOnBoard/Get-eBooks.html</source>
+        <translation type="unfinished">http://cip.github.com/WikiOnBoard/Get-eBooks-ES.html</translation>
+    </message>
+    <message>
+        <source>Download zimfile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find eBook on Phone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Click %2 to open zimfile on mobile</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LibraryPage</name>
     <message>
         <source>About</source>
         <translation type="obsolete">Acerca de</translation>
+    </message>
+    <message>
+        <source>About zimfile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find eBook on Phone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download eBook</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MainPage</name>
+    <message>
+        <source>Open link in browser</source>
+        <translation type="obsolete">Abrir enlace en navegador</translation>
+    </message>
+    <message>
+        <source>[TRANLATOR]Explain that may not work if browser running.</source>
+        <comment>only displayed if self_signed</comment>
+        <translation type="obsolete">Aviso: En la configuracíon actual  el articulo probablemente solo se podrá abrir si el navegador no está ya abierto.
+Si no se puede abrir el articulo, cierra el navegador e intentalo de nuevo.</translation>
     </message>
 </context>
 <context>
@@ -221,7 +319,7 @@ Aviso: &quot;%1&quot; abre la página web &quot;%3&quot; en el navegador. Como l
     </message>
     <message>
         <source>Open link in browser</source>
-        <translation type="obsolete">Abrir enlace en navegador</translation>
+        <translation type="unfinished">Abrir enlace en navegador</translation>
     </message>
     <message>
         <source>[TRANLATOR]Explain that may not work if browser running.</source>
@@ -424,6 +522,29 @@ Fecha de compilacion: %3</translation>
         <source>Help</source>
         <comment>Help menu</comment>
         <translation type="obsolete">Ayuda</translation>
+    </message>
+    <message>
+        <source>[TRANLATOR]Explain that may not work if browser running.</source>
+        <comment>only displayed if self_signed</comment>
+        <translation type="unfinished">Aviso: En la configuracíon actual  el articulo probablemente solo se podrá abrir si el navegador no está ya abierto.
+Si no se puede abrir el articulo, cierra el navegador e intentalo de nuevo.</translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] Explain that link &quot;%1&quot; clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening link &quot;%1&quot; in system web browser failed.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -5,7 +5,7 @@
     <name>AboutMenuItem</name>
     <message>
         <source>About</source>
-        <translation type="obsolete">Über WikiOnBoard</translation>
+        <translation type="unfinished">Über WikiOnBoard</translation>
     </message>
 </context>
 <context>
@@ -17,7 +17,20 @@
     <message>
         <source>application is self-signed</source>
         <comment>only displayed if application is self-signed</comment>
-        <translation type="obsolete">Anwendung ist selbst-signiert</translation>
+        <translation type="unfinished">Anwendung ist selbst-signiert</translation>
+    </message>
+    <message>
+        <source>WikiOnBoard %1
+Author: %2
+Uses zimlib (openzim.org) and liblzma.
+Build date: %3
+%4
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Christian Puehringer</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -41,19 +54,68 @@ Sprache: %6
 Relation: %7
 </translation>
     </message>
+    <message>
+        <source>%1
+Articles : %2, Images: %3, Categories: %4
+</source>
+        <comment>Add new line after text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Title: %1
+Creator: %2
+Publisher: %8
+Date: %3
+Source: %4
+Description: %5
+Language: %6
+Relation: %7
+</source>
+        <comment>Add newline after Text</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UUID: %1
+</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ArticlePage</name>
     <message>
         <source>Show Images</source>
-        <translation type="obsolete">Bilder anzeigen</translation>
+        <translation type="unfinished">Bilder anzeigen</translation>
+    </message>
+    <message>
+        <source>Very Small</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Very Large</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text size</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ExitMenuItem</name>
     <message>
         <source>Exit</source>
-        <translation type="obsolete">Beenden</translation>
+        <translation type="unfinished">Beenden</translation>
     </message>
 </context>
 <context>
@@ -73,7 +135,19 @@ empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem M
     </message>
     <message>
         <source>Download zimfile</source>
-        <translation type="obsolete">E-Books herunterladen</translation>
+        <translation type="unfinished">E-Books herunterladen</translation>
+    </message>
+    <message>
+        <source>http://cip.github.com/WikiOnBoard/Get-eBooks.html</source>
+        <translation type="unfinished">http://cip.github.com/WikiOnBoard/Get-eBooks-DE.html</translation>
+    </message>
+    <message>
+        <source>Find eBook on Phone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Click %2 to open zimfile on mobile</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -81,6 +155,39 @@ empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem M
     <message>
         <source>About</source>
         <translation type="obsolete">Über WikiOnBoard</translation>
+    </message>
+    <message>
+        <source>About zimfile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Find eBook on Phone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download eBook</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MainPage</name>
+    <message>
+        <source>Open link in browser</source>
+        <translation type="obsolete">Link in Browser öffnen</translation>
+    </message>
+    <message>
+        <source>[TRANLATOR]Explain that may not work if browser running.</source>
+        <comment>only displayed if self_signed</comment>
+        <translation type="obsolete">Achtung: In der aktuellen Konfiguration lassen sich Artikel wahrscheinlich nur öffnen wenn der Internet-Browser nicht geöffnet ist. 
+Wenn sich der Artikel nicht öffnen lässt, schließe den Internet-Browser und versuche es erneut.</translation>
     </message>
 </context>
 <context>
@@ -205,7 +312,7 @@ empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem M
     </message>
     <message>
         <source>Open link in browser</source>
-        <translation type="obsolete">Link in Browser öffnen</translation>
+        <translation type="unfinished">Link in Browser öffnen</translation>
     </message>
     <message>
         <source>[TRANLATOR]Explain that may not work if browser running.</source>
@@ -396,6 +503,29 @@ Version vom: %3
     <message>
         <source>Download ZIM file</source>
         <translation type="obsolete">E-Books herunterladen</translation>
+    </message>
+    <message>
+        <source>[TRANLATOR]Explain that may not work if browser running.</source>
+        <comment>only displayed if self_signed</comment>
+        <translation type="unfinished">Achtung: In der aktuellen Konfiguration lassen sich Artikel wahrscheinlich nur öffnen wenn der Internet-Browser nicht geöffnet ist. 
+Wenn sich der Artikel nicht öffnen lässt, schließe den Internet-Browser und versuche es erneut.</translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] Explain that link &quot;%1&quot; clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening link &quot;%1&quot; in system web browser failed.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

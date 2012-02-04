@@ -10,8 +10,8 @@ TextPage {
     anchors { fill: parent}
     signal findEbookClicked();
     signal openExternalLink(string url);
-    //% "Change link to page with localized zim files." (e.g https://github.com/cip/WikiOnBoard/wiki/Get-eBooks-DE"
-    property string zimDownloadUrl : qsTr("https://github.com/cip/WikiOnBoard/wiki/Get-eBooks");
+    //% "Change link to page with localized zim files." (e.g http://cip.github.com/WikiOnBoard/Get-eBooks-DE.html"
+    property string zimDownloadUrl : qsTr("http://cip.github.com/WikiOnBoard/Get-eBooks.html");
     property string getEBookLinkCaption : qsTr("Download zimfile");
     property string findEBookUrl : "internal://findEBook";
     property string findEBookCaption : qsTr("Find eBook on Phone"); //TODO: Overhead as proprties?
