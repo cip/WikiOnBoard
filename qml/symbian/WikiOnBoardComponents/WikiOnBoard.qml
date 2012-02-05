@@ -158,8 +158,10 @@ Item {
         //  having it's height depending on content.
         source: ""
         property url url;
-        function askAndOpenUrlExternally(urlA) {
+        property bool isLinkInArticle;
+        function askAndOpenUrlExternally(urlA, isLinkInArticleA) {
             url = urlA;
+            isLinkInArticle = isLinkInArticleA;
             source = "OpenExternalLinkQueryDialog.qml"
         }
 
@@ -167,8 +169,9 @@ Item {
             //Actually works (at least in simulator)
             //as well if open() called directly after
             //setting source, but doing it here appears
-            //to be cleaner
+            //to be cleaner.
             item.url = url
+            item.isLinkInArticle = isLinkInArticle
             item.open();
         }
 
@@ -272,8 +275,7 @@ Item {
             id: articlePage
             anchors { fill: parent}
             onOpenExternalLink: {
-                //TODO ask banner.showMessage("Open url "+url+" in system web browser.");
-                openExternalLinkQueryDialog.askAndOpenUrlExternally(url);
+                openExternalLinkQueryDialog.askAndOpenUrlExternally(url, true);
             }
 
             onBackwardAvailable: {

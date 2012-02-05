@@ -36,8 +36,7 @@ TextPage {
         pageStack.push(Qt.resolvedUrl("ZimFileSelectPage.qml"))
     }
     onOpenExternalLink: {
-        //TODO perhaps show different.
-        openExternalLinkQueryDialog.askAndOpenUrlExternally(url);
+        openExternalLinkQueryDialog.askAndOpenUrlExternally(url, false);
     }
 
 

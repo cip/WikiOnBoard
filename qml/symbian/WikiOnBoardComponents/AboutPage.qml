@@ -28,8 +28,7 @@ Uses zimlib (openzim.org) and liblzma.<p>\
         }
     }
     onLinkActivated: {
-        //TODO perhaps show different.
-        openExternalLinkQueryDialog.askAndOpenUrlExternally(link);
+        openExternalLinkQueryDialog.askAndOpenUrlExternally(link, false);
     }
 }
 
