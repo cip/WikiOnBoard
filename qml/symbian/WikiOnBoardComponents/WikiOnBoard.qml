@@ -151,31 +151,32 @@ Item {
         tools: defaultTools
     }
 
-    QueryDialogWrapMode {
-        //TODO should probably be handled by loader. (Or directly dynamically)
+    Loader {
         id: openExternalLinkQueryDialog
-        property url url
-        icon: visual.internetToolbarIconSource
-        titleText: qsTr("Open link in browser")
-        //To ensure url is wrappd. QueryDialogWrapMode is just a copy of the symbian component,
-        // but with message wrapMode exposed.
-        messageWrapMode: Text.WrapAtWordBoundaryOrAnywhere
-        //TODO: Would be nice if the self-signed string can be displayed as well
-        message: qsTr("[TRANSLATOR] Explain that link \"%1\" clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.\n%2").replace(
-                     "%1", url).replace(
-                     "%2", appInfo.isSelfSigned?qsTr("[TRANLATOR]Explain that may not work if browser running.","only displayed if self_signed"):"")
-        acceptButtonText: qsTr("Open")
-        rejectButtonText: qsTr("Cancel")
-        //SYMBIAN_ONLY
-        onClickedOutside: reject()
-        onAccepted:  {
-            if (!Qt.openUrlExternally(url)) {
-                banner.showMessage(qsTr("Opening link \"%1\" in system web browser failed.").replace("%1",url));
-            }
+        //Note: Don't use anchors.fill: parent here, as
+        //  else dialog is (nearly) full screen instead
+        //  having it's height depending on content.
+        source: ""
+        property url url;
+        function askAndOpenUrlExternally(urlA) {
+            url = urlA;
+            source = "OpenExternalLinkQueryDialog.qml"
         }
-        function askAndOpenUrlExternally(url) {
-            openExternalLinkQueryDialog.url = url
-            open();
+
+        onLoaded: {
+            //Actually works (at least in simulator)
+            //as well if open() called directly after
+            //setting source, but doing it here appears
+            //to be cleaner
+            item.url = url
+            item.open();
+        }
+
+        function closed() {
+            // Closed is called by OpenExternalLinkQueryDialog
+            // when dialog is closed
+            console.log("OpenExternalLinkQueryDialog close(). Unload it")
+            source = "";
         }
     }
 
