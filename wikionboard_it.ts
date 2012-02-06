@@ -11,12 +11,12 @@
 <context>
     <name>AboutPage</name>
     <message>
-        <source>WikiOnBoard %1
-Author: %2
-Uses zimlib (openzim.org) and liblzma.
-Build date: %3
-%4
-</source>
+        <source>http://cip.github.com/WikiOnBoard/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Build date: %3&lt;br&gt;Author: %2&lt;p&gt;Uses zimlib (openzim.org) and liblzma.&lt;p&gt;%4&lt;br&gt;</source>
+        <comment>Use html tags for new line/paragraphs</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -110,7 +110,7 @@ Relation: %7
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Click %2 to open zimfile on mobile</source>
+        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -138,7 +138,7 @@ Relation: %7
     </message>
 </context>
 <context>
-    <name>WikiOnBoard</name>
+    <name>OpenExternalLinkQueryDialog</name>
     <message>
         <source>Open link in browser</source>
         <translation type="unfinished"></translation>
@@ -151,6 +151,11 @@ Relation: %7
     <message>
         <source>[TRANLATOR]Explain that may not work if browser running.</source>
         <comment>only displayed if self_signed</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] Ask whether ok to open link &quot;%1&quot; in webrowser.
+%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

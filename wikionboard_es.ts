@@ -17,7 +17,7 @@ Uses zimlib (openzim.org) and liblzma.
 Build date: %3
 %4
 </source>
-        <translation type="unfinished">WikiOnBoard %1
+        <translation type="obsolete">WikiOnBoard %1
 Autor: %2
 Está usando zimlib (openzim.org) and liblzma.
 Fecha de compilacion: %3 {1
@@ -38,6 +38,15 @@ Fecha de compilacion: %3 {1
     <message>
         <source>application is self-signed</source>
         <translation type="obsolete">Aplicación está self-signed</translation>
+    </message>
+    <message>
+        <source>http://cip.github.com/WikiOnBoard/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Build date: %3&lt;br&gt;Author: %2&lt;p&gt;Uses zimlib (openzim.org) and liblzma.&lt;p&gt;%4&lt;br&gt;</source>
+        <comment>Use html tags for new line/paragraphs</comment>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -153,7 +162,7 @@ Aviso: &quot;%1&quot; abre la página web &quot;%3&quot; en el navegador. Como l
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Click %2 to open zimfile on mobile</source>
+        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -195,6 +204,41 @@ Aviso: &quot;%1&quot; abre la página web &quot;%3&quot; en el navegador. Como l
         <comment>only displayed if self_signed</comment>
         <translation type="obsolete">Aviso: En la configuracíon actual  el articulo probablemente solo se podrá abrir si el navegador no está ya abierto.
 Si no se puede abrir el articulo, cierra el navegador e intentalo de nuevo.</translation>
+    </message>
+</context>
+<context>
+    <name>OpenExternalLinkQueryDialog</name>
+    <message>
+        <source>Open link in browser</source>
+        <translation type="unfinished">Abrir enlace en navegador</translation>
+    </message>
+    <message>
+        <source>[TRANLATOR]Explain that may not work if browser running.</source>
+        <comment>only displayed if self_signed</comment>
+        <translation type="unfinished">Aviso: En la configuracíon actual  el articulo probablemente solo se podrá abrir si el navegador no está ya abierto.
+Si no se puede abrir el articulo, cierra el navegador e intentalo de nuevo.</translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] Explain that link &quot;%1&quot; clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] Ask whether ok to open link &quot;%1&quot; in webrowser.
+%2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opening link &quot;%1&quot; in system web browser failed.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -319,7 +363,7 @@ Aviso: &quot;%1&quot; abre la página web &quot;%3&quot; en el navegador. Como l
     </message>
     <message>
         <source>Open link in browser</source>
-        <translation type="unfinished">Abrir enlace en navegador</translation>
+        <translation type="obsolete">Abrir enlace en navegador</translation>
     </message>
     <message>
         <source>[TRANLATOR]Explain that may not work if browser running.</source>
@@ -526,25 +570,8 @@ Fecha de compilacion: %3</translation>
     <message>
         <source>[TRANLATOR]Explain that may not work if browser running.</source>
         <comment>only displayed if self_signed</comment>
-        <translation type="unfinished">Aviso: En la configuracíon actual  el articulo probablemente solo se podrá abrir si el navegador no está ya abierto.
+        <translation type="obsolete">Aviso: En la configuracíon actual  el articulo probablemente solo se podrá abrir si el navegador no está ya abierto.
 Si no se puede abrir el articulo, cierra el navegador e intentalo de nuevo.</translation>
-    </message>
-    <message>
-        <source>[TRANSLATOR] Explain that link &quot;%1&quot; clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
-%2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Opening link &quot;%1&quot; in system web browser failed.</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
