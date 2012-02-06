@@ -14,9 +14,10 @@ TextPage {
     property string zimDownloadUrl : qsTr("http://cip.github.com/WikiOnBoard/Get-eBooks.html");
     property string getEBookLinkCaption : qsTr("Download zimfile");
     property string findEBookUrl : "internal://findEBook";
-    property string findEBookCaption : qsTr("Find eBook on Phone"); //TODO: Overhead as proprties?
+    property string findEBookCaption : qsTr("Find eBook on Phone");
 
-    text: qsTr("[TRANSLATOR] No zimfile selected. getEBook link  %1 opens url %3 with info where to get eBooks. Click %2 to open zimfile on mobile").replace(
+    text: qsTr("[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. <p>\
+Click %2 to open an eBook you've copied to your mobile").replace(
               "%1",getHtmlLink(getEBookLinkCaption, zimDownloadUrl)).replace(
               "%2",getHtmlLink(findEBookCaption, findEBookUrl))
     onLinkActivated: {
