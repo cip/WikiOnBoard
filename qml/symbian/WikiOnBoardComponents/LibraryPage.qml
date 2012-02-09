@@ -40,7 +40,7 @@ WikionboardPage {
             ListItemText {
                 anchors.fill: parent.paddingItem
                 role: "Heading"
-                text: "eBook Library"
+                text: qsTr("Library")
             }
         }
     }
@@ -194,16 +194,16 @@ WikionboardPage {
         anchors.right:  parent.right
         anchors.bottomMargin: UI.LISTVIEW_MARGIN
         Button {
-            id: addEBookButton
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Find eBook on Phone")
-            onClicked: findEbookClicked()
-        }
-        Button {
             id: downloadEBookButton
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Download eBook")
             onClicked: downloadEbookClicked()
+        }
+        Button {
+            id: addEBookButton
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("Find eBook on Phone")
+            onClicked: findEbookClicked()
         }
     }
 }
