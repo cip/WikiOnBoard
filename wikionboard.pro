@@ -269,8 +269,8 @@ platform_qml.target = qml
   platform_qml.source = qml/symbian/WikiOnBoardComponents
 platform_qml.target = qml
 } else {
-message("neither symbian nor simulator, assume meego")
-platform_qml.source = qml/meego/WikiOnBoardComponents
+message("neither symbian nor simulator, assume symbian")
+platform_qml.source = qml/symbian/WikiOnBoardComponents
 platform_qml.target = qml
 # Speed up launching on MeeGo/Harmattan when using applauncherd daemon
 CONFIG += qdeclarative-boostable
