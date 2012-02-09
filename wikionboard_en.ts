@@ -5,19 +5,19 @@
     <name>AboutMenuItem</name>
     <message>
         <source>About</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>AboutPage</name>
     <message>
         <source>Christian Puehringer</source>
-        <translation>Christian Pühringer</translation>
+        <translation type="unfinished">Christian Pühringer</translation>
     </message>
     <message>
         <source>application is self-signed</source>
         <comment>only displayed if application is self-signed</comment>
-        <translation>Application is self-signed</translation>
+        <translation type="unfinished">Application is self-signed</translation>
     </message>
     <message>
         <source>application is self-signed</source>
@@ -25,12 +25,12 @@
     </message>
     <message>
         <source>http://cip.github.com/WikiOnBoard/</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Build date: %3&lt;br&gt;Author: %2&lt;p&gt;Uses zimlib (openzim.org) and liblzma.&lt;p&gt;%4&lt;br&gt;</source>
         <comment>Use html tags for new line/paragraphs</comment>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -40,7 +40,7 @@
 Articles : %2, Images: %3, Categories: %4
 </source>
         <comment>Add new line after text</comment>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Title: %1
@@ -53,50 +53,50 @@ Language: %6
 Relation: %7
 </source>
         <comment>Add newline after Text</comment>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>UUID: %1
 </source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ArticlePage</name>
     <message>
         <source>Show Images</source>
-        <translation>Show Images</translation>
-    </message>
-    <message>
-        <source>Very Small</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Small</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Normal</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Large</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Very Large</source>
-        <translation></translation>
+        <translation type="unfinished">Show Images</translation>
     </message>
     <message>
         <source>Text size</source>
-        <translation>Text Size</translation>
+        <translation type="unfinished">Text Size</translation>
+    </message>
+    <message>
+        <source>Very Small</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Very Large</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ExitMenuItem</name>
     <message>
         <source>Exit</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -111,15 +111,11 @@ recommended to download the eBooks with your PC and not directly with your mobil
     </message>
     <message>
         <source>Download zimfile</source>
-        <translation>Get Wikipedia</translation>
-    </message>
-    <message>
-        <source>http://cip.github.com/WikiOnBoard/Get-eBooks.html</source>
-        <translation></translation>
+        <translation type="unfinished">Get Wikipedia</translation>
     </message>
     <message>
         <source>Find eBook on Phone</source>
-        <translation>Open Wikipedia Stored on Phone</translation>
+        <translation type="unfinished">Open Wikipedia Stored on Phone</translation>
     </message>
     <message>
         <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile</source>
@@ -127,30 +123,45 @@ recommended to download the eBooks with your PC and not directly with your mobil
 After you have copied the Wikipedia to your phone, choose %2 to open it.&lt;p&gt;
 Note: &quot;%1&quot; opens the  webpage &quot;%3&quot; in the internet browser. Alternatively you can open the webpage on your PC. As the eBooks can be very large it is anyway
 recommended to download the eBooks with your PC and not directly with your mobile.</translatorcomment>
-        <translation type="unfinished">Click %1 for information on how to put eBooks such as the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve already copied to your mobile</translation>
+        <translation type="obsolete">Click %1 for information on how to put eBooks such as the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve already copied to your mobile</translation>
+    </message>
+    <message>
+        <source>http://cip.github.com/WikiOnBoard/Get-eBooks.html</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile. &lt;p&gt;Explain that clicking %4 opens the website &quot;%3&quot; with further instructions.</source>
+        <translation>Click &quot;%1&quot; to find out how to download Wikipedia and other eBooks to your mobile.&lt;p&gt;
+After you have copied the Wikipedia to your phone, choose %2 to open it.&lt;p&gt;
+Note: &quot;%1&quot; opens the  web page &quot;%3&quot; in your internet browser. Alternatively you can open the web page on your PC. As eBooks, particularly Wikipedia, can be very large it is 
+recommended to download them with your PC and not directly with your mobile.</translation>
     </message>
 </context>
 <context>
     <name>LibraryPage</name>
     <message>
         <source>About zimfile</source>
-        <translation>About eBook</translation>
+        <translation type="unfinished">About eBook</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Remove from Library</translation>
+        <translation type="unfinished">Remove from Library</translation>
     </message>
     <message>
         <source>Remove All</source>
-        <translation>Remove All from Library</translation>
+        <translation type="unfinished">Remove All from Library</translation>
     </message>
     <message>
         <source>Find eBook on Phone</source>
-        <translation>Open Wikipedia Stored on Phone</translation>
+        <translation type="unfinished">Open Wikipedia Stored on Phone</translation>
     </message>
     <message>
         <source>Download eBook</source>
-        <translation>Download Wikipedia</translation>
+        <translation type="unfinished">Download Wikipedia</translation>
+    </message>
+    <message>
+        <source>Library</source>
+        <translation>Library</translation>
     </message>
 </context>
 <context>
@@ -167,36 +178,36 @@ If the link does not open after pressing the OK button, try to close the interne
     <message>
         <source>[TRANLATOR]Explain that may not work if browser running.</source>
         <comment>only displayed if self_signed</comment>
-        <translation>Attention: In your configuration opening an article may only work if the internet browser is not already running. 
+        <translation type="unfinished">Attention: In your configuration opening an article may only work if the internet browser is not already running. 
 If the link does not open after pressing the OK button, try to close the internet browser and try again.</translation>
     </message>
     <message>
         <source>Open link in browser</source>
-        <translation>Open Link in Browser</translation>
+        <translation type="unfinished">Open Link in Browser</translation>
     </message>
     <message>
         <source>[TRANSLATOR] Explain that link &quot;%1&quot; clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
 %2</source>
-        <translation>The link &quot;%1&quot; is not a part of this eBook. Do you want to open it in your web browser?
+        <translation type="unfinished">The link &quot;%1&quot; is not a part of this eBook. Do you want to open it in your web browser?
 %2</translation>
     </message>
     <message>
         <source>[TRANSLATOR] Ask whether ok to open link &quot;%1&quot; in webrowser.
 %2</source>
-        <translation>Do you want to open &quot;%1&quot; in your web browser?.
+        <translation type="unfinished">Do you want to open &quot;%1&quot; in your web browser?.
 %2</translation>
     </message>
     <message>
+        <source>Opening link &quot;%1&quot; in system web browser failed.</source>
+        <translation type="unfinished">The link &quot;%1&quot; could not be opened.</translation>
+    </message>
+    <message>
         <source>Open</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Opening link &quot;%1&quot; in system web browser failed.</source>
-        <translation>The link &quot;%1&quot; could not be opened.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
