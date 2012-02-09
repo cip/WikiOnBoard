@@ -5,7 +5,7 @@
     <name>AboutMenuItem</name>
     <message>
         <source>About</source>
-        <translation type="unfinished">Über WikiOnBoard</translation>
+        <translation>Über WikiOnBoard</translation>
     </message>
 </context>
 <context>
@@ -17,20 +17,20 @@
     <message>
         <source>application is self-signed</source>
         <comment>only displayed if application is self-signed</comment>
-        <translation type="unfinished">Anwendung ist selbst-signiert</translation>
-    </message>
-    <message>
-        <source>http://cip.github.com/WikiOnBoard/</source>
-        <translation type="unfinished"></translation>
+        <translation>Anwendung ist selbst-signiert</translation>
     </message>
     <message>
         <source>WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Build date: %3&lt;br&gt;Author: %2&lt;p&gt;Uses zimlib (openzim.org) and liblzma.&lt;p&gt;%4&lt;br&gt;</source>
         <comment>Use html tags for new line/paragraphs</comment>
-        <translation type="unfinished"></translation>
+        <translation>WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Version vom: %3&lt;br&gt;Autor: %2&lt;p&gt;Verwendet zimlib (openzim.org) und liblzma.&lt;p&gt;%4&lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>http://cip.github.com/WikiOnBoard/</source>
+        <translation></translation>
     </message>
     <message>
         <source>Christian Puehringer</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -59,7 +59,8 @@ Relation: %7
 Articles : %2, Images: %3, Categories: %4
 </source>
         <comment>Add new line after text</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1
+Artikel : %2, Bilder: %3, Kategorien: %4</translation>
     </message>
     <message>
         <source>Title: %1
@@ -72,50 +73,57 @@ Language: %6
 Relation: %7
 </source>
         <comment>Add newline after Text</comment>
-        <translation type="unfinished"></translation>
+        <translation>Titel: %1
+Erstellt von: %2
+Verleger: %8
+Datum: %3
+Quelle: %4
+Beschreibung: %5
+Sprache: %6
+Relation: %7</translation>
     </message>
     <message>
         <source>UUID: %1
 </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>ArticlePage</name>
     <message>
         <source>Show Images</source>
-        <translation type="unfinished">Bilder anzeigen</translation>
+        <translation>Bilder anzeigen</translation>
     </message>
     <message>
         <source>Very Small</source>
-        <translation type="unfinished"></translation>
+        <translation>Sehr klein</translation>
     </message>
     <message>
         <source>Small</source>
-        <translation type="unfinished"></translation>
+        <translation>Klein</translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <source>Large</source>
-        <translation type="unfinished"></translation>
+        <translation>Groß</translation>
     </message>
     <message>
         <source>Very Large</source>
-        <translation type="unfinished"></translation>
+        <translation>Sehr groß</translation>
     </message>
     <message>
         <source>Text size</source>
-        <translation type="unfinished"></translation>
+        <translation>Textgröße</translation>
     </message>
 </context>
 <context>
     <name>ExitMenuItem</name>
     <message>
         <source>Exit</source>
-        <translation type="unfinished">Beenden</translation>
+        <translation>Beenden</translation>
     </message>
 </context>
 <context>
@@ -135,18 +143,18 @@ empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem M
     </message>
     <message>
         <source>Download zimfile</source>
-        <translation type="unfinished">E-Books herunterladen</translation>
+        <translation>Wikipedia herunterladen</translation>
     </message>
     <message>
         <source>http://cip.github.com/WikiOnBoard/Get-eBooks.html</source>
-        <translation type="unfinished">http://cip.github.com/WikiOnBoard/Get-eBooks-DE.html</translation>
+        <translation>http://cip.github.com/WikiOnBoard/Get-eBooks-DE.html</translation>
     </message>
     <message>
         <source>Find eBook on Phone</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeicherte Wikipedia öffnen</translation>
     </message>
     <message>
-        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile</source>
+        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -158,23 +166,27 @@ empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem M
     </message>
     <message>
         <source>About zimfile</source>
-        <translation type="unfinished"></translation>
+        <translation>Über E-Book</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Aus Bibliothek entfernen</translation>
     </message>
     <message>
         <source>Remove All</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle aus Bibliothek entfernen</translation>
     </message>
     <message>
         <source>Find eBook on Phone</source>
-        <translation type="unfinished"></translation>
+        <translation>Gespeicherte Wikipedia öffnen</translation>
     </message>
     <message>
         <source>Download eBook</source>
-        <translation type="unfinished"></translation>
+        <translation>Wikipedia herunterladen</translation>
+    </message>
+    <message>
+        <source>Library</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -194,35 +206,37 @@ Wenn sich der Artikel nicht öffnen lässt, schließe den Internet-Browser und v
     <name>OpenExternalLinkQueryDialog</name>
     <message>
         <source>Open link in browser</source>
-        <translation type="unfinished">Link in Browser öffnen</translation>
+        <translation>Link in Browser öffnen</translation>
     </message>
     <message>
         <source>[TRANLATOR]Explain that may not work if browser running.</source>
         <comment>only displayed if self_signed</comment>
-        <translation type="unfinished">Achtung: In der aktuellen Konfiguration lassen sich Artikel wahrscheinlich nur öffnen wenn der Internet-Browser nicht geöffnet ist. 
+        <translation>Achtung: In der aktuellen Konfiguration lassen sich Artikel wahrscheinlich nur öffnen wenn der Internet-Browser nicht geöffnet ist. 
 Wenn sich der Artikel nicht öffnen lässt, schließe den Internet-Browser und versuche es erneut.</translation>
     </message>
     <message>
         <source>[TRANSLATOR] Explain that link &quot;%1&quot; clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Link &quot;%1&quot; ist nicht Teil dieses E-Books. Möchtest du ihn in deinem Webbrowser öffnen?
+%2</translation>
     </message>
     <message>
         <source>[TRANSLATOR] Ask whether ok to open link &quot;%1&quot; in webrowser.
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchtest du &quot;%1&quot; in deinem Webbrowser öffnen?.
+%2</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnen</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <source>Opening link &quot;%1&quot; in system web browser failed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Link &quot;%1&quot; konnte nicht geöffnet werden.</translation>
     </message>
 </context>
 <context>
