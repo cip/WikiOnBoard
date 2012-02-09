@@ -20,12 +20,12 @@
         <translation type="unfinished">Anwendung ist selbst-signiert</translation>
     </message>
     <message>
-        <source>http://cip.github.com/WikiOnBoard/</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Build date: %3&lt;br&gt;Author: %2&lt;p&gt;Uses zimlib (openzim.org) and liblzma.&lt;p&gt;%4&lt;br&gt;</source>
         <comment>Use html tags for new line/paragraphs</comment>
+        <translation type="unfinished">WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Version vom: %3&lt;br&gt;Autor: %2&lt;p&gt;Verwendet zimlib (openzim.org) und liblzma.&lt;p&gt;%4&lt;br&gt;</translation>
+    </message>
+    <message>
+        <source>http://cip.github.com/WikiOnBoard/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -59,7 +59,8 @@ Relation: %7
 Articles : %2, Images: %3, Categories: %4
 </source>
         <comment>Add new line after text</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1
+Artikel : %2, Bilder: %3, Kategorien: %4</translation>
     </message>
     <message>
         <source>Title: %1
@@ -72,7 +73,14 @@ Language: %6
 Relation: %7
 </source>
         <comment>Add newline after Text</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Titel: %1
+Erstellt von: %2
+Verleger: %8
+Datum: %3
+Quelle: %4
+Beschreibung: %5
+Sprache: %6
+Relation: %7</translation>
     </message>
     <message>
         <source>UUID: %1
@@ -88,27 +96,27 @@ Relation: %7
     </message>
     <message>
         <source>Very Small</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sehr klein</translation>
     </message>
     <message>
         <source>Small</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Klein</translation>
     </message>
     <message>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Normal</translation>
     </message>
     <message>
         <source>Large</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Groß</translation>
     </message>
     <message>
         <source>Very Large</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sehr groß</translation>
     </message>
     <message>
         <source>Text size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Textgröße</translation>
     </message>
 </context>
 <context>
@@ -135,7 +143,7 @@ empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem M
     </message>
     <message>
         <source>Download zimfile</source>
-        <translation type="unfinished">E-Books herunterladen</translation>
+        <translation type="unfinished">Wikipedia herunterladen</translation>
     </message>
     <message>
         <source>http://cip.github.com/WikiOnBoard/Get-eBooks.html</source>
@@ -143,11 +151,15 @@ empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem M
     </message>
     <message>
         <source>Find eBook on Phone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gespeicherte Wikipedia öffnen</translation>
     </message>
     <message>
-        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile</source>
-        <translation type="unfinished"></translation>
+        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile. &lt;p&gt;Explain that clicking %4 opens the website &quot;%3&quot; with further instructions.</source>
+        <translation>Wähle &quot;%1&quot; um herauszufinden, wie du die Wikipedia oder andere E-Books auf dein Mobiltelefon laden kannst.&lt;p&gt;
+Um ein E-Book zu öffnen, das du bereits auf dein Handy kopiert hast, wähle &quot;%2&quot;.&lt;p&gt;
+Anmerkung: &quot;%1&quot; öffnet die Webseite &quot;%3&quot; im Webbrowser. Da E-Books, insbesondere die Wikipedia, sehr groß sein können, ist es in jedem Fall
+empfehlenswert die E-Books mit dem PC herunterzuladen und nicht direkt mit dem Mobiltelefon.
+</translation>
     </message>
 </context>
 <context>
@@ -158,23 +170,27 @@ empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem M
     </message>
     <message>
         <source>About zimfile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Über E-Book</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aus Bibliothek entfernen</translation>
     </message>
     <message>
         <source>Remove All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alle aus Bibliothek entfernen</translation>
     </message>
     <message>
         <source>Find eBook on Phone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gespeicherte Wikipedia öffnen</translation>
     </message>
     <message>
         <source>Download eBook</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Wikipedia herunterladen</translation>
+    </message>
+    <message>
+        <source>Library</source>
+        <translation>Bibliothek</translation>
     </message>
 </context>
 <context>
@@ -205,24 +221,26 @@ Wenn sich der Artikel nicht öffnen lässt, schließe den Internet-Browser und v
     <message>
         <source>[TRANSLATOR] Explain that link &quot;%1&quot; clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der Link &quot;%1&quot; ist nicht Teil dieses E-Books. Möchtest du ihn in deinem Webbrowser öffnen?
+%2</translation>
     </message>
     <message>
         <source>[TRANSLATOR] Ask whether ok to open link &quot;%1&quot; in webrowser.
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Möchtest du &quot;%1&quot; in deinem Webbrowser öffnen?.
+%2</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Öffnen</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Abbrechen</translation>
     </message>
     <message>
         <source>Opening link &quot;%1&quot; in system web browser failed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der Link &quot;%1&quot; konnte nicht geöffnet werden.</translation>
     </message>
 </context>
 <context>

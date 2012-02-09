@@ -65,7 +65,11 @@ Relation: %7
     <name>ArticlePage</name>
     <message>
         <source>Show Images</source>
-        <translation type="unfinished">Show images</translation>
+        <translation type="unfinished">Show Images</translation>
+    </message>
+    <message>
+        <source>Text size</source>
+        <translation type="unfinished">Text Size</translation>
     </message>
     <message>
         <source>Very Small</source>
@@ -85,10 +89,6 @@ Relation: %7
     </message>
     <message>
         <source>Very Large</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text size</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -111,42 +111,57 @@ recommended to download the eBooks with your PC and not directly with your mobil
     </message>
     <message>
         <source>Download zimfile</source>
-        <translation type="unfinished">Get eBooks</translation>
+        <translation type="unfinished">Get Wikipedia</translation>
+    </message>
+    <message>
+        <source>Find eBook on Phone</source>
+        <translation type="unfinished">Open Wikipedia Stored on Phone</translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile</source>
+        <translatorcomment>Click &quot;%1&quot; to find out how to download the Wikipedia and other eBooks to your mobile.&lt;p&gt;
+After you have copied the Wikipedia to your phone, choose %2 to open it.&lt;p&gt;
+Note: &quot;%1&quot; opens the  webpage &quot;%3&quot; in the internet browser. Alternatively you can open the webpage on your PC. As the eBooks can be very large it is anyway
+recommended to download the eBooks with your PC and not directly with your mobile.</translatorcomment>
+        <translation type="obsolete">Click %1 for information on how to put eBooks such as the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve already copied to your mobile</translation>
     </message>
     <message>
         <source>http://cip.github.com/WikiOnBoard/Get-eBooks.html</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Find eBook on Phone</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile</source>
-        <translation type="unfinished"></translation>
+        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile. &lt;p&gt;Explain that clicking %4 opens the website &quot;%3&quot; with further instructions.</source>
+        <translation>Click &quot;%1&quot; to find out how to download Wikipedia and other eBooks to your mobile.&lt;p&gt;
+After you have copied the Wikipedia to your phone, choose %2 to open it.&lt;p&gt;
+Note: &quot;%1&quot; opens the  web page &quot;%3&quot; in your internet browser. Alternatively you can open the web page on your PC. As eBooks, particularly Wikipedia, can be very large it is 
+recommended to download them with your PC and not directly with your mobile.</translation>
     </message>
 </context>
 <context>
     <name>LibraryPage</name>
     <message>
         <source>About zimfile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">About eBook</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Remove from Library</translation>
     </message>
     <message>
         <source>Remove All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Remove All from Library</translation>
     </message>
     <message>
         <source>Find eBook on Phone</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Open Wikipedia Stored on Phone</translation>
     </message>
     <message>
         <source>Download eBook</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Download Wikipedia</translation>
+    </message>
+    <message>
+        <source>Library</source>
+        <translation>Library</translation>
     </message>
 </context>
 <context>
@@ -168,17 +183,23 @@ If the link does not open after pressing the OK button, try to close the interne
     </message>
     <message>
         <source>Open link in browser</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Open Link in Browser</translation>
     </message>
     <message>
         <source>[TRANSLATOR] Explain that link &quot;%1&quot; clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">The link &quot;%1&quot; is not a part of this eBook. Do you want to open it in your web browser?
+%2</translation>
     </message>
     <message>
         <source>[TRANSLATOR] Ask whether ok to open link &quot;%1&quot; in webrowser.
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Do you want to open &quot;%1&quot; in your web browser?.
+%2</translation>
+    </message>
+    <message>
+        <source>Opening link &quot;%1&quot; in system web browser failed.</source>
+        <translation type="unfinished">The link &quot;%1&quot; could not be opened.</translation>
     </message>
     <message>
         <source>Open</source>
@@ -186,10 +207,6 @@ If the link does not open after pressing the OK button, try to close the interne
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Opening link &quot;%1&quot; in system web browser failed.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
