@@ -580,7 +580,7 @@ Wenn sich der Artikel nicht öffnen lässt, schließe den Internet-Browser und v
     <name>ZimFileSelectPage</name>
     <message>
         <source>Browse for Wikipedia</source>
-        <translation type="unfinished">Nach Wikipedia suchen</translation>
+        <translation>Wikipedia auswählen</translation>
     </message>
 </context>
 <context>

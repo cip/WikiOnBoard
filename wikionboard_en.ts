@@ -400,7 +400,7 @@ If the link does not open after pressing the OK button, try to close the interne
     <name>ZimFileSelectPage</name>
     <message>
         <source>Browse for Wikipedia</source>
-        <translation type="unfinished">Browse for Wikipedia</translation>
+        <translation>Browse for Wikipedia</translation>
     </message>
 </context>
 <context>
