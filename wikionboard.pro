@@ -84,11 +84,9 @@ DEFINES += QT_NO_CAST_FROM_ASCII \
 
 win32: {
 #Update and generate translations here (during simulator builds)
-#Not really the best but for now ok. (may not work for c++ strings?)
-message(Generate translations)
-system($$quote(lupdate wikionboard.pro))
-system($$quote(lupdate qml/symbian -ts $${TRANSLATIONS}))
-system($$quote(lrelease wikionboard.pro))
+message("Generate translations (Symbian only. (Meego is omitted))")
+system($$quote(lupdate  -no-recursive  .  -recursive qml/common -recursive qml/symbian  -ts $${TRANSLATIONS}))
+system($$quote(lrelease $${TRANSLATIONS}))
 }
 
 message(QT_VERSION: $$QT_VERSION)
