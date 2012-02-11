@@ -38,10 +38,23 @@ WikionboardPage {
     }
 
     onIsDriveSelectionChanged: console.log("isDriveSelection:"+isDriveSelection)
+
+    Component {
+        id: listHeading
+        ListHeading {
+            ListItemText {
+                anchors.fill: parent.paddingItem
+                role: "Heading"
+                text: qsTr("Browse for Wikipedia")
+            }
+        }
+    }
+
     ListView {
         id: folderListView
-        anchors { fill: parent}
+        anchors.fill: parent
         clip: true
+        header: listHeading
         FolderListModel {
             id: folderModel
             // Not very useful, because not displayed at  drive (like c:) level
