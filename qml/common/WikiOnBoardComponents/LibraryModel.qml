@@ -38,7 +38,7 @@ ListModel {
             }
             return true
         } else {
-            console.log("could not add zim file. error: "+ backend.errorString());
+            console.log("could not add zim file. error: "+ backend.errorString);
             return false
         }
 

@@ -20,7 +20,8 @@ WikionboardPage {
         if (libraryPage.addZimFile(file)) {
             pageStack.pop();
         } else {
-            var s = "Error adding zim file: "+file+" Error: "+backend.errorString()
+            var s = (backend.isTooLargeError)?qsTr("Too large"):qsTr("other %1").replace("%1",backend.errorString)
+            //= "Error adding zim file: "+file+" Error: "+backend.errorString
             banner.showMessage(s)
 
         }

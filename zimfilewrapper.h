@@ -30,17 +30,21 @@
 class ZimFileWrapper : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString errorString READ errorString)
+    Q_PROPERTY(int isTooLargeError READ isTooLargeError)
 private:
     zim::File* zimFile;
     bool valid;
-    QString errorStr;
+    QString m_errorStr;
+    bool m_isTooLargeError;
     QDirIterator* dirIterator;
     QString byteArray2HexQString(const QByteArray &byteArray);
 public:
     explicit ZimFileWrapper(QObject *parent = 0);
     ~ZimFileWrapper();
     bool isValid() {return valid;}
-Q_INVOKABLE QString errorString() {return errorStr;}
+    QString errorString() {return m_errorStr;}
+    bool isTooLargeError() {return m_isTooLargeError;}
 Q_INVOKABLE bool openZimFile(QString zimFileName);
     zim::File::const_iterator getArticleByUrl(QString articleUrl,QChar nameSpace='A', bool closestMatchIfNotFound=true);
 

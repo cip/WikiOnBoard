@@ -28,7 +28,8 @@ ZimFileWrapper::ZimFileWrapper(QObject *parent) :
 {
     zimFile = 0;
     valid = false;
-    errorStr = QString();    
+    m_errorStr = QString();
+    m_isTooLargeError  = false;
 }
 ZimFileWrapper::~ZimFileWrapper(){
     delete zimFile;
@@ -38,6 +39,7 @@ ZimFileWrapper::~ZimFileWrapper(){
 bool ZimFileWrapper::openZimFile(QString zimFileName)
 {
     std::string zimfilename;
+    m_isTooLargeError = false;
     try
     {
         //If zim file is split extension of first file is zimaa
@@ -62,13 +64,13 @@ bool ZimFileWrapper::openZimFile(QString zimFileName)
     }
     catch (const std::exception& e)
     {
-        errorStr = QString::fromStdString(e.what());
-        qDebug() << "Opening file "<<zimFileName<<" failed. error message: "<<errorStr;
+        m_errorStr = QString::fromStdString(e.what());
+        qDebug() << "Opening file "<<zimFileName<<" failed. error message: "<<m_errorStr<<" "<<e.what();
 #if defined(Q_OS_SYMBIAN)
         QFile f(zimFileName);
         qDebug() << "Size of file: "<<f.size();
         if (f.size()<0) {
-            errorStr = tr("[TRANSLATOR] Explain that file %1 too large for configuration, and that help say how to solve ").arg(zimFileName);
+            m_isTooLargeError = true;
         }
 
 #endif

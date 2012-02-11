@@ -6,6 +6,8 @@ Item {
     Component.onCompleted: console.log("onCompleted in Backend")
 
     property string fileName
+    property string errorString: zimFileWrapper.errorString;
+    property bool isTooLargeError: zimFileWrapper.isTooLargeError;
 
     ZimFileWrapper {
         id:zimFileWrapper
@@ -26,9 +28,6 @@ Item {
 
     }
 
-    function errorString() {
-        return zimFileWrapper.errorString();
-    }
 
     function getZimFileWrapper() {
         return zimFileWrapper
