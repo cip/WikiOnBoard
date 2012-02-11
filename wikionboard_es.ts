@@ -162,7 +162,7 @@ Aviso: &quot;%1&quot; abre la página web &quot;%3&quot; en el navegador. Como l
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile</source>
+        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile. &lt;p&gt;Explain that clicking %4 opens the website &quot;%3&quot; with further instructions.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -171,6 +171,10 @@ Aviso: &quot;%1&quot; abre la página web &quot;%3&quot; en el navegador. Como l
     <message>
         <source>About</source>
         <translation type="obsolete">Acerca de</translation>
+    </message>
+    <message>
+        <source>Library</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>About zimfile</source>
@@ -185,11 +189,11 @@ Aviso: &quot;%1&quot; abre la página web &quot;%3&quot; en el navegador. Como l
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Find eBook on Phone</source>
+        <source>Download eBook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Download eBook</source>
+        <source>Find eBook on Phone</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -575,18 +579,25 @@ Si no se puede abrir el articulo, cierra el navegador e intentalo de nuevo.</tra
     </message>
 </context>
 <context>
+    <name>ZimFileSelectPage</name>
+    <message>
+        <source>Browse for Wikipedia</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ZimFileWrapper</name>
     <message>
         <source>[TRANSLATOR] Explain that file %1 too large for configuration, and that help say how to solve </source>
-        <translation type="obsolete">Lo sentimos, este eBook no se puede abrir en tu movíl porque el archivo es demasiado grande. Por favor, selecciona &quot;Ayuda&quot; y encontrarás las instrucciones para resolverlo.</translation>
+        <translation type="unfinished">Lo sentimos, este eBook no se puede abrir en tu movíl porque el archivo es demasiado grande. Por favor, selecciona &quot;Ayuda&quot; y encontrarás las instrucciones para resolverlo.</translation>
     </message>
     <message>
         <source>Error: article not found. (URL: %1 )</source>
-        <translation type="obsolete">Error: Artículo no encontrado (URL: %1)</translation>
+        <translation type="unfinished">Error: Artículo no encontrado (URL: %1)</translation>
     </message>
     <message>
         <source>Not available</source>
-        <translation type="obsolete">No disponible</translation>
+        <translation type="unfinished">No disponible</translation>
     </message>
 </context>
 <context>

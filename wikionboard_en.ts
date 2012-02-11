@@ -405,10 +405,25 @@ If the link does not open after pressing the OK button, try to close the interne
     </message>
 </context>
 <context>
+    <name>ZimFileSelectPage</name>
+    <message>
+        <source>Browse for Wikipedia</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ZimFileWrapper</name>
     <message>
         <source>[TRANSLATOR] Explain that file %1 too large for configuration, and that help say how to solve </source>
-        <translation type="obsolete">Sorry, this eBook cannot be opened on your mobile phone, because the file is too large. Please select &quot;Help&quot; to find out how to solve this.</translation>
+        <translation type="unfinished">Sorry, this eBook cannot be opened on your mobile phone, because the file is too large. Please select &quot;Help&quot; to find out how to solve this.</translation>
+    </message>
+    <message>
+        <source>Error: article not found. (URL: %1 )</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not available</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

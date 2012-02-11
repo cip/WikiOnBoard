@@ -155,7 +155,7 @@ empfehlenswert die eBooks mit dem PC herunterzuladen, und nicht direkt mit dem M
     </message>
     <message>
         <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile. &lt;p&gt;Explain that clicking %4 opens the website &quot;%3&quot; with further instructions.</source>
-        <translation>Wähle &quot;%1&quot; um herauszufinden, wie du die Wikipedia oder andere E-Books auf dein Mobiltelefon laden kannst.&lt;p&gt;
+        <translation type="unfinished">Wähle &quot;%1&quot; um herauszufinden, wie du die Wikipedia oder andere E-Books auf dein Mobiltelefon laden kannst.&lt;p&gt;
 Um ein E-Book zu öffnen, das du bereits auf dein Handy kopiert hast, wähle &quot;%2&quot;.&lt;p&gt;
 Anmerkung: &quot;%1&quot; öffnet die Webseite &quot;%3&quot; im Webbrowser. Da E-Books, insbesondere die Wikipedia, sehr groß sein können, ist es in jedem Fall
 empfehlenswert die E-Books mit dem PC herunterzuladen und nicht direkt mit dem Mobiltelefon.
@@ -190,7 +190,7 @@ empfehlenswert die E-Books mit dem PC herunterzuladen und nicht direkt mit dem M
     </message>
     <message>
         <source>Library</source>
-        <translation>Bibliothek</translation>
+        <translation type="unfinished">Bibliothek</translation>
     </message>
 </context>
 <context>
@@ -565,18 +565,25 @@ Wenn sich der Artikel nicht öffnen lässt, schließe den Internet-Browser und v
     </message>
 </context>
 <context>
+    <name>ZimFileSelectPage</name>
+    <message>
+        <source>Browse for Wikipedia</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ZimFileWrapper</name>
     <message>
         <source>[TRANSLATOR] Explain that file %1 too large for configuration, and that help say how to solve </source>
-        <translation type="obsolete">Dieses eBook kann leider auf ihrem Handy nicht geöffnet werden, weil die Datei zu groß ist. Bitte wähle &quot;Hilfe&quot; für eine Anleitung wie dieses Problem gelöst werden kann.</translation>
+        <translation type="unfinished">Dieses eBook kann leider auf ihrem Handy nicht geöffnet werden, weil die Datei zu groß ist. Bitte wähle &quot;Hilfe&quot; für eine Anleitung wie dieses Problem gelöst werden kann.</translation>
     </message>
     <message>
         <source>Error: article not found. (URL: %1 )</source>
-        <translation type="obsolete">Fehler: Artikel nicht gefunden (URL: %1)</translation>
+        <translation type="unfinished">Fehler: Artikel nicht gefunden (URL: %1)</translation>
     </message>
     <message>
         <source>Not available</source>
-        <translation type="obsolete">Nicht verfügbar</translation>
+        <translation type="unfinished">Nicht verfügbar</translation>
     </message>
 </context>
 <context>

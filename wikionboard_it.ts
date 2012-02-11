@@ -110,12 +110,16 @@ Relation: %7
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile</source>
+        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile. &lt;p&gt;Explain that clicking %4 opens the website &quot;%3&quot; with further instructions.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>LibraryPage</name>
+    <message>
+        <source>Library</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <source>About zimfile</source>
         <translation type="unfinished"></translation>
@@ -129,11 +133,11 @@ Relation: %7
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Find eBook on Phone</source>
+        <source>Download eBook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Download eBook</source>
+        <source>Find eBook on Phone</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -168,6 +172,28 @@ Relation: %7
     </message>
     <message>
         <source>Opening link &quot;%1&quot; in system web browser failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ZimFileSelectPage</name>
+    <message>
+        <source>Browse for Wikipedia</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ZimFileWrapper</name>
+    <message>
+        <source>[TRANSLATOR] Explain that file %1 too large for configuration, and that help say how to solve </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error: article not found. (URL: %1 )</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not available</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
