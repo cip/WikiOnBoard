@@ -32,28 +32,8 @@
 <context>
     <name>AboutZimFilePage</name>
     <message>
-        <source>%1
-Articles : %2, Images: %3, Categories: %4
-</source>
-        <comment>Add new line after text</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Title: %1
-Creator: %2
-Publisher: %8
-Date: %3
-Source: %4
-Description: %5
-Language: %6
-Relation: %7
-</source>
-        <comment>Add newline after Text</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>UUID: %1
-</source>
+        <source>%1&lt;p&gt;Articles : %2&lt;br&gt;Images: %3&lt;br&gt;Categories: %4&lt;p&gt;Title: %5&lt;br&gt;Creator: %6&lt;br&gt;Publisher: %7&lt;br&gt;Date: %8&lt;br&gt;Source: %9&lt;br&gt;Description: %10&lt;br&gt;Language: %11&lt;br&gt;Relation: %12&lt;p&gt;UUID: %13</source>
+        <comment>%1 is filename</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -110,7 +90,7 @@ Relation: %7
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile. &lt;p&gt;Explain that clicking %4 opens the website &quot;%3&quot; with further instructions.</source>
+        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile. &lt;p&gt;Explain that clicking %1 opens the website &quot;%3&quot; with further instructions.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -118,10 +98,6 @@ Relation: %7
     <name>LibraryPage</name>
     <message>
         <source>Library</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>About zimfile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -138,6 +114,10 @@ Relation: %7
     </message>
     <message>
         <source>Find eBook on Phone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Details</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

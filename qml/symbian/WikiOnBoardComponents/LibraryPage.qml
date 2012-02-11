@@ -134,7 +134,7 @@ WikionboardPage {
         itemIndex: -1
         MenuLayout {
             MenuItem {
-                text: qsTr("About zimfile")
+                text: qsTr("Details")
                 onClicked: library.aboutZimFile(libraryModel.get(libraryItemMenu.itemIndex).fileName)
             }
             MenuItem {
