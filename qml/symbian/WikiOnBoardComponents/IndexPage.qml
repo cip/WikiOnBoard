@@ -98,7 +98,7 @@ WikionboardPage {
             // (focus sometimes "stolen".
             articleName.forceActiveFocus()
             //Does not work
-            //articleName.openSoftwareInputPanel()
+            articleName.openSoftwareInputPanel()
         }
     }
 
