@@ -37,6 +37,8 @@ public:
         //Prevent focusing, because keyboard events handled in qml
         // If focus not  disabled here, after touching list,
         // no text entry via keypad possible, as focus changed.
+        //Drawback:virtual keyboard not closed anymore when clicking
+        // on list
         setFocusPolicy(Qt::NoFocus);
         #if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
         #else

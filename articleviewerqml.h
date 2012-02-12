@@ -21,6 +21,7 @@
 #include <qdebug>
 #include "zimfilewrapper.h"
 #include "articleviewer.h"
+#include <QApplication>
 
 class ArticleViewerQML : public QGraphicsProxyWidget
 {
@@ -34,6 +35,7 @@ public:
         : QGraphicsProxyWidget(parent)
     {
         widget = new ArticleViewer(0,0);
+        setFocusPolicy(Qt::NoFocus);
         #if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
         #else
             //On harmattan article font size way to small,
