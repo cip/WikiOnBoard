@@ -28,7 +28,7 @@ ZimFileWrapper::ZimFileWrapper(QObject *parent) :
 {
     zimFile = 0;
     valid = false;
-    m_errorStr = QString();
+    m_errorStr = QString();    
     m_isTooLargeError  = false;
 }
 ZimFileWrapper::~ZimFileWrapper(){
@@ -39,7 +39,10 @@ ZimFileWrapper::~ZimFileWrapper(){
 bool ZimFileWrapper::openZimFile(QString zimFileName)
 {
     std::string zimfilename;
+    m_errorStr = QString();
+    emit errorStringChanged(m_errorStr);
     m_isTooLargeError = false;
+    emit isTooLargeErrorChanged(m_isTooLargeError);
     try
     {
         //If zim file is split extension of first file is zimaa
@@ -59,18 +62,21 @@ bool ZimFileWrapper::openZimFile(QString zimFileName)
         //If opensuccesful, delete pointer to previously openend zim file.
         // If open fails keep previously opened zim file open.
         delete oldZimFile;
-        valid = true;
+        valid = true;        
         return true;
+
     }
     catch (const std::exception& e)
     {
         m_errorStr = QString::fromStdString(e.what());
+        emit errorStringChanged(m_errorStr);
         qDebug() << "Opening file "<<zimFileName<<" failed. error message: "<<m_errorStr<<" "<<e.what();
-#if defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
         QFile f(zimFileName);
         qDebug() << "Size of file: "<<f.size();
         if (f.size()<0) {
             m_isTooLargeError = true;
+            emit isTooLargeErrorChanged(m_isTooLargeError);
         }
 
 #endif

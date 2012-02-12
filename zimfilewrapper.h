@@ -25,13 +25,14 @@
 #include <QPixmap>
 #include <QFile>
 #include <QDirIterator>
+#include <QDebug>
 
 //TODO define implictly shared class?
 class ZimFileWrapper : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString errorString READ errorString)
-    Q_PROPERTY(int isTooLargeError READ isTooLargeError)
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
+    Q_PROPERTY(int isTooLargeError READ isTooLargeError NOTIFY isTooLargeErrorChanged)
 private:
     zim::File* zimFile;
     bool valid;
@@ -78,6 +79,9 @@ Q_INVOKABLE int getNamespaceCount(QString nameSpace);
 protected:
 
 signals:
+     void errorStringChanged(QString errorString);
+     void isTooLargeErrorChanged(bool isTooLargeError);
+
 
 public slots:
 
