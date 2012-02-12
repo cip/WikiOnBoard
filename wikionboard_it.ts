@@ -161,13 +161,18 @@
         <source>Browse for Wikipedia</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>[TRANSLATOR] Explain that the file is too large for configuration. Click &quot;Download Wikipedia&quot; in Library to find out how to solve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error on opening file.
+Error Message:  &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ZimFileWrapper</name>
-    <message>
-        <source>[TRANSLATOR] Explain that file %1 too large for configuration, and that help say how to solve </source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Error: article not found. (URL: %1 )</source>
         <translation type="unfinished"></translation>
