@@ -97,9 +97,7 @@ WikionboardPage {
             //Note that doing this in "Activating"-phase it does not work reliable
             // (focus sometimes "stolen".
             articleName.forceActiveFocus()
-            //Does not work
-            articleName.openSoftwareInputPanel()
-        }
+         }
     }
 
     function openMenu() {
