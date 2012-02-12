@@ -34,12 +34,6 @@ public:
 
         widget = new IndexList(0, 0);
         widget->setAttribute(Qt::WA_NoSystemBackground);
-        //Prevent focusing, because keyboard events handled in qml
-        // If focus not  disabled here, after touching list,
-        // no text entry via keypad possible, as focus changed.
-        //Drawback:virtual keyboard not closed anymore when clicking
-        // on list
-        setFocusPolicy(Qt::NoFocus);
         #if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
         #else
             //On harmattan index font size way to small,
