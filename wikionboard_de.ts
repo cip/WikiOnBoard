@@ -232,8 +232,8 @@ Wenn sich der Artikel nicht öffnen lässt, schließe den Internet-Browser und v
     <message>
         <source>[TRANSLATOR] Explain that link &quot;%1&quot; clicked in article is not contained in ebook and needs to be opened in webrowser. Ask if ok.
 %2</source>
-        <translatorcomment>eBook? Replaced anywhere else with wikipedia</translatorcomment>
-        <translation type="unfinished">Der Link &quot;%1&quot; ist nicht Teil dieses E-Books. Möchtest du ihn in deinem Webbrowser öffnen?
+        <translation>Du hast den externen Link &quot;%1&quot; angeklickt.
+Möchtest du ihn in deinem Webbrowser öffnen?
 %2</translation>
     </message>
     <message>
@@ -582,12 +582,34 @@ Wenn sich der Artikel nicht öffnen lässt, schließe den Internet-Browser und v
         <source>Browse for Wikipedia</source>
         <translation>Wikipedia auswählen</translation>
     </message>
+    <message>
+        <source>[TRANSLATOR] Explain that file &quot;%1&quot; too large for configuration. Click &quot;Download Wikipedia&quot; in Library to find out how to solve</source>
+        <translation type="obsolete">Die Datei &quot;%1&quot; kann leider auf ihrem Handy nicht geöffnet werden, weil sie zu groß ist. 
+Bitte klicke auf der Bibliotheksseite &quot;Wikipedia herunterladen&quot; für eine Anleitung wie dieses Problem gelöst werden kann.</translation>
+    </message>
+    <message>
+        <source>Error on opening file &quot;%1&quot;
+Error Message:  &quot;%2&quot;</source>
+        <translation type="obsolete">Fehler: E-Book &quot;%1&quot; kann nicht geöffnet werden.
+Fehlermeldung: &quot;%2&quot;</translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] Explain that the file is too large for configuration. Click &quot;Download Wikipedia&quot; in Library to find out how to solve</source>
+        <translation>Diese Datei kann leider auf ihrem Handy nicht geöffnet werden, weil sie zu groß ist. 
+Bitte klicke auf der Bibliotheksseite &quot;Wikipedia herunterladen&quot; für eine Anleitung wie dieses Problem gelöst werden kann.</translation>
+    </message>
+    <message>
+        <source>Error on opening file.
+Error Message:  &quot;%1&quot;</source>
+        <translation>Datei kann nicht geöffnet werden.
+Fehlermeldung &quot;%1&quot;</translation>
+    </message>
 </context>
 <context>
     <name>ZimFileWrapper</name>
     <message>
         <source>[TRANSLATOR] Explain that file %1 too large for configuration, and that help say how to solve </source>
-        <translation type="unfinished">Dieses eBook kann leider auf ihrem Handy nicht geöffnet werden, weil die Datei zu groß ist. Bitte wähle &quot;Hilfe&quot; für eine Anleitung wie dieses Problem gelöst werden kann.</translation>
+        <translation type="obsolete">Dieses eBook kann leider auf ihrem Handy nicht geöffnet werden, weil die Datei zu groß ist. Bitte wähle &quot;Hilfe&quot; für eine Anleitung wie dieses Problem gelöst werden kann.</translation>
     </message>
     <message>
         <source>Error: article not found. (URL: %1 )</source>

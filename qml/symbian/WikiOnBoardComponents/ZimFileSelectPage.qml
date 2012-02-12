@@ -20,8 +20,8 @@ WikionboardPage {
         if (libraryPage.addZimFile(file)) {
             pageStack.pop();
         } else {
-            var s = (backend.isTooLargeError)?qsTr("[TRANSLATOR] Explain that file \"%1\" too large for configuration. Click \"Download Wikipedia\" in Library to find out how to solve").replace("%1",file):
-                                               qsTr("Error on opening file \"%1\"\nError Message:  \"%2\"").replace("%1",file).replace("%2", backend.errorString);
+            var s = (backend.isTooLargeError)?qsTr("[TRANSLATOR] Explain that the file is too large for configuration. Click \"Download Wikipedia\" in Library to find out how to solve"):
+                                              qsTr("Error on opening file.\nError Message:  \"%1\"").replace("%1", backend.errorString);
             banner.showMessage(s)
 
         }
