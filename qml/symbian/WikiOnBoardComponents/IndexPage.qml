@@ -8,11 +8,10 @@ import WikiOnBoardModule 1.0
 WikionboardPage {
     id: index
     signal openArticle(string articleUrl)
-
+    focus: true
     function init() {
         indexListQML.setZimFileWrapper(backend.getZimFileWrapper())
     }
-
     Rectangle {
         anchors { fill: parent; bottomMargin: parent.height-articleName.height }
 
@@ -31,6 +30,24 @@ WikionboardPage {
                 console.log("TODO:Update search: "+text)
                 indexListQML.searchArticle(text)
             }            
+
+            Keys.onUpPressed: {
+                    console.log("Key up pressed")
+                    indexListQML.selectPreviousEntry()
+                    event.accepted = true
+                }
+
+            Keys.onDownPressed: {
+                    console.log("Key down pressed")
+                    indexListQML.selectNextEntry()
+                    event.accepted = true
+                }
+            Keys.onSelectPressed: {
+                    console.log("Key select pressed")
+                    indexListQML.openCurrentEntry()
+                    event.accepted = true
+                }
+
             //Symbian Workaround for always-upperercase after once clicked on article ListElement
             // If length > 0 force autouppercase off
             // (Issue 67)
@@ -80,6 +97,8 @@ WikionboardPage {
             //Note that doing this in "Activating"-phase it does not work reliable
             // (focus sometimes "stolen".
             articleName.forceActiveFocus()
+            //Does not work
+            //articleName.openSoftwareInputPanel()
         }
     }
 
@@ -93,7 +112,6 @@ WikionboardPage {
             ExitMenuItem {}
         }
     }
-
     Rectangle {
         anchors { fill: parent; topMargin: articleName.height }
         IndexListQML {
@@ -103,6 +121,7 @@ WikionboardPage {
                 index.openArticle(articleUrl);
             }
         }
-
     }
 }
+
+
