@@ -2,7 +2,6 @@ import QtQuick 1.0
 
 //SYMBIAN_SPECIFIC. For harmattan use: import com.nokia.meego 1.0
 import com.nokia.symbian 1.1
-
 import "UIConstants.js" as UI
 import WikiOnBoardModule 1.0
 
@@ -23,20 +22,21 @@ WikionboardPage {
             width: parent.width
             //SYMBIAN_ONLY
             platformLeftMargin: search.width + platformStyle.paddingSmall
-            //SYMBIAN_ONLY
+            //SYMBIAN_ONLY            
             platformRightMargin: clearText.width + platformStyle.paddingMedium * 2
             onInputMethodHintsChanged: console.log("inputMethodHints:" +inputMethodHints)
             onFocusChanged: console.log("focus: "+focus)
+            onActiveFocusChanged: console.log("activeFocus:" +activeFocus)
             onTextChanged: {
                 console.log("TODO:Update search: "+text)
                 indexListQML.searchArticle(text)
-            }
+            }            
             //Symbian Workaround for always-upperercase after once clicked on article ListElement
             // If length > 0 force autouppercase off
             // (Issue 67)
             //In addition disable Predictive Text. (Else at least on harmattan article
             // list not updated before complete word is entered)
-            inputMethodHints:(text.length===0)?Qt.ImhNoPredictiveText:Qt.ImhNoAutoUppercase|Qt.ImhNoPredictiveText
+            //inputMethodHints:(text.length===0)?Qt.ImhNoPredictiveText:Qt.ImhNoAutoUppercase|Qt.ImhNoPredictiveText
             Image {
                 id: search
                 anchors { top: parent.top; left: parent.left; margins: platformStyle.paddingMedium }
@@ -64,14 +64,22 @@ WikionboardPage {
                         articleName.text = ""
                         articleName.forceActiveFocus()
                     }
-                }
-            }
+                }                
+            }            
         }
     }
     onStatusChanged: {
         if (PageStatus.Activating == status) {
             console.log("IndexPage onStatusChanged: PageStatus.Activating")
             indexListQML.searchArticle(articleName.text)
+        }
+        if (PageStatus.Active == status) {
+            console.log("IndexPage onStatusChanged: PageStatus.Active")
+            //Set focus to allow textinput without clicking.
+            // (i.p. relevant for devices like Nokia E6)
+            //Note that doing this in "Activating"-phase it does not work reliable
+            // (focus sometimes "stolen".
+            articleName.forceActiveFocus()
         }
     }
 
