@@ -51,7 +51,8 @@ WikionboardPage {
                 id: clearText
                 fillMode: Image.PreserveAspectFit
                 smooth: true; visible: articleName.text
-                source: visual.removeToolbarIconSource
+                source: clear.pressed ? visual.clearPressedIconSource
+                                        : visual.clearNormalIconSource
                 height: parent.height - platformStyle.paddingMedium * 2
                 width: parent.height - platformStyle.paddingMedium * 2
 

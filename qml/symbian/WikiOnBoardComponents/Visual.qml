@@ -21,6 +21,9 @@ Item {
     property int scrollBarWidth: 8
     property string launcherIconSource: "./gfx/wikionboard.svg"
 
+    property string clearNormalIconSource: "image://theme/qtg_graf_textfield_clear_normal"
+    property string clearPressedIconSource: "image://theme/qtg_graf_textfield_clear_pressed"
+
     property string removeToolbarIconSource: "./gfx/toolbar-icons/remove.svg"
     property string searchToolbarIconSource: "./gfx/toolbar-icons/search.svg"
 
