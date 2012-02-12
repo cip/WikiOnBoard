@@ -225,6 +225,20 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
      }
  }
 
+ void ArticleViewer::pageUp() {
+     QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
+                                                 Qt::Key_PageUp, Qt::NoModifier, QString(), false, 1);
+     QApplication::sendEvent(this, remappedKeyEvent);
+ }
+
+ void ArticleViewer::pageDown() {
+     QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
+                                                 Qt::Key_PageDown, Qt::NoModifier, QString(), false, 1);
+     QApplication::sendEvent(this, remappedKeyEvent);
+ }
+
+
+
  void ArticleViewer::onAnchorClicked(QUrl url)
          {
          qDebug() << "onAnchorClicked: Url: " << url.toString();

@@ -48,8 +48,10 @@ public:
     void setZoomLevel(int zoomLevel);
 
     int zoomLevel() const
-        { return m_zoomLevel;}
+    { return m_zoomLevel;}
 
+    void pageUp();
+    void pageDown();
 protected:
     void hideWaitCursor();
     void showWaitCursor();

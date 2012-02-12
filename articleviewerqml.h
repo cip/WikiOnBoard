@@ -34,7 +34,6 @@ public:
         : QGraphicsProxyWidget(parent)
     {
         widget = new ArticleViewer(0,0);
-
         #if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
         #else
             //On harmattan article font size way to small,
@@ -111,6 +110,14 @@ public slots:
     bool isForwardAvailable() {
         qDebug() << "ArticleViewerQML.isForwardAvailable()";
         return widget->isForwardAvailable();
+    }
+
+    void pageDown() {
+        widget->pageDown();
+    }
+
+    void pageUp() {
+        widget->pageUp();
     }
 
 private:

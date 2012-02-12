@@ -17,6 +17,33 @@ WikionboardPage {
      property int zoomLevel
      zoomLevel: 0
 
+     Keys.onUpPressed: {
+             console.log("Key up pressed")
+             articleViewerQML.pageUp()
+             event.accepted = true
+         }
+
+     Keys.onDownPressed: {
+             console.log("Key down pressed")
+             articleViewerQML.pageDown()
+             event.accepted = true
+         }
+
+     Keys.onVolumeUpPressed:  {
+         console.log("Volume up pressed")
+         articleViewerQML.pageUp()
+         event.accepted = true
+
+
+     }
+     Keys.onVolumeDownPressed:  {
+         console.log("Volume down pressed")
+         articleViewerQML.pageDown()
+         event.accepted = true
+
+
+     }
+
      signal backwardAvailable(bool available)
      signal forwardAvailable(bool available)
      signal openExternalLink(url url)
@@ -37,6 +64,12 @@ WikionboardPage {
          }
      }
 
+     onStatusChanged: {
+         if (PageStatus.Active == status) {
+             console.log("ArticlePage onStatusChanged: PageStatus.Active")
+             forceActiveFocus()
+         }
+     }
 
      ContextMenu {
          id: textSizeMenu
