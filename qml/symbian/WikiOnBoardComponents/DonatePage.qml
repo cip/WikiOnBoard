@@ -31,33 +31,23 @@ WikionboardPage {
             anchors.left: parent.left
             anchors.right:  parent.right
             spacing: UI.LISTVIEW_MARGIN
-            Button {
+            DonateButton {
                 id: donate_1
-                anchors.horizontalCenter: parent.horizontalCenter
-                enabled: !iap.isApplicationBusy
-                text: qsTr("Donate ~1$")
-                onClicked: iap.purchaseProduct(825910)
+                productId: "825910"
             }
-            Button {
+            DonateButton {
                 id: donate_5
-                anchors.horizontalCenter: parent.horizontalCenter
-                enabled: !iap.isApplicationBusy
-                text: qsTr("Donate ~5$")
-                onClicked: iap.purchaseProduct(825911)
+                productId : "825911"
             }
-            Button {
+
+            DonateButton {
                 id: donate_10
-                anchors.horizontalCenter: parent.horizontalCenter
-                enabled: !iap.isApplicationBusy
-                text: qsTr("Donate ~10$")
-                onClicked: iap.purchaseProduct(825912)
+                productId: "825912"
             }
-            Button {
+
+            DonateButton {
                 id: donate_20
-                anchors.horizontalCenter: parent.horizontalCenter
-                enabled: !iap.isApplicationBusy
-                text: qsTr("Donate ~20$")
-                onClicked: iap.purchaseProduct(825916)
+                productId: "825916"
             }
         }
 
@@ -68,13 +58,16 @@ WikionboardPage {
             text: qsTr("[Translator] Donate media wiki")
             wrapMode: Text.WordWrap
         }
-
-
-
     }
 
     IAP {
         id: iap
+        onProductDataReceived: {
+            console.log("onProductDataReceived:  requestId:"+requestId+
+                        "status:"+ status+ " info:"+ info+ "shortdescription:"+shortdescription,
+                        "price:"+ price+" result:" +result );
+        }
+
         onPurchaseCompleted: {
             console.log("onPurchaseCompleted: requestId:"+requestId +" status:"+
                         status+" purchaseTicket:"+purchaseTicket );
