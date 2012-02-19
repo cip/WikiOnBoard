@@ -19,6 +19,7 @@
 #include "qmlapplicationviewer.h"
 #include "articleviewerqml.h"
 #include "indexlistqml.h"
+#include "iapwrapper.h"
 #include <QTranslator>
 #include <QDeclarativeContext>
 #include <QDeclarativeEngine>
@@ -86,6 +87,9 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     appInfo.insert(QLatin1String("buildDate"), QVariant(QString::fromLocal8Bit(__DATE__)));
 
     context->setContextProperty(QLatin1String("appInfo"), &appInfo);
+
+    IAPWrapper iap;
+    context->setContextProperty(QLatin1String("iap"), &iap);
 
     viewer->setMainQmlFile(QLatin1String("qml/WikiOnBoardComponents/main.qml"));
     viewer->showExpanded();
