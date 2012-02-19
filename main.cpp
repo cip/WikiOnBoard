@@ -24,6 +24,7 @@
 #include <QDeclarativeContext>
 #include <QDeclarativeEngine>
 #include <QDeclarativePropertyMap>
+#include <QTimer>
 
 //Get VERSION from qmake .pro file as string
 #define __VER1M__(x) #x
@@ -32,6 +33,8 @@
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
+    QTime timer;
+    timer.start();
     #if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
     #else
       //On harmattan default rendered (should be "meego") slow for
@@ -65,15 +68,16 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     //Note: In case of english locale the same translator is installed twice. This should however
     // not have a negative impact.
     if (translatorLocale.load(QLatin1String("wikionboard_") + locale, translationsDir)) {
-        qDebug() << "Installing transloator for locale: "<<locale;
+        qDebug() << "Installing translator for locale: "<<locale;
         app->installTranslator(&translatorLocale);
     } else {
         qDebug() << "Loading translation file for locale " << locale << " failed. (english translator is used instead)";
     }
+    qDebug() << timer.elapsed() <<" ms";
     qmlRegisterType<ZimFileWrapper>("WikiOnBoardModule", 1, 0, "ZimFileWrapper");
     qmlRegisterType<ArticleViewerQML>("WikiOnBoardModule", 1, 0, "ArticleViewerQML");
     qmlRegisterType<IndexListQML>("WikiOnBoardModule", 1, 0, "IndexListQML");
-
+    qDebug() << timer.elapsed() <<" ms" << "qml types registered";
     QScopedPointer<QmlApplicationViewer>
           viewer(QmlApplicationViewer::create());
     QDeclarativeContext *context = viewer->rootContext();
@@ -88,11 +92,13 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     context->setContextProperty(QLatin1String("appInfo"), &appInfo);
 
+    qDebug() << timer.elapsed() <<" ms " << "Application viewer created";
     IAPWrapper iap;
     context->setContextProperty(QLatin1String("iap"), &iap);
+    qDebug() << timer.elapsed() <<" ms " << "iap created";
 
     viewer->setMainQmlFile(QLatin1String("qml/WikiOnBoardComponents/main.qml"));
     viewer->showExpanded();
-
+    qDebug() << timer.elapsed() <<" ms " << "main qml set";
     return app->exec();
 }
