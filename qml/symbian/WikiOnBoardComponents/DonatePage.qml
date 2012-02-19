@@ -4,6 +4,7 @@ import QtQuick 1.1
 import com.nokia.symbian 1.1
 
 import "UIConstants.js" as UI
+import WikiOnBoardModule 1.0
 
 WikionboardPage {
     id: helpPage
@@ -72,8 +73,15 @@ WikionboardPage {
 
     }
 
-
-
-
+    IAP {
+        id: iap
+        onPurchaseCompleted: {
+            console.log("onPurchaseCompleted: requestId:"+requestId +" status:"+
+                        status+" purchaseTicket:"+purchaseTicket );
+        }
+        onPurchaseFlowFinished: {
+            console.log("onPurchaseFlowFinished. requestId:"+requestId)
+        }
+    }
 }
 

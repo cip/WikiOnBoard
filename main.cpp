@@ -78,6 +78,10 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     qmlRegisterType<ArticleViewerQML>("WikiOnBoardModule", 1, 0, "ArticleViewerQML");
     qmlRegisterType<IndexListQML>("WikiOnBoardModule", 1, 0, "IndexListQML");
     qDebug() << timer.elapsed() <<" ms" << "qml types registered";
+    qmlRegisterType<IAPWrapper>("WikiOnBoardModule", 1, 0, "IAP");
+
+    qDebug() << timer.elapsed() <<" ms " << "iap registered";
+
     QScopedPointer<QmlApplicationViewer>
           viewer(QmlApplicationViewer::create());
     QDeclarativeContext *context = viewer->rootContext();
@@ -93,9 +97,6 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     context->setContextProperty(QLatin1String("appInfo"), &appInfo);
 
     qDebug() << timer.elapsed() <<" ms " << "Application viewer created";
-    IAPWrapper iap;
-    context->setContextProperty(QLatin1String("iap"), &iap);
-    qDebug() << timer.elapsed() <<" ms " << "iap created";
 
     viewer->setMainQmlFile(QLatin1String("qml/WikiOnBoardComponents/main.qml"));
     viewer->showExpanded();
