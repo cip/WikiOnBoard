@@ -1,0 +1,8 @@
+[simulation]
+825910=simulated_ok
+825911=simulated_ok
+825912=simulated_ok
+825916=simulated_payment_declined
+
+
+

@@ -7,7 +7,7 @@ DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
 ENABLE_SPLITSCREENKEYBOARD = 0
 DEFINES += "__ENABLE_SPLITSCREENKEYBOARD__=$$ENABLE_SPLITSCREENKEYBOARD"
 
-VERSION = 2.0.00
+VERSION = 2.1.0
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 
@@ -19,12 +19,14 @@ HEADERS += \
     indexlist.h \
     articleviewerqml.h \
     indexlistqml.h \
-    QsKineticScroller.h
+    QsKineticScroller.h \
+    iapwrapper.h
 SOURCES += main.cpp \
     zimfilewrapper.cpp \
     articleviewer.cpp \
     indexlist.cpp \
-    QsKineticScroller.cpp
+    QsKineticScroller.cpp \
+    iapwrapper.cpp
 FORMS +=
 #Wikionboard should not depend on webkit.
 #Attention: Ensure that kinetic scroller has been built with this option as well.
@@ -289,3 +291,36 @@ symbian {
     # Required for S^3 SDK, else linking fails
     LIBS += -lusrt2_2.lib
 }
+
+symbian {
+# IAP only supported on symbian.
+#  (i.p. no simulator support)
+# Note that still only IAP-defines
+# restricted to symbian only
+# if else compile  for simulator fails
+# IAP Client library
+LIBS += -liapclientapi
+
+}
+CONFIG += mobility
+
+# IAP API dependency
+MOBILITY = serviceframework
+# capabilities required for IAP API
+TARGET.CAPABILITY += NetworkServices ReadDeviceData WriteDeviceData
+# dependency for Symbian^3 and later devices
+supported_platforms = \
+"; Application only supports Symbian^3" \
+"[0x20022E6D], 0, 0, 0, {\"Symbian^3\"}"
+
+symbian: {
+    iap_dependency.pkg_prerules = \
+    "; Has dependency on IAP component" \
+    "(0x200345C8), 0, 1, 1, {\"IAP\"}"
+    DEPLOYMENT += iap_dependency
+}
+
+# IAP API files to include in package
+addIapFiles.sources = ./data/IAP_VARIANTID.txt \
+                      ./data/TEST_MODE.txt
+addIapFiles.path = ./
