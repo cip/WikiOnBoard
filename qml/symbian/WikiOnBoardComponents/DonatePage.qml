@@ -10,6 +10,9 @@ WikionboardPage {
     id: helpPage
     anchors { fill: parent}
     tools: backOnlyTools
+    function getHtmlLink(caption, url) {
+        return "<a href=\"%1\">%2</a>".replace("%1",url).replace("%2",caption);
+    }
 
     Flickable {
         anchors.fill: parent
@@ -26,13 +29,16 @@ WikionboardPage {
             id: column
             anchors.left: parent.left
             anchors.right: parent.right
-            spacing: UI.LISTVIEW_MARGIN
+            spacing: UI.LISTVIEW_MARGIN*2
             Label {
                 id: donateText
                 anchors.left: parent.left
                 anchors.right:  parent.right
 
-                text: qsTr("[Translator] If you like WikiOnBoard consider donating. Click button below. Note that exact amount  depends on country, youu will see the exact amount befoire f inally making payment.")
+                text: qsTr("[TRANSLATOR] If you like WikiOnBoard\
+consider donating to express your appreciation.<br>\
+Click button below to donate easily via Nokia Store.\
+")
                 wrapMode: Text.WordWrap
             }
 
@@ -49,13 +55,13 @@ WikionboardPage {
                 DonateButton {
                     id: donate_5
                     productId : "825911"
-                    temporaryText: qsTr("Donate more", "Displayed before actual value (~5€) loaded from store")
+                    temporaryText: qsTr("Donate something", "Displayed before actual value (~5€) loaded from store")
                 }
 
                 DonateButton {
                     id: donate_10
                     productId: "825912"
-                    temporaryText: qsTr("Donate even more", "Displayed before actual value (~10€) loaded from store")
+                    temporaryText: qsTr("Donate more", "Displayed before actual value (~10€) loaded from store")
                 }
 
                 DonateButton {
@@ -69,7 +75,16 @@ WikionboardPage {
                 id: donateMediaWikiText
                 anchors.left: parent.left
                 anchors.right: parent.right
-                text: qsTr("[Translator] Donate media wiki")
+                property string donateMediaWikiUrl : qsTr("https://donate.wikipedia.org/")
+                property string donateMediaWikiCaption : qsTr("Donate to wikipedia")
+                text: qsTr("[TRANSLATOR] If you rather want to donate WikiMedia,\
+the organization operating Wikipedia, click  %1 to visit their webpage.<br>\
+Note, that WikiOnBoard is not officially affiliated with WikiMedia.").replace(
+                          "%1", getHtmlLink(donateMediaWikiCaption, donateMediaWikiUrl))
+                onLinkActivated: {
+                    openExternalLinkQueryDialog.askAndOpenUrlExternally(link, false);
+                }
+
                 wrapMode: Text.WordWrap
             }
         }
@@ -137,7 +152,7 @@ WikionboardPage {
                         id: donateText
                         anchors.left: parent.left
                         anchors.right:  parent.right
-                        text: qsTr("[Translator] Thank you for supporting WikiOnBoard")
+                        text: qsTr("[TRANSLATOR] Thank you for supporting WikiOnBoard")
                         wrapMode: Text.WordWrap
                     }
                 }

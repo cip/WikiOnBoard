@@ -22,7 +22,7 @@ TextPage {
     text: qsTr("[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. <p>\
 Click %2 to open an eBook you've copied to your mobile. <p>\
 Explain that clicking %1 opens the website \"%3\" with further instructions.<p>\
-If you like WikiOnBoard and want to support us click %4 for information how you can donate\
+If you like WikiOnBoard and want to support us click %4 for information how you can donate \
 easily via nokia store").replace(
               "%1",getHtmlLink(getEBookLinkCaption, zimDownloadUrl)).replace(
               "%2",getHtmlLink(findEBookCaption, findEBookUrl)).replace(
