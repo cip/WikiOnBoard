@@ -226,15 +226,15 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
  }
 
  void ArticleViewer::pageUp() {
-     QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-                                                 Qt::Key_PageUp, Qt::NoModifier, QString(), false, 1);
-     QApplication::sendEvent(this, remappedKeyEvent);
+     QKeyEvent pageUpEvent(QEvent::KeyPress,
+                           Qt::Key_PageUp, Qt::NoModifier, QString(), false, 1);
+     QApplication::sendEvent(this, &pageUpEvent);
  }
 
  void ArticleViewer::pageDown() {
-     QKeyEvent *remappedKeyEvent = new QKeyEvent(QEvent::KeyPress,
-                                                 Qt::Key_PageDown, Qt::NoModifier, QString(), false, 1);
-     QApplication::sendEvent(this, remappedKeyEvent);
+     QKeyEvent pageDownEvent(QEvent::KeyPress,
+                           Qt::Key_PageDown, Qt::NoModifier, QString(), false, 1);
+     QApplication::sendEvent(this, &pageDownEvent);
  }
 
 
