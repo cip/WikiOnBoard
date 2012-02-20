@@ -12,6 +12,11 @@ Button {
                                string price, string result )
     property string temporaryText
     property string storeText
+    property string error
+    error: ""
+    property string errorText
+    errorText: qsTr("Error: \"%1\"").replace(
+                   "%1",error)
     property bool initialized
     property bool busy
     //TODO perhaps better use signal
@@ -29,8 +34,13 @@ Button {
                         ": onProductDataReceived:  requestId:"+requestId+
                         "status:"+ status+ " info:"+ info+ "shortdescription:"+shortdescription,
                         "price:"+ price+" result:" +result );
-            storeText = info+" "+price
-            state = "ready"
+            if (status=="OK") {
+                storeText = info+" "+price
+                state = "ready"
+            } else {
+                error = status
+                state = "error"
+            }
         }
 
     }
@@ -49,6 +59,10 @@ Button {
               State {
               name: "ready"
               PropertyChanges { target: donateButton; enabled: true; text: storeText;busy:false}
+              },
+              State {
+                name: "error"
+                PropertyChanges { target: donateButton; enabled: true; text: errorText;busy:false}
               }
          ]
     Component.onCompleted: {
