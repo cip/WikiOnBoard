@@ -21,6 +21,7 @@
 #include <QtScroller>
 #include <QKeyEvent>
 #include <QApplication>
+#include <QScrollBar>
 
 #ifndef Q_OS_SYMBIAN
 #include "QsKineticScroller.h"
@@ -225,16 +226,32 @@ QSize ArticleViewer::getMaximumDisplaySizeInCurrentArticleForImage(QString image
      }
  }
 
- void ArticleViewer::pageUp() {
+ void ArticleViewer::pageUp() {     
+    #ifdef Q_OS_SYMBIAN
+        QtScroller::scroller(viewport())->scrollTo(
+                 QPoint(0,
+                        verticalScrollBar()->value()-
+                        verticalScrollBar()->pageStep()+
+                        verticalScrollBar()->singleStep()));
+    #else
      QKeyEvent pageUpEvent(QEvent::KeyPress,
                            Qt::Key_PageUp, Qt::NoModifier, QString(), false, 1);
      QApplication::sendEvent(this, &pageUpEvent);
+    #endif
  }
 
  void ArticleViewer::pageDown() {
-     QKeyEvent pageDownEvent(QEvent::KeyPress,
+     #ifdef Q_OS_SYMBIAN
+        QtScroller::scroller(viewport())->scrollTo(
+                 QPoint(0,
+                        verticalScrollBar()->value()+
+                        verticalScrollBar()->pageStep()-
+                        verticalScrollBar()->singleStep()));
+     #else
+        QKeyEvent pageDownEvent(QEvent::KeyPress,
                            Qt::Key_PageDown, Qt::NoModifier, QString(), false, 1);
-     QApplication::sendEvent(this, &pageDownEvent);
+        QApplication::sendEvent(this, &pageDownEvent);
+     #endif
  }
 
 
