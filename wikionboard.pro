@@ -20,13 +20,15 @@ HEADERS += \
     articleviewerqml.h \
     indexlistqml.h \
     QsKineticScroller.h \
-    iapwrapper.h
+    iapwrapper.h \
+    mediakeycaptureitem.h
 SOURCES += main.cpp \
     zimfilewrapper.cpp \
     articleviewer.cpp \
     indexlist.cpp \
     QsKineticScroller.cpp \
-    iapwrapper.cpp
+    iapwrapper.cpp \
+    mediakeycaptureitem.cpp
 FORMS +=
 #Wikionboard should not depend on webkit.
 #Attention: Ensure that kinetic scroller has been built with this option as well.
@@ -290,6 +292,12 @@ symbian {
     # Copied from QTCREATORBUG-5589
     # Required for S^3 SDK, else linking fails
     LIBS += -lusrt2_2.lib
+
+    # Required for using volume key for article scrolling
+    # Note that for symbian 5th compile it may be required
+    # to copy libs manully to qt sdk.
+    LIBS += -L\epoc32\release\armv5\lib -lremconcoreapi
+    LIBS += -L\epoc32\release\armv5\lib -lremconinterfacebase
 }
 
 # IAP dependency for Symbian^3 and later devices are taken from IAP project template 'inapppurchase'

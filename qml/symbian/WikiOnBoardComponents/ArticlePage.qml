@@ -5,6 +5,7 @@ import com.nokia.symbian 1.1
 
 import "UIConstants.js" as UI
 import WikiOnBoardModule 1.0
+import Mediakey 1.0
 
 WikionboardPage {
      id: article
@@ -17,6 +18,16 @@ WikionboardPage {
      property int zoomLevel
      zoomLevel: 0
 
+     MediakeyCapture{
+             onVolumeDownPressed: {
+                 console.log('VOLUME DOWN PRESSED ')
+                 articleViewerQML.pageDown()
+             }
+             onVolumeUpPressed: {
+                 console.log('VOLUME UP PRESSED ')
+                 articleViewerQML.pageUp()
+             }
+         }
      Keys.onUpPressed: {
              console.log("Key up pressed")
              articleViewerQML.pageUp()

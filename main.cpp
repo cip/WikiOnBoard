@@ -20,6 +20,7 @@
 #include "articleviewerqml.h"
 #include "indexlistqml.h"
 #include "iapwrapper.h"
+#include "mediakeycaptureitem.h"
 #include <QTranslator>
 #include <QDeclarativeContext>
 #include <QDeclarativeEngine>
@@ -82,6 +83,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     qmlRegisterType<IAPWrapper>("WikiOnBoardModule", 1, 0, "IAP");
 
     qDebug() << timer.elapsed() <<" ms " << "iap registered";
+    qmlRegisterType<MediakeyCaptureItem>("Mediakey", 1, 0, "MediakeyCapture");
 
     QScopedPointer<QmlApplicationViewer>
           viewer(QmlApplicationViewer::create());
