@@ -34,20 +34,24 @@ WikionboardPage {
             DonateButton {
                 id: donate_1
                 productId: "825910"
+                temporaryText: "Donate a little"
             }
             DonateButton {
                 id: donate_5
                 productId : "825911"
+                temporaryText: "Donate more"
             }
 
             DonateButton {
                 id: donate_10
                 productId: "825912"
+                temporaryText: "Donate even more"
             }
 
             DonateButton {
                 id: donate_20
                 productId: "825916"
+                temporaryText: "Donate a lot"
             }
         }
 

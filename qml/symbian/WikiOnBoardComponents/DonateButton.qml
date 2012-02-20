@@ -9,51 +9,47 @@ Button {
     signal productDataReceived( int requestId, string status,
                                string info, string shortdescription,
                                string price, string result )
-
+    property string temporaryText
+    property string storeText
     property bool initialized
     //TODO perhaps better use signal
     initialized : !iap.isApplicationBusy
-    onInitializedChanged: if (initialized) state="fetchingdata"
+    onInitializedChanged: if (initialized && state=="initializing") state="fetchingdata"
 
     requestId : -1
     anchors.horizontalCenter: parent.horizontalCenter
     text: qsTr("Loading")
     onClicked: iap.purchaseProduct(productId)
-    onEnabledChanged: {
-        if (enabled) {
-
-        }
-    }
     onProductDataReceived: {
-        console.log("productId: "+productId+", donateButton.requestId:"+donateButton.requestId+
-                    ": onProductDataReceived:  requestId:"+requestId+
-                    "status:"+ status+ " info:"+ info+ "shortdescription:"+shortdescription,
-                    "price:"+ price+" result:" +result );
-
         if (donateButton.requestId==requestId) {
-            text = info+" "+price
+            console.log("productId: "+productId+", donateButton.requestId:"+donateButton.requestId+
+                        ": onProductDataReceived:  requestId:"+requestId+
+                        "status:"+ status+ " info:"+ info+ "shortdescription:"+shortdescription,
+                        "price:"+ price+" result:" +result );
+            storeText = info+" "+price
+            state = "ready"
         }
-        state = "ready"
+
     }
     states: [
              State {
                  name: "initializing"
-                 PropertyChanges { target: donateButton; enabled: false }
+                 PropertyChanges { target: donateButton; enabled: false; text: temporaryText+"(initializing)" }
              },
               State {
               name: "fetchingdata"
               StateChangeScript {
                   script: requestId = iap.getProductData(productId);
               }
-              PropertyChanges { target: donateButton; enabled: false }
+              PropertyChanges { target: donateButton; enabled: true; text: temporaryText+"(fetching)"}
               },
               State {
               name: "ready"
-              PropertyChanges { target: donateButton; enabled: true }
+              PropertyChanges { target: donateButton; enabled: true; text: storeText }
               }
          ]
     Component.onCompleted: {
-        state="initializing"
         iap.productDataReceived.connect(productDataReceived);
+        state="initializing"
     }
 }
