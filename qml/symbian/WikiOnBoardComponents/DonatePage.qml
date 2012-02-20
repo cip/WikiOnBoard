@@ -34,24 +34,24 @@ WikionboardPage {
             DonateButton {
                 id: donate_1
                 productId: "825910"
-                temporaryText: "Donate a little"
+                temporaryText: qsTr("Donate a little", "Displayed before actual value (~1€) loaded from store")
             }
             DonateButton {
                 id: donate_5
                 productId : "825911"
-                temporaryText: "Donate more"
+                temporaryText: qsTr("Donate more", "Displayed before actual value (~5€) loaded from store")
             }
 
             DonateButton {
                 id: donate_10
                 productId: "825912"
-                temporaryText: "Donate even more"
+                temporaryText: qsTr("Donate even more", "Displayed before actual value (~10€) loaded from store")
             }
 
             DonateButton {
                 id: donate_20
                 productId: "825916"
-                temporaryText: "Donate a lot"
+                temporaryText: qsTr("Donate a lot", "Displayed before actual value (~20€) loaded from store")
             }
         }
 
