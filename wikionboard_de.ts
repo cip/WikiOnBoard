@@ -17,12 +17,12 @@
     <message>
         <source>application is self-signed</source>
         <comment>only displayed if application is self-signed</comment>
-        <translation>Anwendung ist selbst-signiert</translation>
+        <translation type="obsolete">Anwendung ist selbst-signiert</translation>
     </message>
     <message>
         <source>WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Build date: %3&lt;br&gt;Author: %2&lt;p&gt;Uses zimlib (openzim.org) and liblzma.&lt;p&gt;%4&lt;br&gt;</source>
         <comment>Use html tags for new line/paragraphs</comment>
-        <translation>WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Version vom: %3&lt;br&gt;Autor: %2&lt;br&gt;Übersetzer: Julia Pühringer&lt;p&gt;Verwendet zimlib (openzim.org) und liblzma.&lt;p&gt;%4&lt;br&gt;</translation>
+        <translation type="obsolete">WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Version vom: %3&lt;br&gt;Autor: %2&lt;br&gt;Übersetzer: Julia Pühringer&lt;p&gt;Verwendet zimlib (openzim.org) und liblzma.&lt;p&gt;%4&lt;br&gt;</translation>
     </message>
     <message>
         <source>http://cip.github.com/WikiOnBoard/</source>
@@ -31,6 +31,24 @@
     <message>
         <source>Christian Puehringer</source>
         <translation>Christian Pühringer</translation>
+    </message>
+    <message>
+        <source>Donate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>internal://donatePage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Build date: %3&lt;br&gt;Author: %2&lt;p&gt;Uses zimlib (openzim.org) and liblzma.&lt;p&gt;%4If you like WikiOnBoard and want to support us click %6 for information how you can donate easily via nokia store</source>
+        <comment>Use html tags for new line/paragraphs</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>application is self-signed</source>
+        <comment>only displayed if application is self-signed. Add &lt;p&gt; at end</comment>
+        <translation type="unfinished">Anwendung ist selbst-signiert</translation>
     </message>
 </context>
 <context>
@@ -120,6 +138,60 @@ Relation: %7</translation>
     </message>
 </context>
 <context>
+    <name>DonateButton</name>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error: &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DonatePage</name>
+    <message>
+        <source>Donate a little</source>
+        <comment>Displayed before actual value (~1â‚¬) loaded from store</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Donate a lot</source>
+        <comment>Displayed before actual value (~20â‚¬) loaded from store</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] If you like WikiOnBoardconsider donating to express your appreciation.&lt;br&gt;Click button below to donate easily via Nokia Store.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Donate something</source>
+        <comment>Displayed before actual value (~5â‚¬) loaded from store</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Donate more</source>
+        <comment>Displayed before actual value (~10â‚¬) loaded from store</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>https://donate.wikipedia.org/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Donate to wikipedia</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] If you rather want to donate WikiMedia,the organization operating Wikipedia, click  %1 to visit their webpage.&lt;br&gt;Note, that WikiOnBoard is not officially affiliated with WikiMedia.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] Thank you for supporting WikiOnBoard</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ExitMenuItem</name>
     <message>
         <source>Exit</source>
@@ -163,10 +235,22 @@ empfehlenswert die E-Books mit dem PC herunterzuladen und nicht direkt mit dem M
     </message>
     <message>
         <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile. &lt;p&gt;Explain that clicking %1 opens the website &quot;%3&quot; with further instructions.</source>
-        <translation>Wähle &quot;%1&quot; um herauszufinden, wie du die Wikipedia oder andere E-Books auf dein Mobiltelefon laden kannst.&lt;p&gt;
+        <translation type="obsolete">Wähle &quot;%1&quot; um herauszufinden, wie du die Wikipedia oder andere E-Books auf dein Mobiltelefon laden kannst.&lt;p&gt;
 Um ein E-Book zu öffnen, das du bereits auf dein Handy kopiert hast, wähle &quot;%2&quot;.&lt;p&gt;
 Anmerkung: &quot;%1&quot; öffnet die Webseite &quot;%3&quot; im Webbrowser. Da E-Books, insbesondere die Wikipedia, sehr groß sein können, ist es in jedem Fall
 empfehlenswert die E-Books mit dem PC herunterzuladen und nicht direkt mit dem Mobiltelefon.</translation>
+    </message>
+    <message>
+        <source>Donate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>internal://donatePage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile. &lt;p&gt;Explain that clicking %1 opens the website &quot;%3&quot; with further instructions.&lt;p&gt;If you like WikiOnBoard and want to support us click %4 for information how you can donate easily via nokia store</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
