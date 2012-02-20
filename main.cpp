@@ -25,6 +25,7 @@
 #include <QDeclarativeEngine>
 #include <QDeclarativePropertyMap>
 #include <QTimer>
+#include <QtScroller>
 
 //Get VERSION from qmake .pro file as string
 #define __VER1M__(x) #x
@@ -101,5 +102,11 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     viewer->setMainQmlFile(QLatin1String("qml/WikiOnBoardComponents/main.qml"));
     viewer->showExpanded();
     qDebug() << timer.elapsed() <<" ms " << "main qml set";
+    #ifdef Q_OS_SYMBIAN
+        QtScrollerProperties sp;
+        sp.setScrollMetric(QtScrollerProperties::MousePressEventDelay,  qreal(0.1));
+        sp.setScrollMetric(QtScrollerProperties::DragStartDistance,   qreal(2.5 / 1000) );
+        QtScrollerProperties::setDefaultScrollerProperties(sp);
+    #endif
     return app->exec();
 }
