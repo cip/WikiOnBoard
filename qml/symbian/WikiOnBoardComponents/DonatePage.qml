@@ -10,8 +10,14 @@ WikionboardPage {
     id: helpPage
     anchors { fill: parent}
     tools: backOnlyTools
+
     Flickable {
         anchors.fill: parent
+        anchors.leftMargin: 10
+        anchors.rightMargin: 10
+        anchors.topMargin:10
+        anchors.bottomMargin:10
+
         contentHeight : column.height
         contentWidth : width
         flickableDirection: Flickable.VerticalFlick
@@ -20,11 +26,7 @@ WikionboardPage {
             id: column
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.leftMargin: 10
-            anchors.rightMargin: 10
             spacing: UI.LISTVIEW_MARGIN
-            anchors.topMargin:10
-            anchors.bottomMargin:10
             Label {
                 id: donateText
                 anchors.left: parent.left
@@ -76,13 +78,14 @@ WikionboardPage {
     onStatusChanged: {
         if (status == PageStatus.Active) {
             console.log("DonatePage active. Call iap.initIAP()")
-            iap.initIAP()
+            iap.initIAP()            
         }
     }
 
     IAP {
         id: iap
-
+        property string lastStatus
+        lastStatus: ""
         onProductDataReceived: {
             console.log("onProductDataReceived:  requestId:"+requestId+
                         "status:"+ status+ " info:"+ info+ "shortdescription:"+shortdescription,
@@ -92,11 +95,55 @@ WikionboardPage {
         onPurchaseCompleted: {
             console.log("onPurchaseCompleted: requestId:"+requestId +" status:"+
                         status+" purchaseTicket:"+purchaseTicket );
+            lastStatus =  status
         }
         onPurchaseFlowFinished: {
-            console.log("onPurchaseFlowFinished. requestId:"+requestId)
+            console.log("onPurchaseFlowFinished. requestId:"+requestId+ " lastStatus:"+lastStatus)
+            if (lastStatus == "OK") {
+                pageStack.replace(thanksPage)
+            }
+            lastStatus = ""
+
         }
 
+    }
+
+    Component {
+        id: thanksPage
+        WikionboardPage {
+            tools: backOnlyTools
+            anchors { fill: parent}
+
+            Flickable {
+                anchors.fill: parent
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                anchors.topMargin:10
+                anchors.bottomMargin:10
+                contentHeight : column.height
+                contentWidth : width
+                flickableDirection: Flickable.VerticalFlick
+                clip: true
+                Column {
+                    id: column
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+                    spacing: UI.LISTVIEW_MARGIN
+                    anchors.topMargin:10
+                    anchors.bottomMargin:10
+                    Label {
+                        id: donateText
+                        anchors.left: parent.left
+                        anchors.right:  parent.right
+                        text: qsTr("[Translator] Thank you for supporting WikiOnBoard")
+                        wrapMode: Text.WordWrap
+                    }
+                }
+
+            }
+        }
     }
 }
 
