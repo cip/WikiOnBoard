@@ -6,17 +6,7 @@ IAPWrapper::IAPWrapper(QObject *parent) :
     m_isApplicationBusy(false),
     m_client(NULL)
 {
-    m_isApplicationBusy = true;
-    //NOTE from profiling data, instantiating IAP client takes 0.5223 seconds
-    // that is why it should be created in a worker thread
-    // another point is the following : we cannot create child object for parent in separate thread
-    // and even worse, IAPclient implements a dialog thus it must be created in GUI, main thread
-    // Taking all above into account we decided to use timer to execute 'initIAP' slot in future
-    // TODO: 10 and 100 too low. (gui not updated before iap loaded, which takes quite long
-    //        However, 500 seems a little much, try to reduce, or find alternative. (like progress indicator)
-    //        (Perhaps use QDeclarativeParserStatus?)
-    QTimer::singleShot(500, this, SLOT(initIAP()));
-
+    m_isApplicationBusy = true;    
 }
 
 IAPWrapper::~IAPWrapper()
@@ -51,7 +41,7 @@ void IAPWrapper::initIAP()
     connect(m_client, SIGNAL(purchaseFlowFinished(int)),
             this, SIGNAL(purchaseFlowFinished(int)), Qt::QueuedConnection);
     connect(m_client, SIGNAL(purchaseCompleted(int,QString,QString)),
-            SLOT(purchaseCompleted(int,QString,QString)), Qt::QueuedConnection);
+            SIGNAL(purchaseCompleted(int,QString,QString)), Qt::QueuedConnection);
     emit applicationBusyChanged();
 }
 

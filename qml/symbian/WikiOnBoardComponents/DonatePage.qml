@@ -72,8 +72,17 @@ WikionboardPage {
             }
         }
     }
+
+    onStatusChanged: {
+        if (status == PageStatus.Active) {
+            console.log("DonatePage active. Call iap.initIAP()")
+            iap.initIAP()
+        }
+    }
+
     IAP {
         id: iap
+
         onProductDataReceived: {
             console.log("onProductDataReceived:  requestId:"+requestId+
                         "status:"+ status+ " info:"+ info+ "shortdescription:"+shortdescription,
@@ -87,6 +96,7 @@ WikionboardPage {
         onPurchaseFlowFinished: {
             console.log("onPurchaseFlowFinished. requestId:"+requestId)
         }
+
     }
 }
 

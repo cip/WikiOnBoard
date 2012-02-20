@@ -56,8 +56,8 @@ signals:
     void purchaseFlowFinished( int requestId );
 
 public slots:
-private slots:
     void initIAP();
+private slots:    
     void productDataReceivedInt( int requestId, QString status, IAPClient::ProductDataHash productData );
 private:
     // In-Application Purchase API
