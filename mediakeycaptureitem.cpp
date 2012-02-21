@@ -1,5 +1,6 @@
 #include "MediaKeyCaptureItem.h"
-#ifdef Q_WS_S60
+#ifdef Q_OS_SYMBIAN
+
 
 // A private class to access Symbian RemCon API
 class MediakeyCaptureItemPrivate : public QObject, public MRemConCoreApiTargetObserver
@@ -58,4 +59,5 @@ void MediakeyCaptureItemPrivate::MrccatoCommand(TRemConCoreApiOperationId aOpera
         break;
     }
 }
-#endif // Q_WS_S60
+#endif //Q_OS_SYMBIAN
+
