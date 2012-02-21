@@ -27,6 +27,7 @@ class ArticleViewerQML : public QGraphicsProxyWidget
 {
     Q_OBJECT
     Q_PROPERTY(bool showImages READ showImages WRITE setShowImages NOTIFY showImagesChanged)
+    Q_PROPERTY(bool darkTheme READ darkTheme WRITE setDarkTheme NOTIFY darkThemeChanged)
     Q_PROPERTY(int zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)
 
 public:
@@ -35,6 +36,10 @@ public:
         : QGraphicsProxyWidget(parent)
     {
         widget = new ArticleViewer(0,0);
+        //Only effect of Qt::WA_NoSystemBackground
+        // appearantly, that area outside scrollbar bounding
+        // box is then transparent
+//        widget->setAttribute(Qt::WA_NoSystemBackground);
         setFocusPolicy(Qt::NoFocus);
         #if defined(Q_OS_SYMBIAN) || defined(Q_WS_SIMULATOR)
         #else
@@ -53,11 +58,23 @@ public:
         return widget->showImages();
     }
 
-    void setShowImages(const bool showImages)
+    bool darkTheme() const
     {
+        return widget->darkTheme();
+    }
+
+    void setShowImages(const bool showImages) {
         if (showImages != widget->showImages()) {
             widget->setShowImages(showImages);
             emit showImagesChanged(showImages);
+        }
+    }
+
+    void setDarkTheme(const bool darkTheme)
+    {
+        if (darkTheme != widget->darkTheme()) {
+            widget->setDarkTheme(darkTheme);
+            emit darkThemeChanged(darkTheme);
         }
     }
 
@@ -75,6 +92,7 @@ public:
 
 Q_SIGNALS:
      void showImagesChanged(bool showImages);
+     void darkThemeChanged(bool darkTheme);
      void zoomLevelChanged(int zoomLevel);
      void backwardAvailable ( bool available);
      void forwardAvailable ( bool available);

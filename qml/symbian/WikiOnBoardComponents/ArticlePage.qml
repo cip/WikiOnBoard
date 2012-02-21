@@ -15,6 +15,7 @@ WikionboardPage {
      // because showImages is set from javascript to load settings, which clears any binding)
      property alias showImages: showImageMenuItem.checked     
      //zoomLevel property. Same as for showImages, C++ ArticleViewerQML bound to this
+     property alias darkTheme: darkThemeMenuItem.checked
      property int zoomLevel
      zoomLevel: 0
 
@@ -147,7 +148,10 @@ WikionboardPage {
                      platformSubItemIndicator: true
                      onClicked: textSizeMenu.open()
                  }
-
+                 MenuItemCheckable {
+                     id: darkThemeMenuItem
+                     text: qsTr("Dark Theme")
+                 }
                  MenuItemCheckable {
                      id: showImageMenuItem
                      text: qsTr("Show Images")
@@ -161,6 +165,7 @@ WikionboardPage {
         anchors.fill: parent
         showImages: article.showImages
         zoomLevel: article.zoomLevel
+        darkTheme: article.darkTheme
         onBackwardAvailable: {
                console.log("onBackwardAvailable:"+available);
                article.backwardAvailable(available);

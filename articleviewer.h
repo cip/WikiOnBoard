@@ -23,6 +23,8 @@ class ArticleViewer : public QTextBrowser
 {
     Q_OBJECT
     Q_PROPERTY(bool showImages READ showImages WRITE setShowImages)
+    Q_PROPERTY(bool darkTheme READ darkTheme WRITE setDarkTheme)
+
     Q_PROPERTY(int m_zoomLevel READ zoomLevel WRITE setZoomLevel)
 public:   
     ArticleViewer(QWidget* parent = 0, ZimFileWrapper* zimFileWrapper = 0, bool hasTouchScreen = true);
@@ -41,9 +43,20 @@ public:
             reload();
         }
      }
+    void setDarkTheme(bool darkTheme) {
+        if (m_darkTheme != darkTheme) {
+            m_darkTheme = darkTheme;
+            updateTheme();
+         }
+    }
+
 
     bool showImages() const
         { return m_showImages; }
+
+    bool darkTheme() const
+        { return m_darkTheme; }
+
 
     void setZoomLevel(int zoomLevel);
 
@@ -56,12 +69,14 @@ protected:
     void hideWaitCursor();
     void showWaitCursor();
 private:
+    void updateTheme();
     ZimFileWrapper* zimFileWrapper;
     QString articleTitle;
     bool hasTouchScreen;    
     int m_zoomLevel;
     QString welcomePage;
     bool m_showImages;
+    bool m_darkTheme;
 signals:
     void openExternalLink( QUrl url);
     void articleOpened(QString articleTitle);

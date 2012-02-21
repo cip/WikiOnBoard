@@ -129,7 +129,7 @@
 IndexList::IndexList(QWidget *parent, ZimFileWrapper* zimFileWrapper, bool hasTouchScreen) :
     QListWidget(parent), zimFileWrapper(zimFileWrapper), hasTouchScreen(hasTouchScreen)
 {    
-    setStyleSheet(QLatin1String("QListWidget {background-color:white;color: black; selection-background-color: blue}"));
+    setStyleSheet(QLatin1String("QListWidget {background-color:black;color: black; selection-background-color: blue}"));
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -163,6 +163,8 @@ QString IndexList::articleListItemToString(QListWidgetItem* item) {
 
 std::pair <bool, QListWidgetItem*> IndexList::getArticleListItem(zim::File::const_iterator it) {
     QListWidgetItem* articleItem = new QListWidgetItem();
+    articleItem->setBackground(QBrush(QColor(QLatin1String("black"))));
+    articleItem->setForeground(QBrush(QColor(QLatin1String("white"))));
     if (it==zimFileWrapper->end()) {
         #ifdef DEBUG_INDEXLIST
         qDebug() << "getArticleListItem iterator points is end of article list. ";
