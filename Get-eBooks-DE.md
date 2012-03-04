@@ -27,3 +27,17 @@ Wenn du also beispielsweise eine Datei namens wikipedia.zim mit FFSJ-Lite auftei
 
 Diese Dateien müssen auf der Memory-Card im gleichen Ordner liegen. Um Wikipedia zu öffnen, genügt es eine dieser Dateien auszuwählen – egal welche. 
 
+## WikiOnBoard 2 mit Nokia Belle
+
+In WikiOnBoard 2 auf Nokia-Belle-Handys wurde das Limit von 2 GB auf 4 GB erhöht. 4 GB ist auch das Größenlimit für Dateien auf SDHC-Speicherkarten.
+
+Wenn du eine Datei aufteilen musst, weil sie größer als 4 GB ist, solltest du sie trotzdem in Teile, die kleiner als 2 GB sind, aufteilen. Es
+gibt keinen echten Nachteil, wenn die Teile kleiner sind, und es funktioniert damit auch auf älteren Geräten.
+
+Falls du aber WikiOnBoard 2 auf einem Nokia-Belle-Gerät verwendest, und du eine zim-Datei hast, die größer als 2 GB aber kleiner als 4 GB ist, kannst
+du sie direkt auf dein Handy kopieren.
+
+Anmerkung: 4 GB Dateien werden eigentlich nicht nur mit WikiOnBoard 2 auf Nokia Belle unterstützt. Zum Beispiel funktioniert es auch mit WikiOnBoard 1 auf Nokia Belle.
+Da es aber andere Abhängigkeiten geben könnte, und es sowieso wenig sinnvoll ist, eine alte WikiOnBoard-Version auf Belle zu verwenden, wollte ich das nicht versprechen.
+Ich glaube aber, dass 4-GB-Dateien mit älteren OS-Versionen wie Nokia Anna nicht funktionieren. Wenn du das trotzdem ausprobieren möchtest, würde ich mich freuen wenn,
+du mir das Ergebnis via [e-mail](mailto://cip@gmx.at) mitteilst.
