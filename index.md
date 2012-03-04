@@ -41,7 +41,7 @@ Currently only Symbian based mobile phone are supported. Most touch and non-touc
 
 WikiOnBoard is now availabe in Nokia store. Please download it using the Nokia Store App on your mobile or download it on your PC from [here](http://store.ovi.com/content/148305).
 
-Note, that on Symbian^3 devices WikiOnBoard 2 is downloaded (Note: Not released yet), while on Symbian^1 devices WikiOnBoard 1 is downloaded.
+Note, that on Symbian^3 devices WikiOnBoard 2 is downloaded, while on Symbian^1 devices WikiOnBoard 1 is downloaded.
 
 Note, that the Nokia store version is much newer than the versions in the download section of this site. 
 
