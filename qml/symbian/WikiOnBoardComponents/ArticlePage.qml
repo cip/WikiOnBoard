@@ -15,6 +15,9 @@ WikionboardPage {
      // Note that it is not possible to bind the other way around (or bidirectionally)
      // because showImages is set from javascript to load settings, which clears any binding)
      property alias showImages: showImageMenuItem.checked     
+     onShowImagesChanged: articleViewer.setShowImages(showImages);
+
+
      //zoomLevel property. Same as for showImages, C++ ArticleViewerQML bound to this
      property int zoomLevel
      zoomLevel: 0
@@ -179,18 +182,34 @@ WikionboardPage {
           preferredHeight: flickable.height
           contentsScale: 1
           smooth: false
+          function setShowImages(showImages) {
+              console.log("setShowImages. showImages: "+showImages)
+              settings.autoLoadImages = showImages;
+              reload.trigger();
+          }
+
           onLoadStarted: {
-              console.log("articleViewer onLoadStarted");
+              console.log("articleViewer onLoadStarted. url: "+url);
 
               busyIndicator.running = true;
               busyIndicator.visible = true;
           }
 
           onLoadFinished: {
-              console.log("articleViewer onLoadFinished");
+              console.log("articleViewer onLoadFinished. url: " +url);
               busyIndicator.running = false;
               busyIndicator.visible = false;
           }
+
+          onLoadFailed: {
+              console.log("articleViewer onLoadFailed");
+              busyIndicator.running = false;
+              busyIndicator.visible = false;
+              banner.showMessage(qsTr("Loading failed"));
+          }
+
+          // Without this stored images disabled not working.
+          Component.onCompleted: settings.autoLoadImages = article.showImages;
       }
      }
      ScrollBar {
@@ -228,23 +247,21 @@ WikionboardPage {
      }
 
      function backward() {
-         console.log("in ArticlePage backward")
-         articleViewer.backward()
+         console.log("in ArticlePage backward. back.enabled: "+articleViewer.back.enabled);
+         articleViewer.back.trigger();
      }
 
      function forward() {
-         console.log("in ArticlePage forward")
-         articleViewer.forward()
+         console.log("in ArticlePage forward. forward.enabled: "+articleViewer.forward.enabled);
+         articleViewer.forward.trigger();
      }
 
      function isBackwardAvailable() {
-         return false;
-         //return articleViewer.isBackwardAvailable();
+         return true; //return articleViewer.back.enabled;
      }
 
      function isForwardAvailable() {
-         return false;
-         //return articleViewer.isForwardAvailable();
+         return true; //articleViewer.forward.enabled;
      }
 
      onForwardAvailable: {
