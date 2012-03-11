@@ -21,6 +21,7 @@
 #include "indexlistqml.h"
 #include "iapwrapper.h"
 #include "mediakeycaptureitem.h"
+#include "zimreply.h"
 #include <QTranslator>
 #include <QDeclarativeContext>
 #include <QDeclarativeEngine>
@@ -28,10 +29,48 @@
 #include <QTimer>
 #include <QtScroller>
 
+#include <QNetworkAccessManager>
+#include <QDeclarativeNetworkAccessManagerFactory>
+
 //Get VERSION from qmake .pro file as string
 #define __VER1M__(x) #x
 #define __VERM__(x) __VER1M__(x)
 #define __APPVERSIONSTRING__ __VERM__(__APPVERSION__)
+
+
+
+class ZimNetworkAccessManager : public QNetworkAccessManager
+{
+public:
+    ZimNetworkAccessManager(QObject* parent = 0) : QNetworkAccessManager(parent)
+    {
+    }
+
+    virtual QNetworkReply *createRequest(Operation op, const QNetworkRequest &request, QIODevice *outgoingData)
+    {
+        qDebug() << "In ZimNetworkAccessManager::createRequest. Operation : " << op << " request.url():" << request.url();
+
+        //if (op != GetOperation || request.url().scheme() != QLatin1String("qt-render") || request.url().host() != QLatin1String("button"))
+        //TODO external links?
+        if (op != GetOperation )
+            return QNetworkAccessManager::createRequest(op, request, outgoingData);
+        return new ZimReply(this, request);
+    }
+};
+
+
+
+class MyNetworkAccessManagerFactory : public QDeclarativeNetworkAccessManagerFactory
+ {
+ public:
+     virtual QNetworkAccessManager *create(QObject *parent);
+ };
+
+QNetworkAccessManager *MyNetworkAccessManagerFactory::create(QObject *parent)
+ {
+     QNetworkAccessManager *nam = new ZimNetworkAccessManager(parent);
+     return nam;
+ }
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
@@ -100,7 +139,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     context->setContextProperty(QLatin1String("appInfo"), &appInfo);
 
     qDebug() << timer.elapsed() <<" ms " << "Application viewer created";
-
+    viewer->engine()->setNetworkAccessManagerFactory(new MyNetworkAccessManagerFactory);
     viewer->setMainQmlFile(QLatin1String("qml/WikiOnBoardComponents/main.qml"));
     viewer->showExpanded();
     qDebug() << timer.elapsed() <<" ms " << "main qml set";
@@ -112,3 +151,4 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     #endif
     return app->exec();
 }
+

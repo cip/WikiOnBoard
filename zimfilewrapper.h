@@ -26,6 +26,7 @@
 #include <QFile>
 #include <QDirIterator>
 #include <QDebug>
+#include <QMutex>
 
 //TODO define implictly shared class?
 class ZimFileWrapper : public QObject
@@ -40,6 +41,7 @@ private:
     bool m_isTooLargeError;
     QDirIterator* dirIterator;
     QString byteArray2HexQString(const QByteArray &byteArray);
+    mutable QMutex mutex;
 public:
     explicit ZimFileWrapper(QObject *parent = 0);
     ~ZimFileWrapper();

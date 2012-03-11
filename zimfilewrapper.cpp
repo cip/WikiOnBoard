@@ -14,7 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 
+
 #include "zimfilewrapper.h"
+#include <zimreply.h>
 #include <QDebug>
 #include <QStringBuilder>
 #include <QBuffer>
@@ -30,6 +32,8 @@ ZimFileWrapper::ZimFileWrapper(QObject *parent) :
     valid = false;
     m_errorStr = QString();    
     m_isTooLargeError  = false;
+    //TODO: consider replacing with cleaner solution
+    ZimReply::setZimFileWrapper(this);
 }
 ZimFileWrapper::~ZimFileWrapper(){
     delete zimFile;
@@ -38,6 +42,7 @@ ZimFileWrapper::~ZimFileWrapper(){
 
 bool ZimFileWrapper::openZimFile(QString zimFileName)
 {
+    QMutexLocker locker(&mutex);
     std::string zimfilename;
     m_errorStr = QString();
     emit errorStringChanged(m_errorStr);
@@ -171,6 +176,7 @@ QString ZimFileWrapper::getArticleTitleByUrl(QString articleUrl) {
 // this for decoded URL (as in zim file index)
 QString ZimFileWrapper::getArticleTextByUrl(QString articleUrl)
 {
+    QMutexLocker locker(&mutex);
     QString articleText = QLatin1String("ERROR");
     zim::Blob blob;
     try
@@ -207,6 +213,7 @@ QString ZimFileWrapper::getArticleTextByUrl(QString articleUrl)
 // this for decoded URL (as in zim file index)
 QPixmap ZimFileWrapper::getImageByUrl(QString imageUrl, QSize newSize)
 {
+    QMutexLocker locker(&mutex);
     QTime timer;
     QTime subTimer;
 
@@ -302,6 +309,7 @@ QPixmap ZimFileWrapper::getImageByUrl(QString imageUrl, QSize newSize)
 
 QString ZimFileWrapper::getArticleTextByTitle(QString articleTitle)
 {
+    QMutexLocker locker(&mutex);
     QString articleText = QLatin1String("ERROR");
     zim::Blob blob;
     try
