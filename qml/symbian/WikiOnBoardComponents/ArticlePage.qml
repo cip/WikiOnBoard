@@ -160,6 +160,7 @@ WikionboardPage {
      Flickable {
          id: flickable
          anchors.fill: parent
+         clip: true
          contentWidth: Math.max(parent.width,articleViewer.width)
          contentHeight: Math.max(parent.height,articleViewer.height)
      WebView {
