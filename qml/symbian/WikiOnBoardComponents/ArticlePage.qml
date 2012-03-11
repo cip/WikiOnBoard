@@ -15,6 +15,10 @@ WikionboardPage {
     // Note that it is not possible to bind the other way around (or bidirectionally)
     // because showImages is set from javascript to load settings, which clears any binding)
     property alias showImages: showImageMenuItem.checked
+
+    property alias backwardAvailable: articleViewer.backwardAvailable
+    property alias forwardAvailable: articleViewer.forwardAvailable
+
     onShowImagesChanged: articleViewer.setShowImages(showImages);
 
 
@@ -141,6 +145,7 @@ WikionboardPage {
             ToolButton {
                 id: forwardButton
                 iconSource: "toolbar-next"
+                enabled: false
                 onClicked: {
                     articlePage.forward();
                 }
@@ -177,6 +182,8 @@ WikionboardPage {
         contentHeight: Math.max(parent.height,articleViewer.height)
         WebView {
             id: articleViewer
+            property bool forwardAvailable
+            property bool backwardAvailable
             //TODO: required? behavior at least slightly different
             // (e.g. if in scroll down bounds check removed, without
             //   anchors fill works fine, with anchors fill scrolls over.
@@ -200,12 +207,15 @@ WikionboardPage {
 
                 busyIndicator.running = true;
                 busyIndicator.visible = true;
+                updateBackwardForwardAvailable();
+
             }
 
             onLoadFinished: {
                 console.log("articleViewer onLoadFinished. url: " +url);
                 busyIndicator.running = false;
                 busyIndicator.visible = false;
+                updateBackwardForwardAvailable();
             }
 
             onLoadFailed: {
@@ -213,6 +223,12 @@ WikionboardPage {
                 busyIndicator.running = false;
                 busyIndicator.visible = false;
                 banner.showMessage(qsTr("Loading failed"));
+                updateBackwardForwardAvailable();
+            }
+
+            function updateBackwardForwardAvailable() {
+                backwardAvailable = articleViewer.back.enabled;
+                forwardAvailable = articleViewer.forward.enabled;
             }
 
             function pageUp() {
@@ -240,7 +256,10 @@ WikionboardPage {
             }
 
             // Without this stored images disabled not working.
-            Component.onCompleted: settings.autoLoadImages = article.showImages;
+            Component.onCompleted: {
+                settings.autoLoadImages = article.showImages;
+                updateBackwardForwardAvailable();
+            }
         }
     }
     ScrollBar {
@@ -267,17 +286,10 @@ WikionboardPage {
         articleViewer.forward.trigger();
     }
 
-    function isBackwardAvailable() {
-        return true; //return articleViewer.back.enabled;
-    }
 
-    function isForwardAvailable() {
-        return true; //articleViewer.forward.enabled;
-    }
-
-    onForwardAvailable: {
-        console.log("onForwardAvailable. Set forwardButton enabled to : "+available);
-        forwardButton.enabled = available;
+    onForwardAvailableChanged: {
+        console.log("onForwardAvailableChanged. Set forwardButton enabled to : "+ forwardAvailable);
+        forwardButton.enabled = forwardAvailable;
     }
 
 }

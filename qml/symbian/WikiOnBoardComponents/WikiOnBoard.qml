@@ -278,9 +278,9 @@ Item {
                 openExternalLinkQueryDialog.askAndOpenUrlExternally(url, true);
             }
 
-            onBackwardAvailable: {
-                console.log("onBackwardAvailable. Set backwardButton enabled to : "+available);
-                backButton.enabled = available;
+            onBackwardAvailableChanged: {
+                console.log("onBackwardAvailable. Set backwardButton enabled to : "+backwardAvailable);
+                backButton.enabled = backwardAvailable;
             }
 
             onShowImagesChanged: Settings.setSetting("showImages",showImages);
@@ -291,7 +291,7 @@ Item {
             tools: defaultTools
             onStatusChanged: {
                 if (status == PageStatus.Activating) {
-                    backButton.enabled = isBackwardAvailable()
+                    backButton.enabled = backwardAvailable;
                 } else if (status == PageStatus.Deactivating) {
                     //Other pages currently don't have back
                     backButton.enabled= false;
