@@ -182,6 +182,8 @@ WikionboardPage {
           preferredHeight: flickable.height
           contentsScale: 1
           smooth: false
+          settings.defaultFontSize:  18 + (zoomLevel)
+          settings.minimumFontSize:  10
           function setShowImages(showImages) {
               console.log("setShowImages. showImages: "+showImages)
               settings.autoLoadImages = showImages;
