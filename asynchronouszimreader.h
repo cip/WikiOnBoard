@@ -47,17 +47,16 @@ public slots:
     QBuffer b(&saveData);
     image.save(&b, "PNG");
     return saveData;*/
-    QString text;
+    QByteArray data;
     if (zimFileWrapper->isValid()) {
         //TODO: path probably not correct
-        text = zimFileWrapper->getArticleTextByUrl(url.path());
+        data = zimFileWrapper->getDataByUrl(url.path());
     } else {
         qDebug() << "Warning: Attempt to open article while no zim file open. Article URL: TODO";
-        text = QLatin1String("<html><head></head><body>No zim file open</body></html>");
+        QString errorString = QLatin1String("<html><head></head><body>No zim file open</body></html>");
+        data = errorString.toUtf8();
     }
-    QByteArray saveData=text.toUtf8();
-
-    emit readDone(saveData);
+    emit readDone(data);
   }
 };
 

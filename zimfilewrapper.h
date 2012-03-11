@@ -52,6 +52,7 @@ Q_INVOKABLE bool openZimFile(QString zimFileName);
     zim::File::const_iterator getArticleByUrl(QString articleUrl,QChar nameSpace='A', bool closestMatchIfNotFound=true);
 
     QString getArticleTextByTitle(QString articleTitle);
+    QByteArray getDataByUrl(QString articleUrl);
     QPixmap getImageByUrl(QString imageUrl, QSize newSize=QSize());
 Q_INVOKABLE QString getMetaDataString(QString key);
     std::pair<bool, QString> getMetaData(QString key);
@@ -77,6 +78,7 @@ Q_INVOKABLE int getNamespaceCount(QString nameSpace);
     }
     Q_INVOKABLE void zimFileIterator(QString path, bool recurseSubdirs);
     Q_INVOKABLE QString nextZimFile();
+
 
 protected:
 

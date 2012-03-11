@@ -174,6 +174,47 @@ QString ZimFileWrapper::getArticleTitleByUrl(QString articleUrl) {
 
 //Note: expects encoded URL (as used in articles). Therefore don't use
 // this for decoded URL (as in zim file index)
+//TODO: getArticleTextByUrl and getimage pretty redundant now.
+QByteArray ZimFileWrapper::getDataByUrl(QString articleUrl)
+{
+    QMutexLocker locker(&mutex);
+    QByteArray data;
+    zim::Blob blob;
+    try
+    {
+        //FIXME: for now don't return closest match
+        zim::File::const_iterator it = getArticleByUrl(articleUrl,QLatin1Char('A'),false);
+        //TODO: Actually not really clean, because if URL not found just closest match displayed.
+        if (it == zimFile->end())
+            throw std::runtime_error("article not found");
+        if (it->isRedirect())
+        {
+            //Redirect stores decoded URLs. (as in index)
+            std::string articleUrlDecodedStdStr = it->getRedirectArticle().getUrl();
+            qDebug() << "Is redirect to url " << fromUTF8EncodedStdString(articleUrlDecodedStdStr);
+            zim::File::const_iterator it1 = zimFile->find('A',
+                                                          articleUrlDecodedStdStr);
+            blob = it1->getData();
+        }
+        else
+        {
+            blob = it->getData();
+        }
+        qDebug() << " Article (URL: "<< articleUrl << ", Size: "<<blob.size()<<") loaded from zim file";
+        //TODO: this copies data, which should be avoided
+        data = QByteArray(blob.data(), blob.size());
+    }
+    catch (const std::exception& e)
+    {
+        return QString::fromStdString(e.what()).toUtf8();
+    }
+
+    return data;
+}
+
+
+//Note: expects encoded URL (as used in articles). Therefore don't use
+// this for decoded URL (as in zim file index)
 QString ZimFileWrapper::getArticleTextByUrl(QString articleUrl)
 {
     QMutexLocker locker(&mutex);
@@ -351,12 +392,18 @@ zim::File::const_iterator ZimFileWrapper::getArticleByUrl(QString articleUrl,QCh
     // Url  (Without namespace /A/.), assume it is article. (Either relative or other namespace)
     if (articleUrl.startsWith(QLatin1String("/")+nameSpace+QLatin1String("/"))) {
         strippedArticleUrl=articleUrl.remove(0, 3); //Remove /A/
-        qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with /"<< nameSpace << "/./"<< nameSpace << "/ refers to article name space.";
+        qDebug() << Q_FUNC_INFO << ": articleUrl \""<<articleUrl<<"\" starts with /"<< nameSpace << "/./"<< nameSpace << "/ refers to article name space.";
 
+    } else if (articleUrl.startsWith(QLatin1String("/")+QLatin1Char('I')+QLatin1String("/"))) {
+        //FIXME: this is hack for webkit to "autodetect" namespace. May not work in all cases.
+        //      Clean up logic in case webkit finally used.
+        nameSpace = QLatin1Char('I');
+        strippedArticleUrl= strippedArticleUrl=articleUrl.remove(0, 3); //Remove /I/
+        qDebug() << Q_FUNC_INFO << ": articleUrl \""<<articleUrl<<"\". FIXME: this is hack for webkit (needs auto extract of namespace). Fix this in case webkit approach used. ";
     } else if (articleUrl.startsWith(nameSpace+QLatin1String("/"))) {
         //TODO remove this when correct behavior clarified.
         strippedArticleUrl=articleUrl.remove(0, 2); //Remove /A
-        qWarning() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with "<< nameSpace << "/. Assume "<<nameSpace<<"/ refers to article name space. ";
+        qWarning() <<Q_FUNC_INFO << ": articleUrl \""<<articleUrl<<"\" starts with "<< nameSpace << "/. Assume "<<nameSpace<<"/ refers to article name space. ";
     } else if (articleUrl.startsWith(QLatin1String("/"))) {
         // Workaround for welcomepage bug: after opening
         // welcomepage, links clicked in an article always contain welcome://.. in url.
@@ -366,19 +413,20 @@ zim::File::const_iterator ZimFileWrapper::getArticleByUrl(QString articleUrl,QCh
         // debug output is affected (actually shows stripped) but for all cases here,
         // this has not been fixed.
         strippedArticleUrl=articleUrl.remove(0, 1); //Remove /
-        qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" starts with /, but does not contain expected namespace  "<< nameSpace.toLatin1() <<". Strip / from URL and assume remaining part is relative to nameSpace "<< nameSpace;
+        qDebug() << Q_FUNC_INFO <<": articleUrl \""<<articleUrl<<"\" starts with /, but does not contain expected namespace  "<< nameSpace.toLatin1() <<". Strip / from URL and assume remaining part is relative to nameSpace "<< nameSpace;
      } else {
         strippedArticleUrl=articleUrl;
-        qDebug() << "getArticleTextByUrl: articleUrl \""<<articleUrl<<"\" does not start with "<< nameSpace.toLatin1() <<"/ or /"<< nameSpace << "/. Assume it is a relative URL to "<< nameSpace << "/";
+        qDebug() << Q_FUNC_INFO <<": articleUrl \""<<articleUrl<<"\" does not start with "<< nameSpace.toLatin1() <<"/ or /"<< nameSpace << "/. Assume it is a relative URL to "<< nameSpace << "/";
     }
 
     std::string articleUrlStdStr = std::string(strippedArticleUrl.toUtf8());
     std::string articleUrlDecodedStdStr = zim::urldecode(articleUrlStdStr);
-    qDebug() << "Open article by URL.\n QString: " << articleUrl
+    qDebug() << "Open data by URL.\n QString: " << articleUrl
              << "QString article namespace stripped:" << strippedArticleUrl
              << "\n std:string: " << fromUTF8EncodedStdString(articleUrlStdStr)
              << "\n decoded: " << fromUTF8EncodedStdString(
-                    articleUrlDecodedStdStr);
+                    articleUrlDecodedStdStr)
+             << "\n nameSpace: " <<nameSpace;
 
 
     std::pair<bool, zim::File::const_iterator> r = zimFile->findx(nameSpace.toLatin1(), articleUrlDecodedStdStr);
