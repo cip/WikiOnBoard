@@ -1,4 +1,5 @@
 import QtQuick 1.1
+import QtWebKit 1.0
 
 //SYMBIAN_SPECIFIC. For harmattan use: import com.nokia.meego 1.0
 import com.nokia.symbian 1.1
@@ -59,7 +60,7 @@ WikionboardPage {
      signal forwardAvailable(bool available)
      signal openExternalLink(url url)
      function init() {
-        articleViewerQML.setZimFileWrapper(backend.getZimFileWrapper())
+        //articleViewerQML.setZimFileWrapper(backend.getZimFileWrapper())
      }
 
      function openMenu() {
@@ -156,6 +157,21 @@ WikionboardPage {
              }
          }
 
+     Flickable {
+         id: flickable
+         anchors.fill: parent
+         contentWidth: Math.max(parent.width,articleViewer.width)
+         contentHeight: Math.max(parent.height,articleViewer.height)
+     WebView {
+          id: articleViewer
+          url: ""
+          preferredWidth: flickable.width
+          preferredHeight: flickable.height
+          contentsScale: 1
+          smooth: false
+      }
+     }
+     /*
      ArticleViewerQML {
         id: articleViewerQML
         anchors.fill: parent
@@ -174,29 +190,35 @@ WikionboardPage {
             console.log("onOpenExternalLink:"+url);
             article.openExternalLink(url);
         }
-     }
+     }*/
 
      function openArticle(articleUrl) {
          console.log("in ArticlePage openArticle. Url:"+articleUrl)
-         articleViewerQML.openArticle(articleUrl)
+         //TODO: appending file:/// to article url seems to work, but
+         // not really understood why, and may not work  in all cases.
+         // (Just using articleUrl does not work, because it adds absolute path)
+         var fileUrl = "file:///"+articleUrl;
+         articleViewer.url=fileUrl;
      }
 
      function backward() {
          console.log("in ArticlePage backward")
-         articleViewerQML.backward()
+         articleViewer.backward()
      }
 
      function forward() {
          console.log("in ArticlePage forward")
-         articleViewerQML.forward()
+         articleViewer.forward()
      }
 
      function isBackwardAvailable() {
-         return articleViewerQML.isBackwardAvailable();
+         return false;
+         //return articleViewer.isBackwardAvailable();
      }
 
      function isForwardAvailable() {
-         return articleViewerQML.isForwardAvailable();
+         return false;
+         //return articleViewer.isForwardAvailable();
      }
 
      onForwardAvailable: {
