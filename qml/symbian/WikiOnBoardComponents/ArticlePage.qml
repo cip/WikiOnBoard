@@ -193,6 +193,10 @@ WikionboardPage {
           }
       }
      }
+     ScrollBar {
+        flickableItem: flickable
+        anchors { right: flickable.right; top: flickable.top }
+     }
      /*
      ArticleViewerQML {
         id: articleViewerQML
