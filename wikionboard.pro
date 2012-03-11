@@ -1,19 +1,23 @@
 #Set to 1 or 0. Changes UID used, and SwEvent Capability requested only if not selfsigned.
-#IS_SELFSIGNED = 1
-IS_SELFSIGNED = 0
+IS_SELFSIGNED = 1
+#IS_SELFSIGNED = 0
 DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
 #Set to 1 or 0. Set to 1 to enable split screen keyboard support (Symbian^3)
 # Note that feature should not be used for released version (see https://github.com/cip/WikiOnBoard/issues/51 )
 ENABLE_SPLITSCREENKEYBOARD = 0
 DEFINES += "__ENABLE_SPLITSCREENKEYBOARD__=$$ENABLE_SPLITSCREENKEYBOARD"
 
-VERSION = 2.1.0
+VERSION = 2.1.50
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 
 QT += core \
     gui \
-    network
+    network \
+    webkit
+
+# Note that kinetic scroller should still been built with the CONFIG +=no-webkit
+# as it is not used for webkit kinetic scrolling.
 
 HEADERS += \
     zimfilewrapper.h \
@@ -24,7 +28,8 @@ HEADERS += \
     QsKineticScroller.h \
     iapwrapper.h \
     mediakeycaptureitem.h \
-    zimreply.h
+    zimreply.h \
+    asynchronouszimreader.h
 SOURCES += main.cpp \
     zimfilewrapper.cpp \
     articleviewer.cpp \
@@ -32,12 +37,10 @@ SOURCES += main.cpp \
     QsKineticScroller.cpp \
     iapwrapper.cpp \
     mediakeycaptureitem.cpp \
-    zimreply.cpp
+    zimreply.cpp \
+    asynchronouszimreader.cpp
 
 FORMS +=
-#Wikionboard should not depend on webkit.
-#Attention: Ensure that kinetic scroller has been built with this option as well.
-CONFIG +=no-webkit
 
 simulator {
     INCLUDEPATH *= ../kineticscroller/include

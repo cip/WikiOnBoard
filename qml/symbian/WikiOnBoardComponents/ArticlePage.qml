@@ -254,6 +254,11 @@ WikionboardPage {
                 }
                 flickable.contentY = yv
             }
+            //FIXME: implement external link functionality
+            //onOpenExternalLink: {
+            //    console.log("onOpenExternalLink:"+url);
+            //    article.openExternalLink(url);
+            //}
 
             // Without this stored images disabled not working.
             Component.onCompleted: {

@@ -36,17 +36,6 @@ public slots:
   void readFromZimFile(const QUrl& url) {
     qDebug() << Q_FUNC_INFO << QThread::currentThreadId(); // Worker Thread
 
-    /*
-    QImage image(size, QImage::Format_ARGB32_Premultiplied);
-    image.fill(0);
-    QPainter painter(&image);
-    QPainterPath path;
-    path.addRoundedRect(QRectF(QPoint(0, 0), size), radius, radius);
-    painter.fillPath(path, QBrush(color, style));
-    QByteArray saveData;
-    QBuffer b(&saveData);
-    image.save(&b, "PNG");
-    return saveData;*/
     QByteArray data;
     if (zimFileWrapper->isValid()) {
         //TODO: path probably not correct

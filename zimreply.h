@@ -12,7 +12,6 @@ class ZimReply : public QNetworkReply
     Q_OBJECT
 private:
     static ZimFileWrapper* zimFileWrapper;
-    static AsynchronousZimReader* zimReader;
 
 public:
     ZimReply(QObject* object, const QNetworkRequest& request)
@@ -49,8 +48,10 @@ public:
         if (!ok)
             size.setHeight(100);
         qDebug() <<"Creating AsynchronousZimReader";
-        //FIXME: create thread only once
-         AsynchronousZimReader *zimReader = new AsynchronousZimReader(this,ZimReply::zimFileWrapper);
+        //TODO: check whether can be optimized reusing thread.
+        // (Would require that requests are strictly sequential,
+        // which is doubtful)
+        AsynchronousZimReader *zimReader = new AsynchronousZimReader(this,ZimReply::zimFileWrapper);
 
         connect(zimReader, SIGNAL(readDone(QByteArray)),
                 SLOT(readFromZimFileDone(QByteArray)));
@@ -90,10 +91,7 @@ public:
 
 
     static void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {
-        ZimReply::zimFileWrapper = zimFileWrapper;
-           //FIXME: Memory leak
-        //ZimReply::zimReader = new AsynchronousZimReader();
-
+        ZimReply::zimFileWrapper = zimFileWrapper;        
     }
 
     static ZimFileWrapper* getZimFileWrapper() {
