@@ -25,35 +25,35 @@ WikionboardPage {
      MediakeyCapture{
              onVolumeDownPressed: {
                  console.log('VOLUME DOWN PRESSED ')
-                 articleViewerQML.pageDown()
+                 articleViewer.pageDown()
              }
              onVolumeUpPressed: {
                  console.log('VOLUME UP PRESSED ')
-                 articleViewerQML.pageUp()
+                 articleViewer.pageUp()
              }
          }
      Keys.onUpPressed: {
              console.log("Key up pressed")
-             articleViewerQML.pageUp()
+             articleViewer.pageUp()
              event.accepted = true
          }
 
      Keys.onDownPressed: {
              console.log("Key down pressed")
-             articleViewerQML.pageDown()
+             articleViewer.pageDown()
              event.accepted = true
          }
 
      Keys.onVolumeUpPressed:  {
          console.log("Volume up pressed")
-         articleViewerQML.pageUp()
+         articleViewer.pageUp()
          event.accepted = true
 
 
      }
      Keys.onVolumeDownPressed:  {
          console.log("Volume down pressed")
-         articleViewerQML.pageDown()
+         articleViewer.pageDown()
          event.accepted = true
 
 
@@ -177,6 +177,11 @@ WikionboardPage {
          contentHeight: Math.max(parent.height,articleViewer.height)
      WebView {
           id: articleViewer
+          //TODO: required? behavior at least slightly different
+          // (e.g. if in scroll down bounds check removed, without
+          //   anchors fill works fine, with anchors fill scrolls over.
+
+          //anchors.fill: parent
           url: ""
           preferredWidth: flickable.width
           preferredHeight: flickable.height
@@ -208,6 +213,30 @@ WikionboardPage {
               busyIndicator.running = false;
               busyIndicator.visible = false;
               banner.showMessage(qsTr("Loading failed"));
+          }
+
+          function pageUp() {
+              if (flickable.contentY == 0) {
+                  return
+              }
+              var yv = flickable.contentY - flickable.height +
+                      articleViewer.settings.defaultFontSize;
+              if (yv < 0) {
+                  yv = 0
+              }
+              flickable.contentY = yv
+          }
+
+          function pageDown() {
+              if (flickable.contentY + flickable.height >= contentsSize.height) {
+                  return
+              }
+              var yv = flickable.contentY + flickable.height -
+                      articleViewer.settings.defaultFontSize;
+              if (yv + flickable.height > contentsSize.height) {
+                  yv = contentsSize.height - flickable.height
+              }
+              flickable.contentY = yv
           }
 
           // Without this stored images disabled not working.
