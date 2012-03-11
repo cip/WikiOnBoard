@@ -157,6 +157,15 @@ WikionboardPage {
              }
          }
 
+     BusyIndicator {
+         id: busyIndicator
+         running: false
+         visible: false
+         anchors.left: parent.left
+         anchors.top: parent.top
+         z: 10
+     }
+
      Flickable {
          id: flickable
          anchors.fill: parent
@@ -170,6 +179,18 @@ WikionboardPage {
           preferredHeight: flickable.height
           contentsScale: 1
           smooth: false
+          onLoadStarted: {
+              console.log("articleViewer onLoadStarted");
+
+              busyIndicator.running = true;
+              busyIndicator.visible = true;
+          }
+
+          onLoadFinished: {
+              console.log("articleViewer onLoadFinished");
+              busyIndicator.running = false;
+              busyIndicator.visible = false;
+          }
       }
      }
      /*
