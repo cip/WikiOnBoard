@@ -1,17 +1,19 @@
 #include <zimfilewrapper.h>
 #include <QNetworkReply>
 #include <QBuffer>
-#include <QtConcurrentRun>
-#include <QFutureWatcher>
 #include <QPainter>
 #include <QImage>
 #include <QColor>
+#include <QThread>
+#include <asynchronouszimreader.h>
 
 class ZimReply : public QNetworkReply
 {
     Q_OBJECT
 private:
     static ZimFileWrapper* zimFileWrapper;
+    static AsynchronousZimReader* zimReader;
+
 public:
     ZimReply(QObject* object, const QNetworkRequest& request)
         : QNetworkReply(object)
@@ -46,9 +48,13 @@ public:
         size.setHeight(heightString.toInt(&ok));
         if (!ok)
             size.setHeight(100);
-        connect(&watcher, SIGNAL(finished()), SLOT(readFromZimFileDone()));
-        QFuture<QByteArray> future = QtConcurrent::run<QByteArray>(readFromZimFile, request.url());
-        watcher.setFuture(future);
+        qDebug() <<"Creating AsynchronousZimReader";
+        //FIXME: create thread only once
+         AsynchronousZimReader *zimReader = new AsynchronousZimReader(this,ZimReply::zimFileWrapper);
+
+        connect(zimReader, SIGNAL(readDone(QByteArray)),
+                SLOT(readFromZimFileDone(QByteArray)));
+        zimReader->readAsync(request.url());
     }
 
     qint64 readData(char* data, qint64 maxSize)
@@ -83,34 +89,11 @@ public:
     }
 
 
-    static QByteArray readFromZimFile(const QUrl& url)
-    {
-        /*
-        QImage image(size, QImage::Format_ARGB32_Premultiplied);
-        image.fill(0);
-        QPainter painter(&image);
-        QPainterPath path;
-        path.addRoundedRect(QRectF(QPoint(0, 0), size), radius, radius);
-        painter.fillPath(path, QBrush(color, style));
-        QByteArray saveData;
-        QBuffer b(&saveData);
-        image.save(&b, "PNG");
-        return saveData;*/
-
-        QString text;
-        if (ZimReply::zimFileWrapper->isValid()) {
-            //TODO: path probably not correct
-            text = ZimReply::zimFileWrapper->getArticleTextByUrl(url.path());
-        } else {
-            qDebug() << "Warning: Attempt to open article while no zim file open. Article URL: TODO";
-            text = QLatin1String("<html><head></head><body>No zim file open</body></html>");
-        }
-        QByteArray saveData=text.toUtf8();
-        return saveData;
-    }
-
     static void setZimFileWrapper(ZimFileWrapper* zimFileWrapper) {
         ZimReply::zimFileWrapper = zimFileWrapper;
+           //FIXME: Memory leak
+        //ZimReply::zimReader = new AsynchronousZimReader();
+
     }
 
     static ZimFileWrapper* getZimFileWrapper() {
@@ -118,11 +101,11 @@ public:
     }
 
 public slots:
-    void readFromZimFileDone()
+    void readFromZimFileDone(const QByteArray& data)
     {
         setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("text/html"));
         position = 0;
-        buffer = watcher.result();
+        buffer = data;
         emit readyRead();
         emit finished();
     }
@@ -133,7 +116,6 @@ public slots:
 public:
     QNetworkReply* rawReply;
 private:
-    QFutureWatcher<QByteArray> watcher;
     QByteArray buffer;
     int position;
 
