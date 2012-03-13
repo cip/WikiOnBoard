@@ -195,13 +195,36 @@ WikionboardPage {
             contentsScale: 1
             smooth: false
             settings.defaultFontSize:  18 + (zoomLevel)
-            settings.minimumFontSize:  10
+            settings.minimumFontSize:  19
             function setShowImages(showImages) {
                 console.log("setShowImages. showImages: "+showImages)
                 settings.autoLoadImages = showImages;
                 reload.trigger();
             }
+            javaScriptWindowObjects: [
+                QtObject {
+                                        //Provide console log to javascript functionality
+                                        // (Appearantly else at least on symbian console log
+                                        //  produces not output)
+                                        // Note that in cordova-qt there is a console plugin
+                                        // with the same objective, but implementing
+                                        // it here does not require adding js/plugin
+                                        WebView.windowObjectName: "console"
 
+                                        function log(msg) {
+                                            console.log("[JSLOG] "+msg);
+                                        }
+                                    },
+                QtObject {
+                                        WebView.windowObjectName: "webView"
+                                        function scrollTo(y) {
+                                            console.log("[JSLOG] scrollTo y:"+y);
+                                            flickable.contentY = y
+
+                                        }
+                                    }
+
+            ]
             onLoadStarted: {
                 console.log("articleViewer onLoadStarted. url: "+url);
 
@@ -216,6 +239,25 @@ WikionboardPage {
                 busyIndicator.running = false;
                 busyIndicator.visible = false;
                 updateBackwardForwardAvailable();
+                 var c= "\
+                        function getOffset( el ) {\
+                            var _x = 0;\
+                            var _y = 0;\
+                            while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {\
+                                _x += el.offsetLeft - el.scrollLeft;\
+                                _y += el.offsetTop - el.scrollTop;\
+                                el = el.offsetParent;\
+                        }                   \
+                        return { top: _y, left: _x };\
+                        }\
+                        \
+                        var allLinks = document.querySelectorAll('a'); \
+                        for (var i=0; i<allLinks.length; i++){\
+                              allLinks[i].onclick = function () {console.log(this+'.onclick top:'+ getOffset(this).top);event.preventDefault();webView.scrollTo(getOffset(this).top);}\
+                  }"
+                var r= evaluateJavaScript(c);
+                console.log("result: "+r+ " for javascript\n"+c);
+
             }
 
             onLoadFailed: {
