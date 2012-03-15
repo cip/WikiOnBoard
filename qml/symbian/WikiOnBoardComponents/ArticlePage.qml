@@ -247,13 +247,22 @@ WikionboardPage {
                                 _x += el.offsetLeft - el.scrollLeft;\
                                 _y += el.offsetTop - el.scrollTop;\
                                 el = el.offsetParent;\
-                        }                   \
+                            }                   \
                         return { top: _y, left: _x };\
                         }\
                         \
+                        function scrollToLink() {\
+                                console.log(this+'.onclick');\
+                                var target = document.querySelector(this.hash); \
+                                console.log('target:'+target);\
+                                var targetOffset = getOffset(target);\
+                                console.log('targetOffset.top:'+ targetOffset.top);\
+                                event.preventDefault();\
+                                webView.scrollTo(targetOffset.top);\
+                        }\
                         var allLinks = document.querySelectorAll('a[href*=\"#\"]'); \
                         for (var i=0; i<allLinks.length; i++){\
-                              allLinks[i].onclick = function () {console.log(this+'.onclick top:'+ getOffset(this).top);event.preventDefault();webView.scrollTo(getOffset(this).top);}\
+                              allLinks[i].onclick = scrollToLink;\
                   }"
                 var r= evaluateJavaScript(c);
                 console.log("result: "+r+ " for javascript\n"+c);
