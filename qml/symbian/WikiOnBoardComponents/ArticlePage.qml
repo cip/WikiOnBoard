@@ -251,7 +251,7 @@ WikionboardPage {
                         return { top: _y, left: _x };\
                         }\
                         \
-                        var allLinks = document.querySelectorAll('a'); \
+                        var allLinks = document.querySelectorAll('a[href*=\"#\"]'); \
                         for (var i=0; i<allLinks.length; i++){\
                               allLinks[i].onclick = function () {console.log(this+'.onclick top:'+ getOffset(this).top);event.preventDefault();webView.scrollTo(getOffset(this).top);}\
                   }"
