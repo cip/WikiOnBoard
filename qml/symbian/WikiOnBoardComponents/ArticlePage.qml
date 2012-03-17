@@ -184,6 +184,7 @@ WikionboardPage {
             id: articleViewer
             property bool forwardAvailable
             property bool backwardAvailable
+            property date creationDate: new Date()
             //TODO: required? behavior at least slightly different
             // (e.g. if in scroll down bounds check removed, without
             //   anchors fill works fine, with anchors fill scrolls over.
@@ -196,8 +197,9 @@ WikionboardPage {
             smooth: false
             settings.defaultFontSize:  18 + (zoomLevel)
             settings.minimumFontSize:  19
+
             function setShowImages(showImages) {
-                console.log("setShowImages. showImages: "+showImages)
+                log("setShowImages. showImages: "+showImages)
                 settings.autoLoadImages = showImages;
                 reload.trigger();
             }
@@ -211,8 +213,8 @@ WikionboardPage {
                                         // it here does not require adding js/plugin
                                         WebView.windowObjectName: "console"
 
-                                        function log(msg) {
-                                            console.log("[JSLOG] "+msg);
+                                        function log(msg) {                                            
+                                            console.log("[JSLOG] "+ articleViewer.getMilisecondsSinceCreation() +" ms " +msg);
                                         }
                                     },
                 QtObject {
@@ -226,7 +228,7 @@ WikionboardPage {
 
             ]
             onLoadStarted: {
-                console.log("articleViewer onLoadStarted. url: "+url);
+                log("articleViewer onLoadStarted. url: "+url);
 
                 busyIndicator.running = true;
                 busyIndicator.visible = true;
@@ -235,18 +237,21 @@ WikionboardPage {
             }
 
             onLoadFinished: {
-                console.log("articleViewer onLoadFinished. url: " +url);
+                log("articleViewer onLoadFinished. url: " +url);
                 busyIndicator.running = false;
-                busyIndicator.visible = false;
+                busyIndicator.visible = false;                
                 updateBackwardForwardAvailable();
+                log("onLoadFinished: Before setBackground");
                 setBackground();
+                log("onLoadFinished: After setBackground, before patchAnchors");
                 patchAnchors();
+                log("onLoadFinished: After patchAnchors");
             }
 
 
 
             onLoadFailed: {
-                console.log("articleViewer onLoadFailed");
+                log("articleViewer onLoadFailed");
                 busyIndicator.running = false;
                 busyIndicator.visible = false;
                 banner.showMessage(qsTr("Loading failed"));
@@ -300,8 +305,6 @@ if (!document.body.style.backgroundColor)  { \
                               allLinks[i].onclick = scrollToLink;\
                   }"
                 var r= evaluateJavaScript(c);
-                console.log("result: "+r+ " for javascript\n"+c);
-
             }
 
             function pageUp() {
@@ -337,6 +340,13 @@ if (!document.body.style.backgroundColor)  { \
             Component.onCompleted: {
                 settings.autoLoadImages = article.showImages;
                 updateBackwardForwardAvailable();
+            }
+            function log(s) {
+                console.log("[QMLLOG] " +getMilisecondsSinceCreation()+" ms:"+s);
+            }
+
+            function getMilisecondsSinceCreation() {
+                return new Date()-creationDate;
             }
         }
     }
