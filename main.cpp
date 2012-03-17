@@ -124,9 +124,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     qDebug() << timer.elapsed() <<" ms " << "iap registered";
     qmlRegisterType<MediakeyCaptureItem>("Mediakey", 1, 0, "MediakeyCapture");
 
-    QScopedPointer<QmlApplicationViewer>
-          viewer(QmlApplicationViewer::create());
-    QDeclarativeContext *context = viewer->rootContext();
+    QmlApplicationViewer viewer;
+    QDeclarativeContext *context = viewer.rootContext();
     QDeclarativePropertyMap appInfo;
     appInfo.insert(QLatin1String("version"), QVariant(QString::fromLocal8Bit(__APPVERSIONSTRING__)));
     bool isSelfSigned= false;
@@ -139,9 +138,9 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     context->setContextProperty(QLatin1String("appInfo"), &appInfo);
 
     qDebug() << timer.elapsed() <<" ms " << "Application viewer created";
-    viewer->engine()->setNetworkAccessManagerFactory(new MyNetworkAccessManagerFactory);
-    viewer->setMainQmlFile(QLatin1String("qml/WikiOnBoardComponents/main.qml"));
-    viewer->showExpanded();
+    viewer.engine()->setNetworkAccessManagerFactory(new MyNetworkAccessManagerFactory);
+    viewer.setMainQmlFile(QLatin1String("qml/WikiOnBoardComponents/main.qml"));
+    viewer.showExpanded();
     qDebug() << timer.elapsed() <<" ms " << "main qml set";
     #ifdef Q_OS_SYMBIAN
         QtScrollerProperties sp;
