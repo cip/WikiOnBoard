@@ -165,17 +165,22 @@ WikionboardPage {
         }
     }
 
-    BusyIndicator {
-        id: busyIndicator
-        running: false
-        visible: false
-        anchors.left: parent.left
-        anchors.top: parent.top
-        z: 10
-    }
+    ProgressBar {
+         id: progressBar
+         anchors.top:parent.top
+         anchors.left: parent.left
+         anchors.right: parent.right
+         anchors.leftMargin: 5
+         anchors.rightMargin: 5
+         minimumValue: 0
+         maximumValue: 1
+         z: 1
+         visible: false
+         value: articleViewer.progress
+     }
 
     Flickable {
-        id: flickable
+        id: flickable        
         anchors.fill: parent
         clip: true
         contentWidth: Math.max(parent.width,articleViewer.width)
@@ -190,6 +195,7 @@ WikionboardPage {
             //   anchors fill works fine, with anchors fill scrolls over.
 
             //anchors.fill: parent
+            onProgressChanged: console.log("progress:"+progress);
             url: ""
             preferredWidth: flickable.width
             preferredHeight: flickable.height
@@ -244,16 +250,14 @@ WikionboardPage {
             onLoadStarted: {
                 log("articleViewer onLoadStarted. url: "+url);
 
-                busyIndicator.running = true;
-                busyIndicator.visible = true;
+                progressBar.visible = true;
                 updateBackwardForwardAvailable();
 
             }
 
             onLoadFinished: {
                 log("articleViewer onLoadFinished. url: " +url);
-                busyIndicator.running = false;
-                busyIndicator.visible = false;                
+                progressBar.visible = false;
                 updateBackwardForwardAvailable();
                 log("onLoadFinished: Before setBackground");
                 setBackground();
@@ -268,8 +272,7 @@ WikionboardPage {
 
             onLoadFailed: {
                 log("articleViewer onLoadFailed");
-                busyIndicator.running = false;
-                busyIndicator.visible = false;
+                progressBar.visible = false;
                 banner.showMessage(qsTr("Loading failed"));
                 updateBackwardForwardAvailable();
             }
