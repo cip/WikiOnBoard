@@ -224,6 +224,10 @@ WikionboardPage {
                                             flickable.contentY = y
 
                                         }
+                                        function openExternalLink(url) {
+                                            article.openExternalLink(url);
+                                        }
+
                                         //Use in querySelector, because css selector
                                         //must not contain . and :. In wikipedia .
                                         //are used to encode non ascii chars.
@@ -255,7 +259,9 @@ WikionboardPage {
                 setBackground();
                 log("onLoadFinished: After setBackground, before patchAnchors");
                 patchAnchors();
-                log("onLoadFinished: After patchAnchors");
+                log("onLoadFinished: After patchAnchors, before patchExternalLinks");
+                patchExternalLinks();
+                log("onLoadFinished: After patchExternalLinks");
             }
 
 
@@ -289,6 +295,19 @@ if (!document.body.style.backgroundColor)  { \
      document.body.style.backgroundColor='white';\
 }");
             }
+            function patchExternalLinks() {
+                var c= "\
+                function openExternalLink() {\
+                    event.preventDefault();\
+                    webView.openExternalLink(this.href);\
+                }\
+                var externalLinks = document.querySelectorAll('a[href^=\"http\"]');\
+                for (var i=0; i<externalLinks.length; i++){\
+                    externalLinks[i].onclick = openExternalLink;\
+                }";
+                evaluateJavaScript(c);
+            }
+
             function patchAnchors() {
                  var c= "\
                         function getOffset( el ) {\
@@ -346,11 +365,6 @@ if (!document.body.style.backgroundColor)  { \
                 }
                 flickable.contentY = yv
             }
-            //FIXME: implement external link functionality
-            //onOpenExternalLink: {
-            //    console.log("onOpenExternalLink:"+url);
-            //    article.openExternalLink(url);
-            //}
 
             // Without this stored images disabled not working.
             Component.onCompleted: {
