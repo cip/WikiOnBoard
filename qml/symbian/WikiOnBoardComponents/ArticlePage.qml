@@ -257,6 +257,8 @@ WikionboardPage {
                 banner.showMessage(qsTr("Loading failed"));
                 updateBackwardForwardAvailable();
             }
+            onAlert: {log("alert:"+message);banner.showMessage(message)}
+
 
             function updateBackwardForwardAvailable() {
                 backwardAvailable = articleViewer.back.enabled;
@@ -294,11 +296,15 @@ if (!document.body.style.backgroundColor)  { \
                         function scrollToLink() {\
                                 console.log(this+'.onclick');\
                                 var target = document.querySelector(this.hash); \
-                                console.log('target:'+target);\
-                                var targetOffset = getOffset(target);\
-                                console.log('targetOffset.top:'+ targetOffset.top);\
-                                event.preventDefault();\
-                                webView.scrollTo(targetOffset.top);\
+                                if (target) {\
+                                    console.log('target:'+target);\
+                                    var targetOffset = getOffset(target);\
+                                    console.log('targetOffset.top:'+ targetOffset.top);\
+                                    event.preventDefault();\
+                                    webView.scrollTo(targetOffset.top); \
+                                } else {\
+                                    alert('Could not find link target: '+this);\
+                                }\
                         }\
                         var allLinks = document.querySelectorAll('a[href*=\"#\"]'); \
                         for (var i=0; i<allLinks.length; i++){\
