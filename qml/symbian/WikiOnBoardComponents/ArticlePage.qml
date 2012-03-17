@@ -226,8 +226,8 @@ WikionboardPage {
                 QtObject {
                                         WebView.windowObjectName: "webView"
                                         function scrollTo(y) {
-                                            console.log("[JSLOG] scrollTo y:"+y);
-                                            flickable.contentY = y
+                                            console.log("[JSLOG] scrollTo y:"+y);                                            
+                                            flickable.contentY = Math.min(y,flickable.contentHeight-flickable.height);
 
                                         }
                                         function openExternalLink(url) {
