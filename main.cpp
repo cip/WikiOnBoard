@@ -17,7 +17,6 @@
 #include <QtGui/QApplication>
 #include <qdeclarative.h>
 #include "qmlapplicationviewer.h"
-#include "articleviewerqml.h"
 #include "indexlistqml.h"
 #include "iapwrapper.h"
 #include "mediakeycaptureitem.h"
@@ -116,7 +115,6 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     }
     qDebug() << timer.elapsed() <<" ms";
     qmlRegisterType<ZimFileWrapper>("WikiOnBoardModule", 1, 0, "ZimFileWrapper");
-    qmlRegisterType<ArticleViewerQML>("WikiOnBoardModule", 1, 0, "ArticleViewerQML");
     qmlRegisterType<IndexListQML>("WikiOnBoardModule", 1, 0, "IndexListQML");
     qDebug() << timer.elapsed() <<" ms" << "qml types registered";
     qmlRegisterType<IAPWrapper>("WikiOnBoardModule", 1, 0, "IAP");

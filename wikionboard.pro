@@ -21,9 +21,7 @@ QT += core \
 
 HEADERS += \
     zimfilewrapper.h \
-    articleviewer.h \
     indexlist.h \
-    articleviewerqml.h \
     indexlistqml.h \
     QsKineticScroller.h \
     iapwrapper.h \
@@ -32,7 +30,6 @@ HEADERS += \
     asynchronouszimreader.h
 SOURCES += main.cpp \
     zimfilewrapper.cpp \
-    articleviewer.cpp \
     indexlist.cpp \
     QsKineticScroller.cpp \
     iapwrapper.cpp \
