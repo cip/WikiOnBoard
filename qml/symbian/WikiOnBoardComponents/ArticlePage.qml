@@ -239,6 +239,25 @@ WikionboardPage {
                 busyIndicator.running = false;
                 busyIndicator.visible = false;
                 updateBackwardForwardAvailable();
+                patchAnchors();
+            }
+
+
+
+            onLoadFailed: {
+                console.log("articleViewer onLoadFailed");
+                busyIndicator.running = false;
+                busyIndicator.visible = false;
+                banner.showMessage(qsTr("Loading failed"));
+                updateBackwardForwardAvailable();
+            }
+
+            function updateBackwardForwardAvailable() {
+                backwardAvailable = articleViewer.back.enabled;
+                forwardAvailable = articleViewer.forward.enabled;
+            }
+
+            function patchAnchors() {
                  var c= "\
                         function getOffset( el ) {\
                             var _x = 0;\
@@ -267,19 +286,6 @@ WikionboardPage {
                 var r= evaluateJavaScript(c);
                 console.log("result: "+r+ " for javascript\n"+c);
 
-            }
-
-            onLoadFailed: {
-                console.log("articleViewer onLoadFailed");
-                busyIndicator.running = false;
-                busyIndicator.visible = false;
-                banner.showMessage(qsTr("Loading failed"));
-                updateBackwardForwardAvailable();
-            }
-
-            function updateBackwardForwardAvailable() {
-                backwardAvailable = articleViewer.back.enabled;
-                forwardAvailable = articleViewer.forward.enabled;
             }
 
             function pageUp() {
