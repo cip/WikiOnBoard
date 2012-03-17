@@ -224,6 +224,16 @@ WikionboardPage {
                                             flickable.contentY = y
 
                                         }
+                                        //Use in querySelector, because css selector
+                                        //must not contain . and :. In wikipedia .
+                                        //are used to encode non ascii chars.
+                                        //Note that implementing this function within
+                                        // evaluateJavaScript did not work,
+                                        // therefore done here.
+                                        function escapeId(myid) {
+                                            var escaped =  myid.replace(/(:|\.)/g,'\\$1');
+                                            return escaped;
+                                        }
                                     }
 
             ]
@@ -279,7 +289,6 @@ if (!document.body.style.backgroundColor)  { \
      document.body.style.backgroundColor='white';\
 }");
             }
-
             function patchAnchors() {
                  var c= "\
                         function getOffset( el ) {\
@@ -295,7 +304,8 @@ if (!document.body.style.backgroundColor)  { \
                         \
                         function scrollToLink() {\
                                 console.log(this+'.onclick');\
-                                var target = document.querySelector(this.hash); \
+                                var escapedId = webView.escapeId(this.hash); \
+                                var target = document.querySelector(escapedId); \
                                 if (target) {\
                                     console.log('target:'+target);\
                                     var targetOffset = getOffset(target);\
@@ -303,7 +313,7 @@ if (!document.body.style.backgroundColor)  { \
                                     event.preventDefault();\
                                     webView.scrollTo(targetOffset.top); \
                                 } else {\
-                                    alert('Could not find link target: '+this);\
+                                    alert('Could not find link target: '+escapedId);\
                                 }\
                         }\
                         var allLinks = document.querySelectorAll('a[href*=\"#\"]'); \
