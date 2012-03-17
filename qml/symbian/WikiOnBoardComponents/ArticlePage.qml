@@ -239,6 +239,7 @@ WikionboardPage {
                 busyIndicator.running = false;
                 busyIndicator.visible = false;
                 updateBackwardForwardAvailable();
+                setBackground();
                 patchAnchors();
             }
 
@@ -255,6 +256,21 @@ WikionboardPage {
             function updateBackwardForwardAvailable() {
                 backwardAvailable = articleViewer.back.enabled;
                 forwardAvailable = articleViewer.forward.enabled;
+            }
+
+            function setBackground() {
+                // Workaround for https://bugreports.qt-project.org/browse/QTWEBKIT-352
+                // (Transparent background, old text stays visible)
+                // by forcing background to white.
+                // Issue only observed on old wikipedia-de.zim, but not on newer zim files.
+                // Note that checking for empty done just because appears to be sensible.
+                // However, body background is still set even for not affected newer zim files,
+                // because background is set on different elements.
+                evaluateJavaScript("\
+if (!document.body.style.backgroundColor)  { \
+    console.log('body.style.backgroundColor is empty. Set to white as workaround for background bug.'); \
+     document.body.style.backgroundColor='white';\
+}");
             }
 
             function patchAnchors() {
