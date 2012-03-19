@@ -261,7 +261,11 @@ WikionboardPage {
                 updateBackwardForwardAvailable();
                 log("onLoadFinished: Before setBackground");
                 setBackground();
-                log("onLoadFinished: After setBackground, before patchAnchors");
+                log("onLoadFinished: after setBackground, before scrollToHashIfAny");
+                //Note that scrollToHashIfAny injects a javascript function which is used
+                // by patchAnchors as well
+                scrollToHashIfAny();
+                log("onLoadFinished: After scrollToHashIfAny, before patchAnchors");
                 patchAnchors();
                 log("onLoadFinished: After patchAnchors, before patchExternalLinks");
                 patchExternalLinks();
@@ -298,6 +302,39 @@ if (!document.body.style.backgroundColor)  { \
      document.body.style.backgroundColor='white';\
 }");
             }
+            function scrollToHashIfAny() {
+                var c= "\
+                           function getOffset( el ) {\
+                               var _x = 0;\
+                               var _y = 0;\
+                               while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {\
+                                   _x += el.offsetLeft - el.scrollLeft;\
+                                   _y += el.offsetTop - el.scrollTop;\
+                                   el = el.offsetParent;\
+                               }                   \
+                           return { top: _y, left: _x };\
+                           }\
+                           \
+                           function scrollToLink(url) {\
+                                   console.log('scrollToLink: '+url);\
+                                   if (url.hash) {\
+                                    var escapedId = webView.escapeId(url.hash); \
+                                    var target = document.querySelector(escapedId); \
+                                    if (target) {\
+                                        console.log('target:'+target);\
+                                        var targetOffset = getOffset(target);\
+                                        console.log('targetOffset.top:'+ targetOffset.top);\
+                                        webView.scrollTo(targetOffset.top); \
+                                    } else {\
+                                           alert('Could not find link target: '+escapedId);\
+                                    }\
+                                   } \
+                           }\
+                           scrollToLink(window.location);\
+                     "
+                   var r= evaluateJavaScript(c);
+            }
+
             function patchExternalLinks() {
                 var c= "\
                 function openExternalLink() {\
@@ -313,7 +350,7 @@ if (!document.body.style.backgroundColor)  { \
 
             function patchAnchors() {
                  var c= "\
-                        function getOffset( el ) {\
+                        /*function getOffset( el ) {\
                             var _x = 0;\
                             var _y = 0;\
                             while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {\
@@ -322,9 +359,9 @@ if (!document.body.style.backgroundColor)  { \
                                 el = el.offsetParent;\
                             }                   \
                         return { top: _y, left: _x };\
-                        }\
+                        }*/\
                         \
-                        function scrollToLink() {\
+                        function scrollToLinkEventHandler() {\
                                 console.log(this+'.onclick');\
                                 var escapedId = webView.escapeId(this.hash); \
                                 var target = document.querySelector(escapedId); \
@@ -339,8 +376,13 @@ if (!document.body.style.backgroundColor)  { \
                                 }\
                         }\
                         var allLinks = document.querySelectorAll('a[href*=\"#\"]'); \
+                        console.log(window.location.pathname);\
                         for (var i=0; i<allLinks.length; i++){\
-                              allLinks[i].onclick = scrollToLink;\
+                                if (window.location.pathname == allLinks[i].pathname){\
+                                console.log(allLinks[i].href+' is anchor on current page');\
+                              allLinks[i].onclick = scrollToLinkEventHandler;}\
+                              else {\
+                                console.log(allLinks[i].href+' is anchor on other page');}\
                   }"
                 var r= evaluateJavaScript(c);
             }
