@@ -25,6 +25,14 @@ obj
 moc
 ui
 
+# Necessitas build system generated files
+
+android/assets
+# Note that apk is still under version control
+android/bin
+android/gen
+android/libs
+
 # Symbian build system generated files 	
 # ---------------------
 
