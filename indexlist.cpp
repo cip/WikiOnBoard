@@ -136,7 +136,7 @@ IndexList::IndexList(QWidget *parent, ZimFileWrapper* zimFileWrapper, bool hasTo
     // ScrollPerPixel required for kinetic scrolling
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
-    #if defined(Q_OS_SYMBIAN)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_ANDROID)
     //As following not working (Q_WS_HARMATTAN not defined): #if !defined(Q_WS_SIMULATOR) && !defined(Q_WS_HARMATTAN)
         //Crashes on simulator/Bug 70 on harmattan
         QtScroller::grabGesture(viewport(), QtScroller::LeftMouseButtonGesture);
