@@ -20,49 +20,26 @@ public:
     {        
         setRequest(request);
         setOperation(QNetworkAccessManager::GetOperation);
-        setHeader(QNetworkRequest::ContentTypeHeader,QVariant(QLatin1String("text/html")));
         open(ReadOnly|Unbuffered);
         setUrl(request.url());
-        QString pattern = request.url().queryItemValue(QLatin1String("pattern"));
-        Qt::BrushStyle brushStyle = Qt::SolidPattern;
-        if (pattern == QLatin1String("dense"))
-            brushStyle = Qt::Dense2Pattern;
-        else if (pattern == QLatin1String("cross"))
-            brushStyle = Qt::CrossPattern;
-        else if (pattern == QLatin1String("diagonal"))
-            brushStyle = Qt::FDiagPattern;
-        const QString radiusString = request.url().queryItemValue(QLatin1String("radius"));
-        const QString widthString = request.url().queryItemValue(QLatin1String("width"));
-        const QString heightString = request.url().queryItemValue(QLatin1String("height"));
-        const QString colorString = request.url().queryItemValue(QLatin1String("color"));
-        QColor color(colorString);
-        bool ok;
-        int radius = radiusString.toInt(&ok);
-        if (!ok)
-            radius = 5;
-        QSize size;
-        size.setWidth(widthString.toInt(&ok));
-        if (!ok)
-            size.setWidth(100);
-        size.setHeight(heightString.toInt(&ok));
-        if (!ok)
-            size.setHeight(100);
         qDebug() <<"Creating AsynchronousZimReader";
         //TODO: check whether can be optimized reusing thread.
         // (Would require that requests are strictly sequential,
         // which is doubtful)
         AsynchronousZimReader *zimReader = new AsynchronousZimReader(this,ZimReply::zimFileWrapper);
 
-        connect(zimReader, SIGNAL(readDone(QByteArray)),
-                SLOT(readFromZimFileDone(QByteArray)));
+        connect(zimReader, SIGNAL(readDone(QByteArray, QString)),
+                SLOT(readFromZimFileDone(QByteArray, QString)));
         zimReader->readAsync(request.url());
     }
 
     qint64 readData(char* data, qint64 maxSize)
     {
+        qDebug() << Q_FUNC_INFO << " for url. " << this->url();
         const qint64 readSize = qMin(maxSize, (qint64)(buffer.size() - position));
         memcpy(data, buffer.constData() + position, readSize);
         position += readSize;
+        qDebug() << Q_FUNC_INFO << readSize << " bytes read.";
         return readSize;
     }
 
@@ -99,9 +76,20 @@ public:
     }
 
 public slots:
-    void readFromZimFileDone(const QByteArray& data)
+    void readFromZimFileDone(const QByteArray& data, const QString& mimeType)
     {
-        setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("text/html"));
+        qDebug() << Q_FUNC_INFO << " url: " << this->url() << ", mimeType: " <<mimeType;
+        if (mimeType.startsWith(QLatin1String("image/png"))) {
+            //TODO: If mimeType is correct (image/png) pngs are not displayed.
+            // Replacing mimeType is just image (or even  image/jpeg) pngs are displayed.
+            //Note: Detected with kiwix-qt-android. With WikiOnBoard android not tested.
+            // (Except behavior with all set to text/html -> images displayed, but css not loaded)
+            qDebug() << "Workaround for android: mimeType is "<< mimeType << ". -> set MimeType to image";
+            setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("image"));
+        } else {
+            setHeader(QNetworkRequest::ContentTypeHeader, mimeType);
+        }
+        setHeader(QNetworkRequest::ContentLengthHeader,data.length());
         position = 0;
         buffer = data;
         emit readyRead();

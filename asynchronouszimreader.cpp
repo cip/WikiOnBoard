@@ -31,8 +31,8 @@ void AsynchronousZimReader::run()
   connect(this, SIGNAL(readRequested(QUrl)),
   &worker, SLOT(readFromZimFile(QUrl))/*, Qt::QueuedConnection*/);
   // Forward the signal to the clients
-  connect(&worker, SIGNAL(readDone(QByteArray)), this,
-  SIGNAL(readDone(QByteArray))/*, Qt::QueuedConnection*/);
+  connect(&worker, SIGNAL(readDone(QByteArray, QString)), this,
+  SIGNAL(readDone(QByteArray, QString))/*, Qt::QueuedConnection*/);
   // Mark the worker thread as ready
   m_ready = true;
   // Event loop (necessary to process signals)
