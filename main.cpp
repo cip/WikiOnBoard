@@ -131,7 +131,13 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     #endif
     appInfo.insert(QLatin1String("isSelfSigned"), QVariant(isSelfSigned));
     appInfo.insert(QLatin1String("buildDate"), QVariant(QString::fromLocal8Bit(__DATE__)));
-
+    QString platform = QLatin1String("other");
+    #if defined(Q_OS_SYMBIAN)
+        platform = QString(QLatin1String("symbian"));
+    #elif defined(Q_OS_ANDROID)
+        platform = QString(QLatin1String("android"));
+    #endif
+    appInfo.insert(QLatin1String("platform"),QVariant(platform));
     context->setContextProperty(QLatin1String("appInfo"), &appInfo);
 
     #ifdef Q_OS_ANDROID
