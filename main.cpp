@@ -135,6 +135,12 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     context->setContextProperty(QLatin1String("appInfo"), &appInfo);
 
+    #ifdef Q_OS_ANDROID
+        //For Qt Components for Android
+        viewer.addImportPath(QLatin1String("/imports/"));
+        viewer.engine()->addPluginPath(QDir::homePath()+QLatin1String("/../lib"));
+    #endif
+
     qDebug() << timer.elapsed() <<" ms " << "Application viewer created";
     viewer.engine()->setNetworkAccessManagerFactory(new MyNetworkAccessManagerFactory);
     viewer.setMainQmlFile(QLatin1String("qml/WikiOnBoardComponents/main.qml"));

@@ -307,15 +307,40 @@ unix:!symbian {
 }
 message(QT Variable: $$QT)
 message(Libs Variable: $$LIBS)
-
+#QML Qt Components for Android
+    android {
+        qmlcomponents.source = qml/imports
+        qmlcomponents.target = /
+        DEPLOYMENTFOLDERS += qmlcomponents
+        qmlplugins.files = \
+            qml/plugins/libandroidplugin_1_1.so \
+            qml/plugins/libqtcomponentsplugin_1_1.so
+            x86 {
+                qmlplugins.path = /libs/x86
+            } else: armeabi-v7a {
+                qmlplugins.path = /libs/armeabi-v7a
+            } else {
+                qmlplugins.path = /libs/armeabi
+            }
+        INSTALLS += qmlplugins
+    }
 #QML (Common)
 common_qml.source = qml/common/WikiOnBoardComponents
-common_qml.target = qml
+android: {
+    common_qml.target = qml/WikiOnBoardComponents
+} else {
+    common_qml.target = qml
+}
 
 symbian {
 # QML (Symbian components) related
 platform_qml.source = qml/symbian/WikiOnBoardComponents
 platform_qml.target = qml
+}  else:android {
+    # QML (Android components) related
+    platform_qml.source = qml/symbian/WikiOnBoardComponents
+    platform_qml.target = qml/WikiOnBoardComponents
+
 } else:simulator {
 # Edit here to switch between simulator for meego or symbian
   #platform_qml.source = qml/meego/WikiOnBoardComponents
