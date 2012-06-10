@@ -140,6 +140,16 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
         viewer.addImportPath(QLatin1String("/imports/"));
         viewer.engine()->addPluginPath(QDir::homePath()+QLatin1String("/../lib"));
     #endif
+    #if defined(Q_OS_ANDROID)
+        //Workaround for issue that import path incorrect
+        // (e.g. /tmp/necessitas/unstable/Android/Qt/480/build-armeabi/install/imports)
+        //  However,very odd that it has worked without workaround before,
+        // and then it was not working in none of the tested configurations. (e.g. emulator, device
+        // alpha 3 and 4, local deployment and ministro)
+        viewer.engine()->addImportPath(QLatin1String("/data/data/org.kde.necessitas.ministro/files/qt/imports"));
+        qDebug() << "view->engine()->importPathList()():"<<viewer.engine()->importPathList();
+        qDebug() << "view->engine()->pluginPathList():"<<viewer.engine()->pluginPathList();
+    #endif
 
     qDebug() << timer.elapsed() <<" ms " << "Application viewer created";
     viewer.engine()->setNetworkAccessManagerFactory(new MyNetworkAccessManagerFactory);
