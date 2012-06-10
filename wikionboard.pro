@@ -186,11 +186,10 @@ symbian: {
 #TODO trial for mingw build
 
 android {
-#FIXME.
-     INCLUDEPATH += ../../zimlib/include ../../xz ../../kineticscroller/include
-} else {
-    INCLUDEPATH += ../zimlib/include ../xz
+     INCLUDEPATH += ../kineticscroller/include
 }
+INCLUDEPATH += ../zimlib/include ../xz
+
 OTHER_FILES += \
     android/AndroidManifest.xml \
     android/res/drawable-hdpi/icon.png \
