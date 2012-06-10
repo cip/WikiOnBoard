@@ -160,21 +160,7 @@ symbian: {
         my_deployment.pkg_prerules = vendorinfo
 
         DEPLOYMENT += my_deployment
-        message($$DEPLOYMENT)
- 	#Deploy files for translation (qm extension) to application's private directory    
-    translationfiles.sources = *.qm
-    DEPLOYMENT +=translationfiles
-} else:win32 {
-    #Copy translation files  qt simulator
-    #Copy translation files to debug directory in output dir.
-    # (wikionboard tries to load translation files from QCoreApplication::applicationDirPath()
-    #      Could be done differently (similar to qml loader), but not really necessary
-    FILE = *.qm
-    DESTDIR_WIN = $${OUT_PWD}/debug
-    DESTDIR_WIN ~= s,/,\\,g
-    system($$quote(copy /y $${FILE} $${DESTDIR_WIN}))
-} else {
-    #TODO translation files for other platforms (i.p.meego)
+        message($$DEPLOYMENT) 	
 }
 
 symbian: {
@@ -383,6 +369,10 @@ addIapFiles.sources = ./data/IAP_VARIANTID.txt ./data/TEST_MODE.txt
 addIapFiles.path = ./
 
 DEPLOYMENT += addIapFiles
+
+RESOURCES += \
+    translations.qrc
+
 
 
 
