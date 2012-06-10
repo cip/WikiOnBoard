@@ -1,7 +1,7 @@
 //SYMBIAN_SPECIFIC_FILE
 
 import QtQuick 1.1
-import com.nokia.symbian 1.1
+import com.nokia.android 1.1
 
 Window {
     anchors.fill: parent

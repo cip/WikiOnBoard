@@ -3,9 +3,9 @@
 import QtQuick 1.1
 
 //SYMBIAN_SPECIFIC. For harmattan use: import com.nokia.meego 1.0
-import com.nokia.symbian 1.1
+import com.nokia.android 1.1
 
-import com.nokia.extras 1.1
+//import com.nokia.extras 1.1
 import "settings.js" as Settings
 
 Item {
@@ -47,7 +47,7 @@ Item {
         if (fileName!="") {
             console.log("Open zimfile:"+fileName);
             if (backend.openZimFile(fileName)) {
-                Settings.setSetting("lastZimFile",fileName);
+                //FIXME Settings.setSetting("lastZimFile",fileName);
                 indexTabButton.enabled = true
                 tabGroup.currentTab = indexPage;
                 buttonRow.checkedButton = indexTabButton
@@ -77,12 +77,14 @@ Item {
     }
 
     // Create an info banner with no icon
-    InfoBanner {
+    //Hack for android. (no infobanner)
+    Item {
         id: banner
-        text: ""
+        //text: ""
         function showMessage(msg) {
-            text = msg
-            open()
+            //text = msg
+            //open()
+            console.log("FIXME: infobanner not supported in android. "+msg)
         }
     }
 
