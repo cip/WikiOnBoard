@@ -76,9 +76,9 @@ symbian: {
     LIBS *= -L../simulatorlibs -lliblzma
 }  else:android {
     message("android")
-    LIBS += -L../WikiOnBoard/libs/android -lzimlib
-    LIBS += -L../WikiOnBoard/libs/android -lQtScroller
-    LIBS += -L../WikiOnBoard/libs/android -lliblzma
+    LIBS += -L$$_PRO_FILE_PWD_/libs/android -lzimlib
+    LIBS += -L$$_PRO_FILE_PWD_/libs/android -lQtScroller
+    LIBS += -L$$_PRO_FILE_PWD_/libs/android -lliblzma
 
 }
 else {    
@@ -186,11 +186,10 @@ symbian: {
 #TODO trial for mingw build
 
 android {
-#FIXME.
-     INCLUDEPATH += ../../zimlib/include ../../xz ../../kineticscroller/include
-} else {
-    INCLUDEPATH += ../zimlib/include ../xz
+     INCLUDEPATH += ../kineticscroller/include
 }
+INCLUDEPATH += ../zimlib/include ../xz
+
 OTHER_FILES += \
     android/AndroidManifest.xml \
     android/res/drawable-hdpi/icon.png \
