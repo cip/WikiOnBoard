@@ -47,7 +47,7 @@ Item {
         if (fileName!="") {
             console.log("Open zimfile:"+fileName);
             if (backend.openZimFile(fileName)) {
-                //FIXME Settings.setSetting("lastZimFile",fileName);
+                Settings.setSetting("lastZimFile",fileName);
                 indexTabButton.enabled = true
                 tabGroup.currentTab = indexPage;
                 buttonRow.checkedButton = indexTabButton
