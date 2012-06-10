@@ -61,7 +61,9 @@ WikionboardPage {
             // Not very useful, because not displayed at  drive (like c:) level
             //showDotAndDotDot: true
             showOnlyReadable: true
-            folder: "file://"
+            //TODO: hack for android, implement clean solution. (e.g. using QSystemStorageInfo)
+            //Note: extra / is a workaround for issue with file: removal below. (See FIXME)
+            folder: "file:////mnt/sdcard/"
             nameFilters: ["*.zim","*.zimaa"]
             sortField: FolderListModel.Name
             onFolderChanged: {isDriveSelection = (parentFolder=="")}
