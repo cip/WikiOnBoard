@@ -131,8 +131,8 @@ IndexList::IndexList(QWidget *parent, ZimFileWrapper* zimFileWrapper, bool hasTo
 {
 
 #if defined(Q_OS_ANDROID)
-    //Default font to large on android (at least with necessitas alpha3.)-> set to 18 px.
-    setStyleSheet(QLatin1String("QListWidget {font-size: 18px; background-color:white;color: black; selection-background-color: blue}"));
+    //Default font to large on android (at least with necessitas alpha3.)-> set to 24 px.
+    setStyleSheet(QLatin1String("QListWidget {font-size: 24px; background-color:white;color: black; selection-background-color: blue}"));
 #else
     setStyleSheet(QLatin1String("QListWidget {background-color:white;color: black; selection-background-color: blue}"));
 #endif
