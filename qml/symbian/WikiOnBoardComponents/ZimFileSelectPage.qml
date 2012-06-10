@@ -61,7 +61,8 @@ WikionboardPage {
             // Not very useful, because not displayed at  drive (like c:) level
             //showDotAndDotDot: true
             showOnlyReadable: true
-            folder: "file://"
+            //TODO: hack for android, implement clean solution. (e.g. using QSystemStorageInfo)
+            folder: (appInfo.platform=="android")?"file:///mnt/sdcard/": "file://"
             nameFilters: ["*.zim","*.zimaa"]
             sortField: FolderListModel.Name
             onFolderChanged: {isDriveSelection = (parentFolder=="")}
@@ -117,13 +118,14 @@ WikionboardPage {
                             console.log(folderModel.folder)
                         } else {
                             var file = folderModel.folder + "/" + fileName
-                            console.log("ZImFileSelect file selected:"+file)
-                            //SYMBIAN_SPECIFIC
-                            // For harmattan use
-                            //      Meego: leave one '/'
-                            //      file = file.split("file://")[1]; //FIXME: hardly a reliabe solution
-                            file = file.split("file:///")[1]; //FIXME: hardly a reliabe solution
-
+                            console.log("ZImFileSelect file selected:"+file)                            
+                            if (appInfo.platform == "symbian") {
+                                console.log("platform is symbian, remove all / from filename");
+                                file = file.split("file:///")[1];
+                            } else {
+                                console.log("platform is "+appInfo.platform+ ", remove  two / from filename");
+                                file = file.split("file://")[1];
+                            }
                             console.log("ZImFileSelect file selected: (After file:// removal)"+file)
                             zimFileSelected(file)
                         }
