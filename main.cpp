@@ -90,9 +90,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     qDebug() << "current path:" << QDir::currentPath();    
     qDebug() << "application dir path: "<<QCoreApplication::applicationDirPath();
-    //TODO: applicationDirPath is actually default for load anyway, but for other targets
-    // than symbian probably necessary to change path.
-    QString translationsDir =  QCoreApplication::applicationDirPath();
+    //translatins are stored as qt resource
+    QString translationsDir =  QString(QLatin1String(":/translations"));
     qDebug() << "searching translation files in directory: "<<translationsDir;
     //First load english tranlsations. (replaces translation from source code, to separate text and code more)
     if (translatorDefault.load(QLatin1String("wikionboard_en"), translationsDir)) {

@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/translations">
+        <file>wikionboard_de.qm</file>
+        <file>wikionboard_en.qm</file>
+        <file>wikionboard_es.qm</file>
+        <file>wikionboard_it.qm</file>
+    </qresource>
+</RCC>
