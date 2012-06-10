@@ -326,11 +326,7 @@ message(Libs Variable: $$LIBS)
     }
 #QML (Common)
 common_qml.source = qml/common/WikiOnBoardComponents
-android: {
-    common_qml.target = qml/WikiOnBoardComponents
-} else {
-    common_qml.target = qml
-}
+common_qml.target = qml
 
 symbian {
 # QML (Symbian components) related
@@ -339,7 +335,7 @@ platform_qml.target = qml
 }  else:android {
     # QML (Android components) related
     platform_qml.source = qml/symbian/WikiOnBoardComponents
-    platform_qml.target = qml/WikiOnBoardComponents
+    platform_qml.target = qml
 
 } else:simulator {
 # Edit here to switch between simulator for meego or symbian
@@ -353,7 +349,7 @@ platform_qml.target = qml
 # Speed up launching on MeeGo/Harmattan when using applauncherd daemon
 CONFIG += qdeclarative-boostable
 }
-DEPLOYMENTFOLDERS = common_qml platform_qml
+DEPLOYMENTFOLDERS += common_qml platform_qml
 message(DEPLOYMENTFOLDERS: $$DEPLOYMENTFOLDERS)
 message(platform_qml.source: $$platform_qml.source)
 
