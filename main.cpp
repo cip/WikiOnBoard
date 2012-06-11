@@ -18,7 +18,6 @@
 #include <qdeclarative.h>
 #include "qmlapplicationviewer.h"
 #include "indexlistqml.h"
-#include "iapwrapper.h"
 #include "mediakeycaptureitem.h"
 #include "zimreply.h"
 #include <QTranslator>
@@ -116,9 +115,6 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     qmlRegisterType<ZimFileWrapper>("WikiOnBoardModule", 1, 0, "ZimFileWrapper");
     qmlRegisterType<IndexListQML>("WikiOnBoardModule", 1, 0, "IndexListQML");
     qDebug() << timer.elapsed() <<" ms" << "qml types registered";
-    qmlRegisterType<IAPWrapper>("WikiOnBoardModule", 1, 0, "IAP");
-
-    qDebug() << timer.elapsed() <<" ms " << "iap registered";
     qmlRegisterType<MediakeyCaptureItem>("Mediakey", 1, 0, "MediakeyCapture");
 
     QmlApplicationViewer viewer;
