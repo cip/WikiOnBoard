@@ -1,0 +1,347 @@
+<libs version="0.34" applicationParameters="-platform  android" environmentVariables="MINISTRO_SSL_CERTS_PATH=MINISTRO_PATH/qt/ssl QML_IMPORT_PATH=MINISTRO_PATH/qt/imports    QT_PLUGIN_PATH=MINISTRO_PATH/qt/plugins" loaderClassName="org.kde.necessitas.industrius.QtActivityDelegate">
+	<lib name="QtBearer" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtBearer.so" file="lib/libQtBearer.so" size="113848" sha1="473983590f54effe13cfd425cceab45d9f72e439" level="2">
+		<depends>
+			<lib name="QtGui"/>
+			<lib name="QtNetwork"/>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtConnectivity" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtConnectivity.so" file="lib/libQtConnectivity.so" size="337416" sha1="073394f1052e8ff1f41774157247a7d9260311ab" level="1">
+		<depends>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QmlConnectivityPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/connectivity/libdeclarative_connectivity.so" file="imports/QtMobility/connectivity/libdeclarative_connectivity.so" size="197724" sha1="acd8308f958aa12f7e0d1d402fee1f72923b2334"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/connectivity/qmldir" file="imports/QtMobility/connectivity/qmldir" size="32" sha1="27166e55f0f0f8735115074d1e7a5402f070e745"/>
+		</needs>
+	</lib>
+
+	<lib name="QtContacts" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtContacts.so" file="lib/libQtContacts.so" size="765704" sha1="3ff8b2c03484ab5be94a13bd9c2e3c36473704da" level="2">
+		<depends>
+			<lib name="QtAndroidContactsPlugin"/>
+			<lib name="QtVersit"/>
+			<lib name="QtGui"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QmlContactsPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/contacts/libdeclarative_contacts.so" file="imports/QtMobility/contacts/libdeclarative_contacts.so" size="716420" sha1="73f494ee262229e838486ff4d595bb3bddd5ba40"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/contacts/qmldir" file="imports/QtMobility/contacts/qmldir" size="28" sha1="c8701a9fcdc4ce634e9fbc636fb7837b9a24a98d"/>
+			<item name="QtContactsServiceActionManagerPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/contacts/libqtcontacts_serviceactionmanager.so" file="plugins/contacts/libqtcontacts_serviceactionmanager.so" size="40660" sha1="426f014c462724ce8b29644bd287d881712f26ca"/>
+		</needs>
+	</lib>
+
+	<lib name="QtCore" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtCore.so" file="lib/libQtCore.so" size="2273196" sha1="2e56cb79aaf24f2e3e40a569ffaba5f5d118a9f9" level="0">
+		<needs>
+			<item name="QtIndustrius" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/jar/QtIndustrius-8.jar" file="jar/QtIndustrius-8.jar" size="44450" sha1="edbeb706e5a6479b638212867b5d029afc0cb873" type="jar" />
+		</needs>
+	</lib>
+
+	<lib name="QtDeclarative" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtDeclarative.so" file="lib/libQtDeclarative.so" size="1943812" sha1="9441ee0e6cbb13a0ba192ad62bc9d7b039693827" level="3">
+		<depends>
+			<lib name="QtScript"/>
+			<lib name="QtSvg"/>
+			<lib name="QtSql"/>
+			<lib name="QtXmlPatterns"/>
+			<lib name="QtGui"/>
+			<lib name="QtNetwork"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QmlFolderListModelPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/Qt/labs/folderlistmodel/libqmlfolderlistmodelplugin.so" file="imports/Qt/labs/folderlistmodel/libqmlfolderlistmodelplugin.so" size="27112" sha1="ffde24cf46e798ea5118f138f5357866bca6911d"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/Qt/labs/folderlistmodel/qmldir" file="imports/Qt/labs/folderlistmodel/qmldir" size="32" sha1="339a50ff0cf652c565a7adf4ab8c4c74aac7305e"/>
+			<item name="QmlGesturesPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/Qt/labs/gestures/libqmlgesturesplugin.so" file="imports/Qt/labs/gestures/libqmlgesturesplugin.so" size="33636" sha1="5a99c2081f87b550c2632eda94364eabfc16a206"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/Qt/labs/gestures/qmldir" file="imports/Qt/labs/gestures/qmldir" size="25" sha1="237bc60b12c32e8763435b3286970975f33e642a"/>
+			<item name="QmlParticlesPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/Qt/labs/particles/libqmlparticlesplugin.so" file="imports/Qt/labs/particles/libqmlparticlesplugin.so" size="49348" sha1="69ee4a4526f7acb2ad2011af3d57f83b99c6dfbc"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/Qt/labs/particles/qmldir" file="imports/Qt/labs/particles/qmldir" size="26" sha1="094a12fb018347e29ab831c5423b01576ddfc59f"/>
+		</needs>
+	</lib>
+
+	<lib name="QtFeedback" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtFeedback.so" file="lib/libQtFeedback.so" size="68072" sha1="c85c08e07d64f99cb21b02e67b3f40028e8744ce" level="1">
+		<depends>
+			<lib name="QtAndroidFeedbackPlugin"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QmlFeedbackPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/feedback/libdeclarative_feedback.so" file="imports/QtMobility/feedback/libdeclarative_feedback.so" size="66336" sha1="f12dd08bf9b13d699a18edc0a7852c055f6852df"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/feedback/qmldir" file="imports/QtMobility/feedback/qmldir" size="28" sha1="7cb0fa5e432358af74f5a04eff6952f49236d700"/>
+		</needs>
+	</lib>
+
+	<lib name="QtGallery" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtGallery.so" file="lib/libQtGallery.so" size="237776" sha1="adc15163008f942025507fa6296fb37042775f6c" level="1">
+		<depends>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QmlGalleryPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/gallery/libdeclarative_gallery.so" file="imports/QtMobility/gallery/libdeclarative_gallery.so" size="203472" sha1="e49cdd3b27938f255ced6ebefaaf15a53069242a"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/gallery/qmldir" file="imports/QtMobility/gallery/qmldir" size="28" sha1="efca891215be071b486d8fb68dff0b00f68c505b"/>
+		</needs>
+	</lib>
+
+	<lib name="QtGui" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtGui.so" file="lib/libQtGui.so" size="5817756" sha1="d8ed24bdd2fe5d8aa952d050a005b0094c541633" level="1">
+		<depends>
+			<lib name="QtAndroidPlatformPlugin"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QtAccessibleWidgets" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/accessible/libqtaccessiblewidgets.so" file="plugins/accessible/libqtaccessiblewidgets.so" size="161756" sha1="5a7e64fd67ce8aee6cc9227f5a254527923eac36"/>
+			<item name="QtGifPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/imageformats/libqgif.so" file="plugins/imageformats/libqgif.so" size="18484" sha1="2ff852b44dc649ef89f1e121fd873dbca88b672b"/>
+			<item name="QtIcoPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/imageformats/libqico.so" file="plugins/imageformats/libqico.so" size="18440" sha1="3a15b3b2a0e91130f4c5c2fb48e8b095e52c7a80"/>
+			<item name="QtJpegPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/imageformats/libqjpeg.so" file="plugins/imageformats/libqjpeg.so" size="152092" sha1="536eac888ccb7190427ff112b6989c5e7f88b7fd"/>
+			<item name="QtMngPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/imageformats/libqmng.so" file="plugins/imageformats/libqmng.so" size="218256" sha1="7627b22a0c76a64d56854776d7a715410e612f6a"/>
+			<item name="QtTiffPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/imageformats/libqtiff.so" file="plugins/imageformats/libqtiff.so" size="266308" sha1="84bc7fe1b6ff825e42918e445e024ff7d3357ac9"/>
+		</needs>
+	</lib>
+
+	<lib name="QtLocation" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtLocation.so" file="lib/libQtLocation.so" size="1747648" sha1="34924769dad85df1e3683cc8e71526410b42840b" level="2">
+		<depends>
+			<lib name="QtLandmarksPlugin"/>
+			<lib name="QtSql"/>
+			<lib name="QtGui"/>
+			<lib name="QtNetwork"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QmlLocationPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/location/libdeclarative_location.so" file="imports/QtMobility/location/libdeclarative_location.so" size="531572" sha1="ad01efd2b079bd4e22e3086d5a4be3b2e326cab0"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/location/qmldir" file="imports/QtMobility/location/qmldir" size="28" sha1="1a96ed3515667d31b34fbbd5a9c5c29e65d4a9be"/>
+			<item name="QtGeoServicesNokiaPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/geoservices/libqtgeoservices_nokia.so" file="plugins/geoservices/libqtgeoservices_nokia.so" size="262336" sha1="6c110f7e342cc52642e568c71bbf14b8fa1d257e"/>
+		</needs>
+	</lib>
+
+	<lib name="QtMultimediaKit" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtMultimediaKit.so" file="lib/libQtMultimediaKit.so" size="917884" sha1="7e80054985b647a615fa5c0f638f01a95aad72b9" level="3">
+		<depends>
+			<lib name="QtAndroidMKMediaPlugin"/>
+			<lib name="QtAndroidMKCameraPlugin"/>
+			<lib name="QtOpenGL"/>
+			<lib name="QtGui"/>
+			<lib name="QtNetwork"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QmlMultimediaKitPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMultimediaKit/libdeclarative_multimedia.so" file="imports/QtMultimediaKit/libdeclarative_multimedia.so" size="153932" sha1="3f7300dc72bf4c9784493561a39e87fbc7acffae"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMultimediaKit/qmldir" file="imports/QtMultimediaKit/qmldir" size="30" sha1="f88f4445e27c9b2ce1f8088a9b17a0dcd8f77390"/>
+			<item name="QtMultimediaKitM3uPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/playlistformats/libqtmultimediakit_m3u.so" file="plugins/playlistformats/libqtmultimediakit_m3u.so" size="27832" sha1="322e0c984bfb6fdea252093aae42484ef8b299c6"/>
+		</needs>
+	</lib>
+
+	<lib name="QtNetwork" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtNetwork.so" file="lib/libQtNetwork.so" size="1587084" sha1="9f63d6f255f2806b85b82d9a6d9d4bca358b87ba" level="1">
+		<depends>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="GenericBearerPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/bearer/libqgenericbearer.so" file="plugins/bearer/libqgenericbearer.so" size="31644" sha1="a1be7712bbb1a3f5bcc1c2f21ab12d91d6f5eb92"/>
+		</needs>
+	</lib>
+
+	<lib name="QtOpenGL" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtOpenGL.so" file="lib/libQtOpenGL.so" size="328456" sha1="c0b694f48cf446f12fd91f7150cb62b1f015c10f" level="2">
+		<depends>
+			<lib name="QtAndroidGLPlatformPlugin"/>
+			<lib name="QtGui"/>
+			<lib name="QtCore"/>
+		</depends>
+		<replaces>
+			<lib name="QtAndroidPlatformPlugin"/>
+		</replaces>
+	</lib>
+
+	<lib name="QtOrganizer" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtOrganizer.so" file="lib/libQtOrganizer.so" size="909680" sha1="edc338105391b5a5f8568b5f22f7de3803560e92" level="2">
+		<depends>
+			<lib name="QtGui"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QmlOrganizerPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/organizer/libdeclarative_organizer.so" file="imports/QtMobility/organizer/libdeclarative_organizer.so" size="676456" sha1="6c44fcd2cfaec56176c249075e8c7df894a54924"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/organizer/qmldir" file="imports/QtMobility/organizer/qmldir" size="29" sha1="0dd85d1b4264760cb524bc2e1f20a6f8b7c5568d"/>
+		</needs>
+	</lib>
+
+	<lib name="QtScript" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtScript.so" file="lib/libQtScript.so" size="1468412" sha1="68e59b7d636ab679f267e09e56a4c72772a1428e" level="1">
+		<depends>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtScriptTools" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtScriptTools.so" file="lib/libQtScriptTools.so" size="464304" sha1="534b45c00635a3e54cf8085fef2f3ebfe56c3ef0" level="2">
+		<depends>
+			<lib name="QtScript"/>
+			<lib name="QtGui"/>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtSensors" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtSensors.so" file="lib/libQtSensors.so" size="172556" sha1="851009dba2378d4ce9689d39c54633b2a4c8c4f2" level="1">
+		<depends>
+			<lib name="QtAndroidSensorsPlugin"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QmlSensorsPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/sensors/libdeclarative_sensors.so" file="imports/QtMobility/sensors/libdeclarative_sensors.so" size="82388" sha1="a0976cdd394e41ae21f330b1af3766ca0d2c7dbf"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/sensors/qmldir" file="imports/QtMobility/sensors/qmldir" size="27" sha1="a9a8c6795e63c7620af8587b3c482b614707c93b"/>
+		</needs>
+	</lib>
+
+	<lib name="QtServiceFramework" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtServiceFramework.so" file="lib/libQtServiceFramework.so" size="463824" sha1="36379b35a81ecdc5d4cae1e14cb04da9e2208155" level="2">
+		<depends>
+			<lib name="QtSql"/>
+			<lib name="QtNetwork"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QmlServiceFrameworkPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/serviceframework/libdeclarative_serviceframework.so" file="imports/QtMobility/serviceframework/libdeclarative_serviceframework.so" size="45440" sha1="553513004305f40347d680ad788603abee3da9d3"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/serviceframework/qmldir" file="imports/QtMobility/serviceframework/qmldir" size="36" sha1="41589911c3dc2ba1c412e1794503cd1ecc7b6e72"/>
+		</needs>
+	</lib>
+
+	<lib name="QtSql" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtSql.so" file="lib/libQtSql.so" size="139768" sha1="a4a6d217bd22c0aa4a6af745a200e1c4ccf430e4" level="1">
+		<depends>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QSQLitePlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/sqldrivers/libqsqlite.so" file="plugins/sqldrivers/libqsqlite.so" size="311056" sha1="4ce0fe87d41e0016628722088e07431132de3e7d"/>
+		</needs>
+	</lib>
+
+	<lib name="QtSvg" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtSvg.so" file="lib/libQtSvg.so" size="201576" sha1="c92e5adf6cf8b0950bc944b9334eca8c7c302eec" level="2">
+		<depends>
+			<lib name="QtGui"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QtSvgIconPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/iconengines/libqsvgicon.so" file="plugins/iconengines/libqsvgicon.so" size="22876" sha1="f06fe102b928c328cf85f910062be4039a8db03f"/>
+			<item name="QtSvgPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/imageformats/libqsvg.so" file="plugins/imageformats/libqsvg.so" size="14660" sha1="fd0f06626fded13302167c1eb272ee9de00100e6"/>
+		</needs>
+	</lib>
+
+	<lib name="QtSystemInfo" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtSystemInfo.so" file="lib/libQtSystemInfo.so" size="229504" sha1="59a10215db9b2676ac86d90c6a9f455ab111eb9e" level="2">
+		<depends>
+			<lib name="QtGui"/>
+			<lib name="QtNetwork"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QmlSystemInfoPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/systeminfo/libdeclarative_systeminfo.so" file="imports/QtMobility/systeminfo/libdeclarative_systeminfo.so" size="111656" sha1="d322235b71cd6b58785b94b3dd722644d5b64c53"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtMobility/systeminfo/qmldir" file="imports/QtMobility/systeminfo/qmldir" size="30" sha1="1db9a28f9bf731c511dcd115df633c50a8736c60"/>
+		</needs>
+	</lib>
+
+	<lib name="QtTest" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtTest.so" file="lib/libQtTest.so" size="85500" sha1="fc304c905ba043444d825d0af1b7f9985a75e0e2" level="1">
+		<depends>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtVersit" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtVersit.so" file="lib/libQtVersit.so" size="462724" sha1="1e657891b7f734f3aaed18262eca46228cf39826" level="3">
+		<depends>
+			<lib name="QtContacts"/>
+			<lib name="QtGui"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="VersitBackupHandlerPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/versit/libqtversit_backuphandler.so" file="plugins/versit/libqtversit_backuphandler.so" size="36420" sha1="fd144ba5f605852125632efda7aa14f146df6f4e"/>
+			<item name="VersitVcardPreserverPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/versit/libqtversit_vcardpreserver.so" file="plugins/versit/libqtversit_vcardpreserver.so" size="26604" sha1="a7becc0f8caafa0c60473ceddb6c06231dce3ea1"/>
+		</needs>
+	</lib>
+
+	<lib name="QtVersitOrganizer" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtVersitOrganizer.so" file="lib/libQtVersitOrganizer.so" size="258464" sha1="5d587d5ec960eba12f45079d6f32ce8d63b4ca6f" level="4">
+		<depends>
+			<lib name="QtVersit"/>
+			<lib name="QtOrganizer"/>
+			<lib name="QtGui"/>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtWebKit" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtWebKit.so" file="lib/libQtWebKit.so" size="14971792" sha1="23fe3e81c59d6fa19e6e11e2df30c5047e10a939" level="2">
+		<depends>
+			<lib name="QtGui"/>
+			<lib name="QtNetwork"/>
+			<lib name="QtCore"/>
+		</depends>
+		<needs>
+			<item name="QmlWebkitPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtWebKit/libqmlwebkitplugin.so" file="imports/QtWebKit/libqmlwebkitplugin.so" size="57544" sha1="eb0ec559265a653d5b51a48f33fd4852a2285c33"/>
+			<item name="QmlDir" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/imports/QtWebKit/qmldir" file="imports/QtWebKit/qmldir" size="23" sha1="f4012c3ef48875607eb1a7bae054d39d1568ada4"/>
+		</needs>
+	</lib>
+
+	<lib name="QtXml" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtXml.so" file="lib/libQtXml.so" size="156468" sha1="fe3b86cf06dc9c5fdbe4fd94735bcd713ccd49e4" level="1">
+		<depends>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtXmlPatterns" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/lib/libQtXmlPatterns.so" file="lib/libQtXmlPatterns.so" size="2004332" sha1="d38a514670812e59bb561cb2207acef54f94398c" level="2">
+		<depends>
+			<lib name="QtNetwork"/>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtAndroidPlatformPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/platforms/android/libandroid-8.so" file="plugins/platforms/android/libandroid-8.so" size="410584" sha1="ac65328594759a880a4fbfb3876024eb6dd1ea4a" level="9999">
+		<depends>
+			<lib name="QtGui"/>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtAndroidGLPlatformPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/platforms/android/libandroidGL-8.so" file="plugins/platforms/android/libandroidGL-8.so" size="406368" sha1="588cf415fae5d023b248b7c7f70e430ee448413a" level="9999">
+		<depends>
+			<lib name="QtOpenGL"/>
+			<lib name="QtGui"/>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtAndroidContactsPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/contacts/libqtcontacts_android.so" file="plugins/contacts/libqtcontacts_android.so" size="462900" sha1="24b07e727d7876f2ba1f2a303b3eebdaab20542b" level="9999">
+		<depends>
+			<lib name="QtContacts"/>
+			<lib name="QtGui"/>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtAndroidFeedbackPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/feedback/libqtfeedback_android.so" file="plugins/feedback/libqtfeedback_android.so" size="39644" sha1="6a0150204bb5dc29acef329f15c76e62396c85af" level="9999">
+		<depends>
+			<lib name="QtFeedback"/>
+			<lib name="QtNetwork"/>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtLandmarksPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/landmarks/libqtlandmarks_sqlite.so" file="plugins/landmarks/libqtlandmarks_sqlite.so" size="471012" sha1="fbcf414fa22cf8451cf77a0e26b95aa62102a855" level="9999">
+		<depends>
+			<lib name="QtLocation"/>
+			<lib name="QtSql"/>
+			<lib name="QtGui"/>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtAndroidMKCameraPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/mediaservice/libqtmultimediakit_androidcam.so" file="plugins/mediaservice/libqtmultimediakit_androidcam.so" size="179944" sha1="014642785d24da34fac09bade77bdd31e6ca27ca" level="9999">
+		<depends>
+			<lib name="QtMultimediaKit"/>
+			<lib name="QtOpenGL"/>
+			<lib name="QtGui"/>
+			<lib name="QtNetwork"/>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtAndroidMKMediaPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/mediaservice/libqtmultimediakit_androidmedia.so" file="plugins/mediaservice/libqtmultimediakit_androidmedia.so" size="115344" sha1="f36c36e37a31831ff324c2af147e36c3871c53e0" level="9999">
+		<depends>
+			<lib name="QtMultimediaKit"/>
+			<lib name="QtOpenGL"/>
+			<lib name="QtGui"/>
+			<lib name="QtNetwork"/>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+	<lib name="QtAndroidSensorsPlugin" url="http://files.kde.org/necessitas/ministro/android/necessitas/objects/0.34-armeabi/plugins/sensors/libqtsensors_android.so" file="plugins/sensors/libqtsensors_android.so" size="56616" sha1="f60f1c8246eea411dfa37dd8798353fd1e3cd5c3" level="9999">
+		<depends>
+			<lib name="QtSensors"/>
+			<lib name="QtNetwork"/>
+			<lib name="QtCore"/>
+		</depends>
+	</lib>
+
+</libs>
