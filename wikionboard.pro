@@ -7,7 +7,7 @@ DEFINES += "__IS_SELFSIGNED__=$$IS_SELFSIGNED"
 ENABLE_SPLITSCREENKEYBOARD = 0
 DEFINES += "__ENABLE_SPLITSCREENKEYBOARD__=$$ENABLE_SPLITSCREENKEYBOARD"
 
-VERSION = 2.1.50
+VERSION = 2.1.60
 DEFINES += "__APPVERSION__=$$VERSION" 
 TEMPLATE = app
 
@@ -24,7 +24,6 @@ HEADERS += \
     indexlist.h \
     indexlistqml.h \
     QsKineticScroller.h \
-    iapwrapper.h \
     mediakeycaptureitem.h \
     zimreply.h \
     asynchronouszimreader.h
@@ -32,7 +31,6 @@ SOURCES += main.cpp \
     zimfilewrapper.cpp \
     indexlist.cpp \
     QsKineticScroller.cpp \
-    iapwrapper.cpp \
     mediakeycaptureitem.cpp \
     zimreply.cpp \
     asynchronouszimreader.cpp
@@ -357,21 +355,8 @@ symbian {
     LIBS += -L\epoc32\release\armv5\lib -lremconinterfacebase
 }
 
-# IAP dependency for Symbian^3 and later devices are taken from IAP project template 'inapppurchase'
-CONFIG += mobility inapppurchase
-
-# capabilities required for IAP API
-TARGET.CAPABILITY += NetworkServices
-
-# IAP API files to include in package
-addIapFiles.sources = ./data/IAP_VARIANTID.txt ./data/TEST_MODE.txt
-addIapFiles.path = ./
-
-DEPLOYMENT += addIapFiles
-
 RESOURCES += \
     translations.qrc
-
 
 
 
