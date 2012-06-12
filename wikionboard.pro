@@ -293,7 +293,7 @@ message(Libs Variable: $$LIBS)
 #QML Qt Components for Android
     android {
         qmlcomponents.source = qml/imports
-        qmlcomponents.target = /
+        qmlcomponents.target = /imports
         DEPLOYMENTFOLDERS += qmlcomponents
         qmlplugins.files = \
             qml/plugins/libandroidplugin_1_1.so \
@@ -318,7 +318,9 @@ platform_qml.target = qml
 }  else:android {
     # QML (Android components) related
     platform_qml.source = qml/symbian/WikiOnBoardComponents
-    platform_qml.target = qml
+    platform_qml.target = qml/WikiOnBoardComponents
+    #Override target here. (else qml files deployed into qml dir directly)
+    common_qml.target = qml/WikiOnBoardComponents
 
 } else:simulator {
 # Edit here to switch between simulator for meego or symbian
