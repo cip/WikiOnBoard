@@ -86,9 +86,15 @@ public slots:
             // (Except behavior with all set to text/html -> images displayed, but css not loaded)
             qDebug() << "Workaround for android: mimeType is "<< mimeType << ". -> set MimeType to image";
             setHeader(QNetworkRequest::ContentTypeHeader, QLatin1String("image"));
+        } else if (mimeType.startsWith(QLatin1String("text"))){
+            // At least in wikipedia-de.zim else non-latin characters not shown correctly,
+            // while newer zim files seem to work without specifying the charset here.
+            setHeader(QNetworkRequest::ContentTypeHeader, mimeType+QLatin1String("; charset=UTF-8)"));
         } else {
             setHeader(QNetworkRequest::ContentTypeHeader, mimeType);
         }
+        //TODO: consider removal of javascript here. (I.p. for symbian check performance impact)
+        qDebug() << Q_FUNC_INFO << " ContentTypeHeader set to:"<< header(QNetworkRequest::ContentTypeHeader);
         setHeader(QNetworkRequest::ContentLengthHeader,data.length());
         position = 0;
         buffer = data;
