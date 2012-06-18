@@ -292,6 +292,8 @@ message(QT Variable: $$QT)
 message(Libs Variable: $$LIBS)
 #QML Qt Components for Android
     android {
+        CONFIG += mobility
+        MOBILITY = systeminfo
         qmlcomponents.source = qml/imports
         qmlcomponents.target = /imports
         DEPLOYMENTFOLDERS += qmlcomponents

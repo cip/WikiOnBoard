@@ -26,9 +26,14 @@
 #include <QDeclarativePropertyMap>
 #include <QTimer>
 #include <QtScroller>
-
 #include <QNetworkAccessManager>
 #include <QDeclarativeNetworkAccessManagerFactory>
+#if defined(Q_OS_ANDROID)
+#include <QSystemInfo>
+#ifdef QTM_NAMESPACE
+QTM_USE_NAMESPACE
+#endif
+#endif
 
 //Get VERSION from qmake .pro file as string
 #define __VER1M__(x) #x
@@ -99,7 +104,20 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     } else {
         qWarning() << "Loading translation file for english failed. Will use text from source code instead, which may be less complete/polished";
     }
+#if defined(Q_OS_ANDROID)
+    // QLocale::system() not working in necessitas (at least in alpha 3)-> use system info instead
+    QSystemInfo *systemInfo = new QSystemInfo(0);
+    QString locale = systemInfo->currentLanguage();
+    qDebug() << "locale as returned by currentLanguage: "<<locale;
+    //TODO remove when fixed in necessitas. Note that workaround (obviously) doesn't work for all languages
+    locale.truncate(2);
+    locale = locale.toLower();
+    qDebug() << "Locale after hack to workaround issue that display name instead of iso code returned: "<< locale;
+    delete systemInfo;
+#else
     QString locale = QLocale::system().name();
+#endif
+
     //Load tranlsation for local language, if available.
     //Note: If translator.load does not find locale file, it automatically strips local name and tries again.
     //  E.g. If wikionboard_de_AT.qsf does not exist, it tries wikionboard_de.qsf next.
