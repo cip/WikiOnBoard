@@ -28,22 +28,14 @@
         <translation></translation>
     </message>
     <message>
-        <source>Donate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>internal://donatePage</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Build date: %3&lt;br&gt;Author: %2&lt;p&gt;Uses zimlib (openzim.org) and liblzma.&lt;p&gt;%4If you like WikiOnBoard and want to support us click %6 for information how you can donate easily via nokia store</source>
-        <comment>Use html tags for new line/paragraphs</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>application is self-signed</source>
         <comment>only displayed if application is self-signed. Add &lt;p&gt; at end</comment>
-        <translation type="unfinished">Application is self-signed</translation>
+        <translation>Application is self-signed</translation>
+    </message>
+    <message>
+        <source>WikiOnBoard %1&lt;br&gt;%5&lt;br&gt;Build date: %3&lt;br&gt;Author: %2&lt;p&gt;Uses zimlib (openzim.org) and liblzma.&lt;p&gt;%4</source>
+        <comment>Use html tags for new line/paragraphs</comment>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -84,59 +76,9 @@
         <source>Very Large</source>
         <translation></translation>
     </message>
-</context>
-<context>
-    <name>DonateButton</name>
     <message>
-        <source>Loading</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error: &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>DonatePage</name>
-    <message>
-        <source>Donate a little</source>
-        <comment>Displayed before actual value (~1â‚¬) loaded from store</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Donate a lot</source>
-        <comment>Displayed before actual value (~20â‚¬) loaded from store</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[TRANSLATOR] If you like WikiOnBoardconsider donating to express your appreciation.&lt;br&gt;Click button below to donate easily via Nokia Store.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Donate something</source>
-        <comment>Displayed before actual value (~5â‚¬) loaded from store</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Donate more</source>
-        <comment>Displayed before actual value (~10â‚¬) loaded from store</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>https://donate.wikipedia.org/</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Donate to wikipedia</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[TRANSLATOR] If you rather want to donate WikiMedia,the organization operating Wikipedia, click  %1 to visit their webpage.&lt;br&gt;Note, that WikiOnBoard is not officially affiliated with WikiMedia.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[TRANSLATOR] Thank you for supporting WikiOnBoard</source>
-        <translation type="unfinished"></translation>
+        <source>Loading failed</source>
+        <translation>Error: The article could not be loaded.</translation>
     </message>
 </context>
 <context>
@@ -185,22 +127,10 @@ recommended to download them with your PC and not directly with your mobile.</tr
     </message>
     <message>
         <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile. &lt;p&gt;Explain that clicking %1 opens the website &quot;%3&quot; with further instructions.</source>
-        <translation type="obsolete">Click &quot;%1&quot; to find out how to download Wikipedia and other eBooks to your mobile.&lt;p&gt;
+        <translation>Click &quot;%1&quot; to find out how to download Wikipedia and other eBooks to your mobile.&lt;p&gt;
 After you have copied the Wikipedia to your phone, choose %2 to open it.&lt;p&gt;
 Note: &quot;%1&quot; opens the  web page &quot;%3&quot; in your internet browser. Alternatively you can open the web page on your PC. As eBooks, particularly Wikipedia, can be very large it is 
 recommended to download them with your PC and not directly with your mobile.</translation>
-    </message>
-    <message>
-        <source>Donate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>internal://donatePage</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>[TRANSLATOR] Click %1 for information how to put e-Books like the Wikipedia on your phone. &lt;p&gt;Click %2 to open an eBook you&apos;ve copied to your mobile. &lt;p&gt;Explain that clicking %1 opens the website &quot;%3&quot; with further instructions.&lt;p&gt;If you like WikiOnBoard and want to support us click %4 for information how you can donate easily via nokia store</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -512,7 +442,7 @@ Error message: &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Error: article not found. (URL: %1 )</source>
-        <translation></translation>
+        <translation>Error: Article not found (URL: %1)</translation>
     </message>
     <message>
         <source>Not available</source>
